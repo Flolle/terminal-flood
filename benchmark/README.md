@@ -97,7 +97,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 ### dataset b24c6n1000
 
-I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so and it most would have needed more RAM than I have available in my PC.
+I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so and it most likely would have needed more RAM than I have available in my PC.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
@@ -112,7 +112,7 @@ I did not attempt to find an optimal solutionset with terminal-flood, because it
 
 This dataset was used in a code challenge [here](https://codegolf.stackexchange.com/questions/26232/create-a-flood-paint-ai). Please note that the starting position for this dataset is in the middle.
 
-I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so (probably multiple days of runtime) and it most would have needed more RAM than I have available in my PC. Luckily, smack42 (creator of [ColorFill](https://github.com/smack42/ColorFill)) did compute an optimal solutionset, allowing us to at least know the score that `astar_a` would have gotten.
+I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so (probably multiple days of runtime) and it most likely would have needed more RAM than I have available in my PC. Luckily, smack42 (creator of [ColorFill](https://github.com/smack42/ColorFill)) did compute an optimal solutionset, allowing us to at least know the score that `astar_a` would have gotten.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
