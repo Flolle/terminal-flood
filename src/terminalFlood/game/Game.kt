@@ -40,7 +40,7 @@ class Game(
             newNeighbors.or(it.borderingNodes)
         }
         newNeighbors.andNot(newFilled)
-        val newNeighborsByColor = GameState.createNeighborsByColorArray(gameBoard, newNeighbors)
+        val newNeighborsByColor = createNeighborsByColorArray(gameBoard, newNeighbors)
         val newNotFilledNotNeighbors = notFilledNotNeighbors.clone() as BitSet
         newNotFilledNotNeighbors.andNot(newNeighbors)
 
@@ -52,7 +52,7 @@ class Game(
             newNeighbors,
             newNeighborsByColor,
             newNotFilledNotNeighbors,
-            GameState.createSensibleMovesSet(newNeighborsByColor)
+            createSensibleMovesSet(newNeighborsByColor)
         )
     }
 
@@ -109,7 +109,7 @@ class Game(
             val startNode = gameBoard.getNodeAtPosition(gameBoard.startPos.x, gameBoard.startPos.y)
             filled.set(startNode.id)
             neighbors.or(startNode.borderingNodes)
-            val neighborsByColor = GameState.createNeighborsByColorArray(gameBoard, neighbors)
+            val neighborsByColor = createNeighborsByColorArray(gameBoard, neighbors)
             val notFilledNotNeighbors = BitSet(gameBoard.boardNodes.size)
             notFilledNotNeighbors.set(0, gameBoard.boardNodes.size)
             notFilledNotNeighbors.andNot(filled)
@@ -123,8 +123,33 @@ class Game(
                 neighbors,
                 neighborsByColor,
                 notFilledNotNeighbors,
-                GameState.createSensibleMovesSet(neighborsByColor)
+                createSensibleMovesSet(neighborsByColor)
             )
+        }
+
+        private fun createNeighborsByColorArray(gameBoard: GameBoard, neighbors: BitSet): Array<BitSet?> {
+            val nodesByColor = arrayOfNulls<BitSet>(gameBoard.maximumColorValue + 1)
+            neighbors.forEachNode(gameBoard) { node ->
+                val nodeColorValue = node.color.value
+                var colorSet = nodesByColor[nodeColorValue]
+                if (colorSet == null) {
+                    colorSet = BitSet(gameBoard.boardNodes.size)
+                    nodesByColor[nodeColorValue] = colorSet
+                }
+                colorSet.set(node.id)
+            }
+
+            return nodesByColor
+        }
+
+        private fun createSensibleMovesSet(neighborsByColor: Array<BitSet?>): ColorSet {
+            val sensibleMoves = ColorSet()
+            neighborsByColor.forEachIndexed { index, colorSet ->
+                if (colorSet != null)
+                    sensibleMoves.set(index)
+            }
+
+            return sensibleMoves
         }
     }
 }

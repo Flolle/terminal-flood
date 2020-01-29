@@ -109,33 +109,6 @@ interface GameState {
 
         return presentColors
     }
-
-    companion object {
-        fun createNeighborsByColorArray(gameBoard: GameBoard, neighbors: BitSet): Array<BitSet?> {
-            val nodesByColor = arrayOfNulls<BitSet>(gameBoard.maximumColorValue + 1)
-            neighbors.forEachNode(gameBoard) { node ->
-                val nodeColorValue = node.color.value
-                var colorSet = nodesByColor[nodeColorValue]
-                if (colorSet == null) {
-                    colorSet = BitSet(gameBoard.boardNodes.size)
-                    nodesByColor[nodeColorValue] = colorSet
-                }
-                colorSet.set(node.id)
-            }
-
-            return nodesByColor
-        }
-
-        fun createSensibleMovesSet(neighborsByColor: Array<BitSet?>): ColorSet {
-            val sensibleMoves = ColorSet()
-            neighborsByColor.forEachIndexed { index, colorSet ->
-                if (colorSet != null)
-                    sensibleMoves.set(index)
-            }
-
-            return sensibleMoves
-        }
-    }
 }
 
 /**
