@@ -54,14 +54,12 @@ class MutableGame(
      * Makes a move that takes all neighboring nodes of the given colors.
      */
     fun makeMultiColorMove(colors: ColorSet): MutableGame {
-        var i = colors.nextSetBit(0)
-        val newNodes = neighborsByColor[i]!!
-        neighborsByColor[i] = null
-        i = colors.nextSetBit(i + 1)
-        while (i >= 0) {
-            newNodes.or(neighborsByColor[i]!!)
-            neighborsByColor[i] = null
-            i = colors.nextSetBit(i + 1)
+        val firstColorValue = colors.nextSetBit(0)
+        val newNodes = neighborsByColor[firstColorValue]!!
+        neighborsByColor[firstColorValue] = null
+        colors.forEachSetBit(firstColorValue + 1) { colorValue ->
+            newNodes.or(neighborsByColor[colorValue]!!)
+            neighborsByColor[colorValue] = null
         }
         computeMove(Color.DUMMY, newNodes)
 
