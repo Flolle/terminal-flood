@@ -42,6 +42,10 @@ class ColorSet private constructor(
         bits = 0L
     }
 
+    fun andNot(colorSet: ColorSet) {
+        bits = bits and colorSet.bits.inv()
+    }
+
     fun nextSetBit(fromIndex: Int): Int {
         if (bits == 0L)
             return -1

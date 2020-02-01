@@ -2,6 +2,7 @@ package terminalFlood.algo.astar
 
 import terminalFlood.algo.Greedy
 import terminalFlood.game.Color
+import terminalFlood.game.ColorSet
 import terminalFlood.game.Game
 import terminalFlood.game.forEachNode
 import java.util.*
@@ -34,26 +35,58 @@ interface Strategy {
 object AdmissibleStrategy : Strategy {
     override fun heuristic(gameState: Game): Int {
         var minimumMovesLeft = 0
-        val currentState = gameState.toMutableGame()
+        val currentState = SimplifiedGame(gameState)
+        val notEliminatedColors = createNotEliminatedColorsSet(gameState)
 
         while (!currentState.isWon) {
-            var eliminatedColors = false
-            // Do all the moves that eliminate a color.
-            val colorEliminationMoves = currentState.findAllColorEliminationMoves()
+            val colorEliminationMoves = findColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
+                // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
+                notEliminatedColors.andNot(colorEliminationMoves)
                 minimumMovesLeft += colorEliminationMoves.size
-                eliminatedColors = true
-            }
-
-            // If we didn't eliminate colors, do a color blind move taking all border nodes.
-            if (!eliminatedColors) {
+            } else {
+                // If we didn't eliminate colors, do a color blind move taking all border nodes.
                 currentState.makeColorBlindMove()
                 minimumMovesLeft++
             }
         }
 
         return minimumMovesLeft
+    }
+
+    private fun createNotEliminatedColorsSet(gameState: Game): ColorSet {
+        val notEliminatedColors = gameState.sensibleMoves.copy()
+
+        var i = gameState.notFilledNotNeighbors.nextSetBit(0)
+        while (i >= 0) {
+            val nodeColorValue = gameState.gameBoard.boardNodes[i].color.value
+            notEliminatedColors.set(nodeColorValue)
+
+            if (notEliminatedColors.size == gameState.gameBoard.colorList.size)
+                break
+
+            i = gameState.notFilledNotNeighbors.nextSetBit(i + 1)
+        }
+
+        return notEliminatedColors
+    }
+
+    private fun findColorEliminations(gameState: SimplifiedGame, containedColors: ColorSet): ColorSet {
+        val colorEliminations = containedColors.copy()
+
+        var i = gameState.notFilledNotNeighbors.nextSetBit(0)
+        while (i >= 0) {
+            val nodeColorValue = gameState.gameBoard.boardNodes[i].color.value
+            colorEliminations.clear(nodeColorValue)
+
+            if (colorEliminations.isEmpty)
+                break
+
+            i = gameState.notFilledNotNeighbors.nextSetBit(i + 1)
+        }
+
+        return colorEliminations
     }
 }
 
@@ -84,18 +117,14 @@ object InadmissibleSlowStrategy : Strategy {
         val currentState = gameState.toMutableGame()
 
         while (!currentState.isWon) {
-            var eliminatedColors = false
-            // Do all the moves that eliminate a color.
             val colorEliminationMoves = currentState.findAllColorEliminationMoves()
             if (!colorEliminationMoves.isEmpty) {
+                // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
                 minimumMovesLeft += colorEliminationMoves.size
-                eliminatedColors = true
-            }
-
-            // If we didn't eliminate colors, take at most two of the adjacent colors. If there are more than two colors
-            // present, choose the two colors that give access to the most new border fields.
-            if (!eliminatedColors) {
+            } else {
+                // If we didn't eliminate colors, take at most two of the adjacent colors. If there are more than two colors
+                // present, choose the two colors that give access to the most new border fields.
                 if (currentState.sensibleMoves.size < 3) {
                     currentState.makeColorBlindMove()
                     minimumMovesLeft++
