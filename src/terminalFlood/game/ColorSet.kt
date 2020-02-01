@@ -53,11 +53,7 @@ class ColorSet private constructor(
     }
 
     inline fun forEachSetBit(action: (index: Int) -> Unit) {
-        var i = nextSetBit(0)
-        while (i >= 0) {
-            action(i)
-            i = nextSetBit(i + 1)
-        }
+        forEachSetBit(0, action)
     }
 
     inline fun forEachSetBit(fromIndex: Int, action: (index: Int) -> Unit) {
