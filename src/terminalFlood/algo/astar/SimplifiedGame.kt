@@ -36,7 +36,7 @@ class SimplifiedGame(
         get() = neighbors.cardinality() == 0
 
     fun makeMultiColorMove(colorSet: ColorSet) {
-        val newNodes = BitSet()
+        val newNodes = BitSet(gameBoard.boardNodes.size)
         val oldNeighbors = neighbors.clone() as BitSet
         oldNeighbors.forEachNode(gameBoard) { node ->
             if (colorSet[node.color.value]) {

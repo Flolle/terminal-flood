@@ -19,6 +19,7 @@ object Greedy {
 
         while (!gameState.isWon) {
             // If we can eliminate colors, that is always the optimal move.
+            // Note: We can't use makeMultiColorMove because we actually need to log every single move.
             var isColorEliminationFound = false
             gameState.findAllColorEliminationMoves().forEachColor {
                 isColorEliminationFound = true
