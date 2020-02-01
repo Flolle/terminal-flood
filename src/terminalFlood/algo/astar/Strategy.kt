@@ -100,9 +100,9 @@ object AdmissibleStrategy : Strategy {
  *
  * Is substantially faster than [AdmissibleStrategy] while often giving optimal solutions. For example, for the
  * dataset of the pc19 challenge this [Strategy] didn't give an optimal solution only 10.3% of the time and was
- * only ever off by one. It also only needed less than a fifth of the time to complete its computations compared
- * to [AdmissibleStrategy]. Still, using this heuristic for A* with big boards and/or a high amount of colors can
- * result in relatively long runtimes.
+ * only ever off by one. It also only needed between a third and a fourth of the time to complete its computations
+ * compared to [AdmissibleStrategy]. Still, using this heuristic for A* with big boards and/or a high amount of
+ * colors can result in relatively long runtimes.
  *
  * For the pc19 dataset see
  * [https://web.archive.org/web/20150909200653/http://cplus.about.com/od/programmingchallenges/a/challenge19.htm]

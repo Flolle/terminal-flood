@@ -42,7 +42,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 26717 | 79655 |
+| astar_a | 26717 | 60871 |
 | astar_ias | 27070 | 5687 |
 | astar_ia | 27161 | 5009 |
 | astar_iaf | 27363 | 2994 |
@@ -53,7 +53,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (4 threads, 14G heap) | 27635 | 1053451 |
+| astar_a (4 threads, 14G heap) | 27635 | 794840 |
 | astar_ias | 27897 | 5492 |
 | astar_ia | 28236 | 3722 |
 | astar_iaf | 28435 | 1474 |
@@ -64,7 +64,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads, 14GB heap) | 24582 | 473947 |
+| astar_a (6 threads, 14GB heap) | 24582 | 353952 |
 | astar_ias | 24740 | 7283 |
 | astar_ia | 25061 | 2362 |
 | astar_iaf | 25256 | 1553 |
@@ -75,7 +75,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads) | 24837 | 579239 |
+| astar_a (6 threads) | 24837 | 427505 |
 | astar_ias | 24951 | 12219 |
 | astar_ia | 25266 | 3549 |
 | astar_iaf | 25530 | 1945 |
@@ -88,7 +88,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 21952 | 38416 |
+| astar_a | 21952 | 24299 |
 | astar_ias | 22062 | 11281 |
 | astar_ia | 22337 | 5580 |
 | astar_iaf | 22496 | 3884 |
@@ -131,7 +131,7 @@ Results using 1 thread:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 47736 |
+| astar_a | 20086 | 30937 |
 | astar_ias | 20189 | 8452 |
 | astar_ia | 20428 | 3741 |
 | astar_iaf | 20529 | 2742 |
@@ -142,7 +142,7 @@ Results using 12 threads:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 8578 |
+| astar_a | 20086 | 6689 |
 | astar_ias | 20189 | 1856 |
 | astar_ia | 20428 | 1232 |
 | astar_iaf | 20529 | 800 |

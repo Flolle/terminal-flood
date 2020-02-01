@@ -41,7 +41,7 @@ This repository contains some datasets for use and benchmark results from my PC 
 # Links
 
 - Java GUI version: [ColorFill](https://github.com/smack42/ColorFill)
-- Android version: [OpenFlood](https://github.com/GunshipPenguin/open_flood/)
+- Android version: [Open Flood](https://github.com/GunshipPenguin/open_flood/)
 - Browser version: [Flood-It](https://unixpapa.com/floodit/)
 
 
