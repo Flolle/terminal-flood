@@ -70,7 +70,7 @@ class MutableGame(
      * Makes a move that ignores all colors. This move takes all neighboring nodes of this game state.
      */
     fun makeColorBlindMove(): MutableGame {
-        neighborsByColor = arrayOfNulls(gameBoard.maximumColorValue + 1)
+        neighborsByColor.fill(null)
         computeMove(Color.DUMMY, neighbors.clone() as BitSet)
 
         return this
