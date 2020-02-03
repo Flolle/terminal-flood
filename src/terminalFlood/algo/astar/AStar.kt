@@ -187,8 +187,8 @@ object AStar {
         // Only allow a move if the previous move added new border nodes of the next move's color.
         val allowedMoves = ColorSet()
         val previousMove = gameState.playedMoves.lastMove
-        gameState.sensibleMoves.forEachSetBit { colorValue ->
-            val nextMoveNeighbors = gameState.neighborsByColor[colorValue]!!
+        gameState.sensibleMoves.forEachColor { color ->
+            val nextMoveNeighbors = gameState.getNeighborsWithColor(color)!!
             var i = nextMoveNeighbors.nextSetBit(0)
             outerLoop@ while (i >= 0) {
                 val borderingNodes = gameState.gameBoard.boardNodes[i].borderingNodes
@@ -201,7 +201,7 @@ object AStar {
                     j = borderingNodes.nextSetBit(j + 1)
                 }
 
-                allowedMoves.set(colorValue)
+                allowedMoves.set(color.value)
                 break
             }
         }
@@ -225,7 +225,7 @@ object AStar {
 
         val allowedMoves = ColorSet()
         gameState.sensibleMoves.forEachColor { nextMove ->
-            if (shouldPlay(gameState, nextMove, gameState.neighborsByColor[nextMove.value]!!))
+            if (shouldPlay(gameState, nextMove, gameState.getNeighborsWithColor(nextMove)!!))
                 allowedMoves.set(nextMove.value)
         }
 

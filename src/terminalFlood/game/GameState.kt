@@ -24,21 +24,11 @@ interface GameState {
     val filled: BitSet
 
     /**
-     * The amount of nodes already taken over.
-     */
-    val amountOfTakenNodes: Int
-
-    /**
      * The nodes bordering [filled].
      *
      * [BoardNode]s and this bitmap are linked through [BoardNode.id], meaning the id is used as the bit index.
      */
     val neighbors: BitSet
-
-    /**
-     * A collection of the nodes bordering [filled], grouped by their colors (the array index is [Color.value]).
-     */
-    val neighborsByColor: Array<BitSet?>
 
     /**
      * The nodes that are neither in [filled] nor in [neighbors]. Basically all not taken nodes that don't directly
@@ -89,6 +79,19 @@ interface GameState {
      * Makes a move that takes all [neighbors] of the given color and returns the new state.
      */
     fun makeMove(move: Color): GameState
+
+    /**
+     * Returns the neighboring [BoardNode]s with the given [Color] or null if no nodes with that color are present.
+     */
+    fun getNeighborsWithColor(color: Color): BitSet? {
+        if (!sensibleMoves[color.value])
+            return null
+
+        val colorNodes = gameBoard.boardNodesByColor[color.value].clone() as BitSet
+        colorNodes.and(neighbors)
+
+        return colorNodes
+    }
 
     /**
      * Returns a collection of all the colors that can be completely eliminated.

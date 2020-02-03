@@ -134,7 +134,7 @@ object InadmissibleSlowStrategy : Strategy {
                     var amountBestColor = Int.MIN_VALUE
                     var amountSecondBestColor = Int.MIN_VALUE
                     currentState.sensibleMoves.forEachColor { color ->
-                        val neighborNodes = currentState.neighborsByColor[color.value]!!
+                        val neighborNodes = currentState.getNeighborsWithColor(color)!!
                         newBorderNodes.clear()
                         neighborNodes.forEachNode(currentState.gameBoard) { node ->
                             newBorderNodes.or(node.borderingNodes)

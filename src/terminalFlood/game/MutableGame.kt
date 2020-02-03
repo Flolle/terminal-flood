@@ -20,9 +20,7 @@ class MutableGame(
     override val gameBoard: GameBoard,
     override var playedMoves: MoveList<Color>,
     override val filled: BitSet,
-    override var amountOfTakenNodes: Int,
     override val neighbors: BitSet,
-    override var neighborsByColor: Array<BitSet?>,
     override val notFilledNotNeighbors: BitSet,
     override val sensibleMoves: ColorSet
 ) : GameState {
@@ -30,8 +28,8 @@ class MutableGame(
      * @see [GameState.makeMove]
      */
     override fun makeMove(move: Color): MutableGame {
-        val newNodes = neighborsByColor[move.value]!!
-        neighborsByColor[move.value] = null
+        val newNodes = gameBoard.boardNodesByColor[move.value].clone() as BitSet
+        newNodes.and(neighbors)
         computeMove(move, newNodes)
 
         return this
@@ -41,10 +39,9 @@ class MutableGame(
      * Makes a move that takes all neighboring nodes of the given colors.
      */
     fun makeTwoColorMove(color1: Color, color2: Color): MutableGame {
-        val newNodes = neighborsByColor[color1.value]!!
-        newNodes.or(neighborsByColor[color2.value]!!)
-        neighborsByColor[color1.value] = null
-        neighborsByColor[color2.value] = null
+        val newNodes = gameBoard.boardNodesByColor[color1.value].clone() as BitSet
+        newNodes.or(gameBoard.boardNodesByColor[color2.value])
+        newNodes.and(neighbors)
         computeMove(Color.DUMMY, newNodes)
 
         return this
@@ -55,12 +52,11 @@ class MutableGame(
      */
     fun makeMultiColorMove(colors: ColorSet): MutableGame {
         val firstColorValue = colors.nextSetBit(0)
-        val newNodes = neighborsByColor[firstColorValue]!!
-        neighborsByColor[firstColorValue] = null
+        val newNodes = gameBoard.boardNodesByColor[firstColorValue].clone() as BitSet
         colors.forEachSetBit(firstColorValue + 1) { colorValue ->
-            newNodes.or(neighborsByColor[colorValue]!!)
-            neighborsByColor[colorValue] = null
+            newNodes.or(gameBoard.boardNodesByColor[colorValue])
         }
+        newNodes.and(neighbors)
         computeMove(Color.DUMMY, newNodes)
 
         return this
@@ -70,7 +66,6 @@ class MutableGame(
      * Makes a move that ignores all colors. This move takes all neighboring nodes of this game state.
      */
     fun makeColorBlindMove(): MutableGame {
-        neighborsByColor.fill(null)
         computeMove(Color.DUMMY, neighbors.clone() as BitSet)
 
         return this
@@ -78,37 +73,18 @@ class MutableGame(
 
     /**
      * Updates the internal state.
-     *
-     * Note: Please remove all nodes that get added to [filled] from [neighborsByColor] before calling this method.
      */
     private fun computeMove(move: Color, newNodes: BitSet) {
         // Updates filled, neighbors, notFilledNotNeighbors, amountOfTakenNodes and playedMoves
         filled.or(newNodes)
-        newNodes.forEachNode(gameBoard) {
-            amountOfTakenNodes++
-            neighbors.or(it.borderingNodes)
-        }
+        newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
         neighbors.andNot(filled)
         notFilledNotNeighbors.andNot(neighbors)
         playedMoves += move
 
-        // Updates neighborsByColor
-        neighbors.forEachNode(gameBoard) { node ->
-            val nodeColorValue = node.color.value
-            var colorSet = neighborsByColor[nodeColorValue]
-            if (colorSet == null) {
-                colorSet = BitSet(gameBoard.boardNodes.size)
-                neighborsByColor[nodeColorValue] = colorSet
-            }
-            colorSet.set(node.id)
-        }
-
         // Updates sensibleMoves
         sensibleMoves.clear()
-        neighborsByColor.forEachIndexed { index, colorSet ->
-            if (colorSet != null)
-                sensibleMoves.set(index)
-        }
+        neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color.value) }
     }
 
     /**
@@ -124,9 +100,7 @@ class MutableGame(
             gameBoard,
             playedMoves,
             filled,
-            amountOfTakenNodes,
             neighbors,
-            neighborsByColor,
             notFilledNotNeighbors,
             sensibleMoves
         )
@@ -137,7 +111,6 @@ class MutableGame(
 
         other as MutableGame
 
-        if (amountOfTakenNodes != other.amountOfTakenNodes) return false
         if (playedMoves != other.playedMoves) return false
         if (filled != other.filled) return false
         if (gameBoard != other.gameBoard) return false

@@ -20,9 +20,7 @@ class Game(
     override val gameBoard: GameBoard,
     override val playedMoves: MoveList<Color>,
     override val filled: BitSet,
-    override val amountOfTakenNodes: Int,
     override val neighbors: BitSet,
-    override val neighborsByColor: Array<BitSet?>,
     override val notFilledNotNeighbors: BitSet,
     override val sensibleMoves: ColorSet
 ) : GameState {
@@ -30,53 +28,40 @@ class Game(
      * @see [GameState.makeMove]
      */
     override fun makeMove(move: Color): Game {
-        val newNodes = neighborsByColor[move.value]!!
-        var newAmountOfTakenNodes = amountOfTakenNodes
+        val newNodes = gameBoard.boardNodesByColor[move.value].clone() as BitSet
+        newNodes.and(neighbors)
         val newFilled = filled.clone() as BitSet
         val newNeighbors = neighbors.clone() as BitSet
         newFilled.or(newNodes)
-        newNodes.forEachNode(gameBoard) {
-            newAmountOfTakenNodes++
-            newNeighbors.or(it.borderingNodes)
-        }
+        newNodes.forEachNode(gameBoard) { newNeighbors.or(it.borderingNodes) }
         newNeighbors.andNot(newFilled)
-        val newNeighborsByColor = createNeighborsByColorArray(gameBoard, newNeighbors)
         val newNotFilledNotNeighbors = notFilledNotNeighbors.clone() as BitSet
         newNotFilledNotNeighbors.andNot(newNeighbors)
+        val newSensibleMoves = ColorSet()
+        newNeighbors.forEachNode(gameBoard) { newSensibleMoves.set(it.color.value) }
 
         return Game(
             gameBoard,
             playedMoves + move,
             newFilled,
-            newAmountOfTakenNodes,
             newNeighbors,
-            newNeighborsByColor,
             newNotFilledNotNeighbors,
-            createSensibleMovesSet(newNeighborsByColor)
+            newSensibleMoves
         )
     }
 
     /**
      * Returns a mutable version of this game state.
      */
-    fun toMutableGame(): MutableGame {
-        val newNeighborsByColor = arrayOfNulls<BitSet>(neighborsByColor.size)
-        neighborsByColor.forEachIndexed { index, colorSet ->
-            if (colorSet != null)
-                newNeighborsByColor[index] = colorSet.clone() as BitSet
-        }
-
-        return MutableGame(
+    fun toMutableGame(): MutableGame =
+        MutableGame(
             gameBoard,
             playedMoves,
             filled.clone() as BitSet,
-            amountOfTakenNodes,
             neighbors.clone() as BitSet,
-            newNeighborsByColor,
             notFilledNotNeighbors.clone() as BitSet,
             sensibleMoves.copy()
         )
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -84,7 +69,6 @@ class Game(
 
         other as Game
 
-        if (amountOfTakenNodes != other.amountOfTakenNodes) return false
         if (playedMoves != other.playedMoves) return false
         if (gameBoard != other.gameBoard) return false
         if (filled != other.filled) return false
@@ -109,47 +93,21 @@ class Game(
             val startNode = gameBoard.getNodeAtPosition(gameBoard.startPos.x, gameBoard.startPos.y)
             filled.set(startNode.id)
             neighbors.or(startNode.borderingNodes)
-            val neighborsByColor = createNeighborsByColorArray(gameBoard, neighbors)
             val notFilledNotNeighbors = BitSet(gameBoard.boardNodes.size)
             notFilledNotNeighbors.set(0, gameBoard.boardNodes.size)
             notFilledNotNeighbors.andNot(filled)
             notFilledNotNeighbors.andNot(neighbors)
+            val sensibleMoves = ColorSet()
+            neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color.value) }
 
             return Game(
                 gameBoard,
                 MoveList.emptyMoveList(),
                 filled,
-                1,
                 neighbors,
-                neighborsByColor,
                 notFilledNotNeighbors,
-                createSensibleMovesSet(neighborsByColor)
+                sensibleMoves
             )
-        }
-
-        private fun createNeighborsByColorArray(gameBoard: GameBoard, neighbors: BitSet): Array<BitSet?> {
-            val nodesByColor = arrayOfNulls<BitSet>(gameBoard.maximumColorValue + 1)
-            neighbors.forEachNode(gameBoard) { node ->
-                val nodeColorValue = node.color.value
-                var colorSet = nodesByColor[nodeColorValue]
-                if (colorSet == null) {
-                    colorSet = BitSet(gameBoard.boardNodes.size)
-                    nodesByColor[nodeColorValue] = colorSet
-                }
-                colorSet.set(node.id)
-            }
-
-            return nodesByColor
-        }
-
-        private fun createSensibleMovesSet(neighborsByColor: Array<BitSet?>): ColorSet {
-            val sensibleMoves = ColorSet()
-            neighborsByColor.forEachIndexed { index, colorSet ->
-                if (colorSet != null)
-                    sensibleMoves.set(index)
-            }
-
-            return sensibleMoves
         }
     }
 }

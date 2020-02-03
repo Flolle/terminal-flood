@@ -34,7 +34,7 @@ object Greedy {
             var bestColor = Color.DUMMY
             var amountBestColor = Int.MIN_VALUE
             gameState.sensibleMoves.forEachColor { move ->
-                val moveBorderNodes = gameState.neighborsByColor[move.value]!!
+                val moveBorderNodes = gameState.getNeighborsWithColor(move)!!
                 newBorderNodes.clear()
                 moveBorderNodes.forEachNode(gameState.gameBoard) { node ->
                     newBorderNodes.or(node.borderingNodes)
