@@ -37,7 +37,7 @@ object AStar {
         }
         val movesNeededForBoardState = ConcurrentHashMap<BoardState, Int>(100000)
         val frontier = PriorityQueue<AStarNode>()
-        val noMaxStepsGameBoard = gameBoard.copy(maximumSteps = Int.MAX_VALUE)
+        val noMaxStepsGameBoard = gameBoard.noMaximumStepsLimitCopy()
         frontier.offer(AStarNode(Game(noMaxStepsGameBoard), false, 0))
 
         while (frontier.isNotEmpty()) {
@@ -115,7 +115,7 @@ object AStar {
         }
         val movesNeededForBoardState = HashMap<BoardState, Int>(10000)
         val frontier = PriorityQueue<AStarNode>()
-        val noMaxStepsGameBoard = gameBoard.copy(maximumSteps = Int.MAX_VALUE)
+        val noMaxStepsGameBoard = gameBoard.noMaximumStepsLimitCopy()
         frontier.offer(AStarNode(Game(noMaxStepsGameBoard), false, 0))
 
         while (frontier.isNotEmpty()) {

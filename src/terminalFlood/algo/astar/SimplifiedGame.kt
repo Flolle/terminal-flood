@@ -37,22 +37,20 @@ class SimplifiedGame(
 
     fun makeMultiColorMove(colorSet: ColorSet) {
         val newNodes = BitSet(gameBoard.boardNodes.size)
-        val oldNeighbors = neighbors.clone() as BitSet
-        oldNeighbors.forEachNode(gameBoard) { node ->
-            if (colorSet[node.color.value]) {
-                newNodes.set(node.id)
-                neighbors.or(node.borderingNodes)
-            }
+        colorSet.forEachSetBit { colorValue ->
+            newNodes.or(gameBoard.boardNodesByColor[colorValue])
         }
-        filled.or(newNodes)
-        neighbors.andNot(filled)
-        notFilledNotNeighbors.andNot(neighbors)
+        newNodes.and(neighbors)
+        computeMove(newNodes)
     }
 
     fun makeColorBlindMove() {
-        val oldNeighbors = neighbors.clone() as BitSet
-        filled.or(neighbors)
-        oldNeighbors.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
+        computeMove(neighbors.clone() as BitSet)
+    }
+
+    private fun computeMove(newNodes: BitSet) {
+        filled.or(newNodes)
+        newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
         neighbors.andNot(filled)
         notFilledNotNeighbors.andNot(neighbors)
     }

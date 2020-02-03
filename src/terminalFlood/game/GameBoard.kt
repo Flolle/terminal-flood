@@ -7,17 +7,27 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 /**
- * This class represents a game board. This class is immutable.
+ * This class represents a game board.
+ *
+ * No methods or accessors of this class modify its internal state. As a result, instances can be freely shared.
+ *
+ * Warning:
+ * Do not modify the exposed bitmaps or [Array]s, since doing so will invalidate the board state. If you want to do
+ * modifying operations on those collections, you must create copies of them.
+ *
+ * This class is thread safe.
  *
  * @param boardNodes The [BoardNode]s of the game board.
+ * @param boardNodesByColor The nodes of the game board grouped by color. [Color.value] is used as the array index. [BoardNode.id] is used as the bit index.
  * @param boardSize The size of the game board. Game boards are always squares, so a game board contains `boardSize*boardSize` fields.
  * @param colorList The collection of all colors used on the game board.
  * @param startPos The start position of the game board.
  * @param maximumSteps The maximum amount of moves allowed to finish the game.
  * @throws IllegalArgumentException if [maximumSteps] is equal or below 0; if size of [colorList] is below 2 or equal or above [Character.MAX_RADIX]
  */
-data class GameBoard(
+class GameBoard(
     val boardNodes: List<BoardNode>,
+    val boardNodesByColor: Array<BitSet>,
     val boardSize: Int,
     val colorList: List<Color>,
     val startPos: Point,
@@ -79,6 +89,41 @@ data class GameBoard(
         }
 
         return str.toString()
+    }
+
+    /**
+     * Returns a copy of this [GameBoard] with the only difference being that its [maximumSteps] value is [Int.MAX_VALUE].
+     */
+    fun noMaximumStepsLimitCopy(): GameBoard =
+        GameBoard(
+            boardNodes,
+            boardNodesByColor,
+            boardSize,
+            colorList,
+            startPos,
+            Int.MAX_VALUE
+        )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameBoard
+
+        if (boardSize != other.boardSize) return false
+        if (startPos != other.startPos) return false
+        if (maximumSteps != other.maximumSteps) return false
+        if (boardNodes != other.boardNodes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = boardNodes.hashCode()
+        result = 31 * result + boardSize
+        result = 31 * result + startPos.hashCode()
+        result = 31 * result + maximumSteps
+        return result
     }
 
     companion object {
@@ -157,6 +202,12 @@ data class GameBoard(
             }
             boardNodes.forEachIndexed { i, node -> node.id = i }
 
+            val maximumColorValue = colors.toList().maxBy { it.value }!!.value
+            val boardNodesByColor = Array(maximumColorValue + 1) { BitSet(boardNodes.size) }
+            for (node in boardNodes) {
+                boardNodesByColor[node.color.value].set(node.id)
+            }
+
             val startPoint = when (startPos) {
                 StartPos.UPPER_LEFT  -> Point(0, 0)
                 StartPos.UPPER_RIGHT -> Point(boardSize - 1, 0)
@@ -164,7 +215,8 @@ data class GameBoard(
                 StartPos.LOWER_RIGHT -> Point(boardSize - 1, boardSize - 1)
                 StartPos.MIDDLE      -> Point(boardSize / 2, boardSize / 2)
             }
-            val gameBoard = GameBoard(boardNodes, boardSize, colors.toList(), startPoint, maximumSteps)
+            val gameBoard =
+                GameBoard(boardNodes, boardNodesByColor, boardSize, colors.toList(), startPoint, maximumSteps)
 
             for (node in boardNodes) {
                 val borderingNodes = HashSet<BoardNode>()
