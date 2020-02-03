@@ -138,7 +138,7 @@ data class GameBoard(
             startPos: StartPos,
             maximumSteps: Int = 30 * (boardSize * numberOfColors) / 100
         ): GameBoard {
-            val colors = HashSet<Color>()
+            val colors = ColorSet()
             val checkedFields = Array(boardSize) { BooleanArray(boardSize) }
             val boardNodes = ArrayList<BoardNodeImpl>()
 
@@ -150,9 +150,8 @@ data class GameBoard(
 
                         exploreColorNode(nodeFields, colorBoard, checkedFields, colorValue, x, y)
 
-                        val color = Color.colorCache[colorValue]
-                        colors.add(color)
-                        boardNodes.add(BoardNodeImpl(color, BitSet(), nodeFields))
+                        colors.set(colorValue)
+                        boardNodes.add(BoardNodeImpl(Color.colorCache[colorValue], BitSet(), nodeFields))
                     }
                 }
             }
@@ -165,7 +164,7 @@ data class GameBoard(
                 StartPos.LOWER_RIGHT -> Point(boardSize - 1, boardSize - 1)
                 StartPos.MIDDLE      -> Point(boardSize / 2, boardSize / 2)
             }
-            val gameBoard = GameBoard(boardNodes, boardSize, colors.sorted(), startPoint, maximumSteps)
+            val gameBoard = GameBoard(boardNodes, boardSize, colors.toList(), startPoint, maximumSteps)
 
             for (node in boardNodes) {
                 val borderingNodes = HashSet<BoardNode>()

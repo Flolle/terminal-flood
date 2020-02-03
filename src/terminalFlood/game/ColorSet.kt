@@ -78,6 +78,16 @@ class ColorSet private constructor(
 
     fun copy(): ColorSet = ColorSet(bits)
 
+    fun toList(): List<Color> {
+        if (isEmpty)
+            return emptyList()
+
+        val colorList = ArrayList<Color>(size)
+        forEachColor { colorList.add(it) }
+
+        return colorList
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
