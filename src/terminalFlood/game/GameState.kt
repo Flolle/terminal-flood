@@ -82,6 +82,8 @@ interface GameState {
 
     /**
      * Returns the neighboring [BoardNode]s with the given [Color] or null if no nodes with that color are present.
+     *
+     * [BoardNode]s and the returned bitmap are linked through [BoardNode.id], meaning the id is used as the bit index.
      */
     fun getNeighborsWithColor(color: Color): BitSet? {
         if (!sensibleMoves[color.value])
