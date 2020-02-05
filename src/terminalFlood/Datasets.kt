@@ -12,8 +12,44 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
+import kotlin.streams.asSequence
 
 object Datasets {
+    fun playFromDataset(file: Path, lineNumber: Int, startPos: StartPos) {
+        val noMaxStepsGameBoard = findGameBoardInDataset(file, lineNumber, startPos)
+
+        PlayGame.play(noMaxStepsGameBoard.withMaximumStepsLimitCopy())
+    }
+
+    fun solveFromDataset(file: Path, lineNumber: Int, startPos: StartPos, strategy: AStarStrategies) {
+        Util.aStarSimulation(findGameBoardInDataset(file, lineNumber, startPos), strategy)
+    }
+
+    private fun findGameBoardInDataset(file: Path, lineNumber: Int, startPos: StartPos): GameBoard {
+        if (!Files.exists(file) || Files.isDirectory(file))
+            throw IllegalArgumentException("The file doesn't exist or is a directory!")
+
+        println("Given dataset: $file")
+        println("Line number: $lineNumber")
+        println("Starting position: $startPos\n")
+
+        val compactBoardString = try {
+            Files.lines(file, Charsets.UTF_8).use { lines ->
+                lines.asSequence()
+                    .map { line -> line.trim() }
+                    .filter { line -> line.isNotEmpty() }
+                    .withIndex()
+                    .first { indexedLine -> indexedLine.index == lineNumber - 1 }
+                    .value
+            }
+        } catch (ex: NoSuchElementException) {
+            println("Couldn't find a game board! Make sure that you specified the right file and line number!")
+            throw ex
+        }
+
+        return GameBoard.createBoardFromCompactString(compactBoardString, startPos, Int.MAX_VALUE)
+    }
+
     fun createDataset(file: Path, boardSize: Int, numberOfColors: Int, numberOfBoards: Int) {
         if (Files.isDirectory(file))
             throw IllegalArgumentException("The file is a directory!")

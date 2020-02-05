@@ -94,14 +94,20 @@ class GameBoard(
     /**
      * Returns a copy of this [GameBoard] with the only difference being that its [maximumSteps] value is [Int.MAX_VALUE].
      */
-    fun noMaximumStepsLimitCopy(): GameBoard =
+    fun noMaximumStepsLimitCopy(): GameBoard = withMaximumStepsLimitCopy(Int.MAX_VALUE)
+
+    /**
+     * Returns a copy of this [GameBoard] with the only difference being that its [maximumSteps] is set to the given
+     * value.
+     */
+    fun withMaximumStepsLimitCopy(maximumSteps: Int = 30 * (boardSize * colorList.size) / 100): GameBoard =
         GameBoard(
             boardNodes,
             boardNodesByColor,
             boardSize,
             colorList,
             startPos,
-            Int.MAX_VALUE
+            maximumSteps
         )
 
     override fun equals(other: Any?): Boolean {

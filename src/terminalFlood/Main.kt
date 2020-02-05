@@ -42,6 +42,25 @@ fun main(args: Array<String>) {
         Datasets.createDataset(file, boardSize, numberOfColors, numberOfBoards)
         return
     }
+    if (args.contains("-playFromDataset")) {
+        val arrayIndex = args.indexOf("-playFromDataset")
+        val lineNumber = args[arrayIndex + 1].toInt()
+        val startPos = parseStartPosition(args[arrayIndex + 2])
+        val file = Paths.get(args[arrayIndex + 3])
+
+        Datasets.playFromDataset(file, lineNumber, startPos)
+        return
+    }
+    if (args.contains("-solveFromDataset")) {
+        val arrayIndex = args.indexOf("-solveFromDataset")
+        val lineNumber = args[arrayIndex + 1].toInt()
+        val strategy = Util.strategyFromString(args[arrayIndex + 2])
+        val startPos = parseStartPosition(args[arrayIndex + 3])
+        val file = Paths.get(args[arrayIndex + 4])
+
+        Datasets.solveFromDataset(file, lineNumber, startPos, strategy)
+        return
+    }
 
     var seed = Util.generateRandomSeed()
     var boardSize = 14
@@ -191,6 +210,31 @@ private fun printHelp() {
     println("  java -jar terminal-flood.jar -createDataset 14 6 1000 \"/path/to/dataset.txt\"")
     println("The above command would create a dataset containing 1000 boards of the size 14x14 with 6 colors.")
     println("The dataset would be saved to \"/path/to/dataset.txt\".")
+
+    println("\n\nGiven a dataset, you can choose and play or solve a board contained in it given the following")
+    println("commands:")
+    println("  -playFromDataset [lineNumber] [startPos] [filepath]\n")
+    println("  -solveFromDataset [lineNumber] [strategy] [startPos] [filepath]\n")
+    println("  [lineNumber] \t --")
+    println("\t\tThe line number of the game board you want to play within the dataset file. Note that")
+    println("\t\tline numbers are starting from 1.")
+    println("  [strategy]   \t --")
+    println("\t\tThe strategy used to compute a solution. The possible values are the same as the single")
+    println("\t\tsolution computation arguments, just without the minus sign in front. See above for the")
+    println("\t\tlist of options and what each option does.")
+    println("  [startPos]   \t --")
+    println("\t\tThe starting position of the game board. The option is exactly the same as the argument")
+    println("\t\tused when simply playing the game.")
+    println("  [filepath]   \t --")
+    println("\t\tThe file path to the text file containing the game boards. Please only use forward")
+    println("\t\tslashes, even on Windows systems.")
+
+    println("\nTo give examples of what the full commands would look like:")
+    println("  java -jar terminal-flood.jar -playFromDataset 815 ul \"/path/to/dataset.txt\"")
+    println("  java -jar terminal-flood.jar -solveFromDataset 815 astar_iaf ul \"/path/to/dataset.txt\"")
+    println("With the above commands you would either play or solve board number 815 from the given dataset with")
+    println("the starting position in the upper left (and use the astar_iaf strategy in case you try to solve")
+    println("the board).")
 }
 
 private fun debug() {
