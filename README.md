@@ -27,7 +27,7 @@ java -jar terminal-flood.jar -seed "xyzzy" -size 18 -colors 6 -startPos m
 
 Will create a game with an 18x18 board, 6 colors, starting position in the middle and the string "xyzzy" used as the seed value for the board creation.
 
-For the complete documentation of all program arguments, start the program with the `-help` or `-h` argument like so:
+For the complete documentation of all program arguments, check out the [documentation page](https://github.com/Flolle/terminal-flood/wiki/Documentation) or start the program with the `-help` or `-h` argument like so:
 
 ```
 java -jar terminal-flood.jar -help

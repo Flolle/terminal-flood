@@ -31,7 +31,7 @@ All benchmarks were run on my personal computer (Ryzen 5 1600(12nm), 16GB DDR4-3
 java -Xmx12G -jar terminal-flood.jar -solutionsForDataset 12 [strategy] ul "path/to/dataset"
 ```
 
-Where `[strategy]` denotes the heuristic algorithm used with A* (see the `-help` documentation for exact details).
+Where `[strategy]` denotes the heuristic algorithm used with A* (see the `-help` documentation or the [documentation page](https://github.com/Flolle/terminal-flood/wiki/Documentation) for exact details).
 
 If you are using a Java version newer than 8, I recommend to use the ParallelGC garbage collector which in Java 8 is the default GC and gives better performance than G1 which is the default GC in Java 9 and newer. You can select it by using the `-XX:+UseParallelGC` program argument when running Java.
 
