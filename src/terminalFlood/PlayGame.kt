@@ -5,6 +5,7 @@ import terminalFlood.game.Game
 import terminalFlood.game.GameBoard
 import terminalFlood.game.GameState
 import java.util.*
+import kotlin.system.exitProcess
 
 object PlayGame {
     fun play(gameBoard: GameBoard) {
@@ -27,10 +28,19 @@ object PlayGame {
             else
                 print("):")
 
-            val input = readLine() ?: error("Couldn't read input!")
+            val input = readLine()
+            // Ctrl+C seems to result in a null value, so we print a short message and exit the program in that case.
+            if (input == null) {
+                println("Invalid or null input, ending program.")
+                exitProcess(0)
+            }
+
             val inputStr = input.trim()
 
-            if (inputStr == "undo") {
+            if (inputStr == "exit" || inputStr == "quit") {
+                println("Ending program.")
+                exitProcess(0)
+            } else if (inputStr == "undo") {
                 if (gameStack.size == 1) {
                     println("No moves played. Cannot undo!")
                 } else {
@@ -39,7 +49,7 @@ object PlayGame {
                 }
             } else {
                 try {
-                    if (inputStr.length > 1)
+                    if (inputStr.length != 1)
                         throw NumberFormatException()
                     if (java.lang.String.valueOf(inputStr[0]).toInt(Character.MAX_RADIX) > gameBoard.maximumColorValue)
                         throw IllegalArgumentException()
