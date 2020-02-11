@@ -42,9 +42,9 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 26717 | 45966 |
-| astar_ias | 27070 | 5143 |
-| astar_ia | 27161 | 4693 |
+| astar_a | 26717 | 43103 |
+| astar_ias | 27070 | 5110 |
+| astar_ia | 27161 | 4651 |
 | astar_iaf | 27363 | 2404 |
 | astar_iaff | 28053 | 1085 |
 
@@ -53,7 +53,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads, 14G heap) | 27635 | 394233 |
+| astar_a (6 threads, 14G heap) | 27635 | 391481 |
 | astar_ias | 27897 | 5441 |
 | astar_ia | 28236 | 3819 |
 | astar_iaf | 28435 | 1562 |
@@ -64,7 +64,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads) | 24582 | 222099 |
+| astar_a (6 threads) | 24582 | 223451 |
 | astar_ias | 24740 | 7104 |
 | astar_ia | 25061 | 2209 |
 | astar_iaf | 25256 | 1745 |
@@ -75,7 +75,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads) | 24837 | 308016 |
+| astar_a (6 threads) | 24837 | 308884 |
 | astar_ias | 24951 | 12325 |
 | astar_ia | 25266 | 3606 |
 | astar_iaf | 25530 | 2068 |
@@ -88,8 +88,8 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 21952 | 23021 |
-| astar_ias | 22062 | 10243 |
+| astar_a | 21952 | 22835 |
+| astar_ias | 22062 | 10366 |
 | astar_ia | 22337 | 5006 |
 | astar_iaf | 22496 | 3762 |
 | astar_iaff | 23242 | 1952 |
@@ -131,7 +131,7 @@ Results using 1 thread:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 27050 |
+| astar_a | 20086 | 25990 |
 | astar_ias | 20189 | 8378 |
 | astar_ia | 20428 | 3624 |
 | astar_iaf | 20529 | 2612 |
@@ -142,7 +142,7 @@ Results using 12 threads:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 5805 |
+| astar_a | 20086 | 5510 |
 | astar_ias | 20189 | 2236 |
 | astar_ia | 20428 | 1418 |
 | astar_iaf | 20529 | 1116 |
