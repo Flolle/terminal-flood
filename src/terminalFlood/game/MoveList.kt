@@ -7,19 +7,21 @@ package terminalFlood.game
  * Immutable because every game state is immutable and using the standard List<T> implementations would make it
  * necessary to allocate a completely new list for every state.
  */
-sealed class MoveList<out T> {
+sealed class MoveList {
     abstract val size: Int
-    abstract val lastMove: T
-    abstract val previousMoves: MoveList<T>
+    abstract val lastMove: Color
+    abstract val previousMoves: MoveList
 
     val isEmpty: Boolean
         get() = size == 0
 
-    fun toList(): List<T> {
+    operator fun plus(move: Color): MoveList = MoveListImpl(size + 1, move, this)
+
+    fun toList(): List<Color> {
         if (isEmpty)
             return emptyList()
 
-        val result = ArrayList<T>(size)
+        val result = ArrayList<Color>(size)
         var index = this
         while (!index.isEmpty) {
             result.add(index.lastMove)
@@ -33,10 +35,10 @@ sealed class MoveList<out T> {
     override fun toString(): String = toList().toString()
 
     companion object {
-        fun <T> emptyMoveList(): MoveList<T> = EmptyMoveList
+        fun emptyMoveList(): MoveList = EmptyMoveList
 
-        fun <T> moveListOf(vararg elements: T): MoveList<T> {
-            var moveList = emptyMoveList<T>()
+        fun moveListOf(vararg elements: Color): MoveList {
+            var moveList = emptyMoveList()
             for (element in elements)
                 moveList += element
 
@@ -45,28 +47,26 @@ sealed class MoveList<out T> {
     }
 }
 
-operator fun <T> MoveList<T>.plus(move: T): MoveList<T> = MoveListImpl(size + 1, move, this)
-
-private object EmptyMoveList : MoveList<Nothing>() {
+private object EmptyMoveList : MoveList() {
     override val size: Int = 0
 
     override val lastMove: Nothing
         get() = throw NoSuchElementException("The move list is empty!")
 
-    override val previousMoves: MoveList<Nothing>
+    override val previousMoves: Nothing
         get() = throw NoSuchElementException("The move list is empty!")
 }
 
-private class MoveListImpl<T>(
+private class MoveListImpl(
     override val size: Int,
-    override val lastMove: T,
-    override val previousMoves: MoveList<T>
-) : MoveList<T>() {
+    override val lastMove: Color,
+    override val previousMoves: MoveList
+) : MoveList() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as MoveListImpl<*>
+        other as MoveListImpl
 
         if (size != other.size) return false
         if (lastMove != other.lastMove) return false

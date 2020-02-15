@@ -18,7 +18,7 @@ import java.util.*
  */
 class MutableGame(
     override val gameBoard: GameBoard,
-    override var playedMoves: MoveList<Color>,
+    override var playedMoves: MoveList,
     override val filled: BitSet,
     override val neighbors: BitSet,
     override val notFilledNotNeighbors: BitSet,

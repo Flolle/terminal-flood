@@ -2,7 +2,6 @@ package terminalFlood
 
 import terminalFlood.algo.astar.AStar
 import terminalFlood.algo.astar.AStarStrategies
-import terminalFlood.game.Color
 import terminalFlood.game.GameBoard
 import terminalFlood.game.MoveList
 import terminalFlood.game.StartPos
@@ -144,5 +143,5 @@ object Datasets {
 
 private data class GameResult(
     val isWon: Boolean,
-    val playedMoves: MoveList<Color>
+    val playedMoves: MoveList
 )

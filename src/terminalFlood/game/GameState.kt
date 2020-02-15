@@ -14,7 +14,7 @@ interface GameState {
     /**
      * The moves played so far.
      */
-    val playedMoves: MoveList<Color>
+    val playedMoves: MoveList
 
     /**
      * The nodes already taken over.

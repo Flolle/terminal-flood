@@ -18,7 +18,7 @@ import java.util.*
  */
 class Game(
     override val gameBoard: GameBoard,
-    override val playedMoves: MoveList<Color>,
+    override val playedMoves: MoveList,
     override val filled: BitSet,
     override val neighbors: BitSet,
     override val notFilledNotNeighbors: BitSet,
