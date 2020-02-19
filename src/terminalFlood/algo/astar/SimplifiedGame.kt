@@ -1,9 +1,6 @@
 package terminalFlood.algo.astar
 
-import terminalFlood.game.ColorSet
-import terminalFlood.game.GameBoard
-import terminalFlood.game.GameState
-import terminalFlood.game.forEachNode
+import terminalFlood.game.*
 import java.util.*
 
 /**
@@ -27,9 +24,9 @@ class SimplifiedGame(
      */
     constructor(gameState: GameState) : this(
         gameState.gameBoard,
-        gameState.filled.clone() as BitSet,
-        gameState.neighbors.clone() as BitSet,
-        gameState.notFilledNotNeighbors.clone() as BitSet
+        gameState.filled.copy(),
+        gameState.neighbors.copy(),
+        gameState.notFilledNotNeighbors.copy()
     )
 
     val isWon: Boolean
@@ -37,7 +34,7 @@ class SimplifiedGame(
 
     fun makeMultiColorMove(colorSet: ColorSet) {
         val firstColorValue = colorSet.nextSetBit(0)
-        val newNodes = gameBoard.boardNodesByColor[firstColorValue].clone() as BitSet
+        val newNodes = gameBoard.boardNodesByColor[firstColorValue].copy()
         colorSet.forEachSetBit(firstColorValue + 1) { colorValue ->
             newNodes.or(gameBoard.boardNodesByColor[colorValue])
         }
@@ -46,7 +43,7 @@ class SimplifiedGame(
     }
 
     fun makeColorBlindMove() {
-        computeMove(neighbors.clone() as BitSet)
+        computeMove(neighbors.copy())
     }
 
     private fun computeMove(newNodes: BitSet) {

@@ -28,7 +28,7 @@ class MutableGame(
      * @see [GameState.makeMove]
      */
     override fun makeMove(move: Color): MutableGame {
-        val newNodes = gameBoard.boardNodesByColor[move.value].clone() as BitSet
+        val newNodes = gameBoard.boardNodesByColor[move.value].copy()
         newNodes.and(neighbors)
         computeMove(move, newNodes)
 
@@ -39,7 +39,7 @@ class MutableGame(
      * Makes a move that takes all neighboring nodes of the given colors.
      */
     fun makeTwoColorMove(color1: Color, color2: Color): MutableGame {
-        val newNodes = gameBoard.boardNodesByColor[color1.value].clone() as BitSet
+        val newNodes = gameBoard.boardNodesByColor[color1.value].copy()
         newNodes.or(gameBoard.boardNodesByColor[color2.value])
         newNodes.and(neighbors)
         computeMove(Color.DUMMY, newNodes)
@@ -52,7 +52,7 @@ class MutableGame(
      */
     fun makeMultiColorMove(colors: ColorSet): MutableGame {
         val firstColorValue = colors.nextSetBit(0)
-        val newNodes = gameBoard.boardNodesByColor[firstColorValue].clone() as BitSet
+        val newNodes = gameBoard.boardNodesByColor[firstColorValue].copy()
         colors.forEachSetBit(firstColorValue + 1) { colorValue ->
             newNodes.or(gameBoard.boardNodesByColor[colorValue])
         }
@@ -66,7 +66,7 @@ class MutableGame(
      * Makes a move that ignores all colors. This move takes all neighboring nodes of this game state.
      */
     fun makeColorBlindMove(): MutableGame {
-        computeMove(Color.DUMMY, neighbors.clone() as BitSet)
+        computeMove(Color.DUMMY, neighbors.copy())
 
         return this
     }

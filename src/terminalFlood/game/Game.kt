@@ -28,14 +28,14 @@ class Game(
      * @see [GameState.makeMove]
      */
     override fun makeMove(move: Color): Game {
-        val newNodes = gameBoard.boardNodesByColor[move.value].clone() as BitSet
+        val newNodes = gameBoard.boardNodesByColor[move.value].copy()
         newNodes.and(neighbors)
-        val newFilled = filled.clone() as BitSet
-        val newNeighbors = neighbors.clone() as BitSet
+        val newFilled = filled.copy()
+        val newNeighbors = neighbors.copy()
         newFilled.or(newNodes)
         newNodes.forEachNode(gameBoard) { newNeighbors.or(it.borderingNodes) }
         newNeighbors.andNot(newFilled)
-        val newNotFilledNotNeighbors = notFilledNotNeighbors.clone() as BitSet
+        val newNotFilledNotNeighbors = notFilledNotNeighbors.copy()
         newNotFilledNotNeighbors.andNot(newNeighbors)
         val newSensibleMoves = ColorSet()
         newNeighbors.forEachNode(gameBoard) { newSensibleMoves.set(it.color) }
@@ -57,9 +57,9 @@ class Game(
         MutableGame(
             gameBoard,
             playedMoves,
-            filled.clone() as BitSet,
-            neighbors.clone() as BitSet,
-            notFilledNotNeighbors.clone() as BitSet,
+            filled.copy(),
+            neighbors.copy(),
+            notFilledNotNeighbors.copy(),
             sensibleMoves.copy()
         )
 

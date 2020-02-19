@@ -14,7 +14,7 @@ object Util {
         "astar_iaf"  -> AStarStrategies.INADMISSIBLE_FAST
         "astar_iaff" -> AStarStrategies.INADMISSIBLE_FASTEST
         "astar_ias"  -> AStarStrategies.INADMISSIBLE_SLOW
-        else         -> throw IllegalArgumentException("Incorrect value for simulation method!")
+        else         -> throw IllegalArgumentException("Incorrect value for strategy!")
     }
 
     fun generateRandomSeed(): String {

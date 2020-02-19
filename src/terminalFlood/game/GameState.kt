@@ -89,7 +89,7 @@ interface GameState {
         if (color !in sensibleMoves)
             return null
 
-        val colorNodes = gameBoard.boardNodesByColor[color.value].clone() as BitSet
+        val colorNodes = gameBoard.boardNodesByColor[color.value].copy()
         colorNodes.and(neighbors)
 
         return colorNodes
@@ -115,6 +115,9 @@ interface GameState {
         return presentColors
     }
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun BitSet.copy(): BitSet = this.clone() as BitSet
 
 /**
  * Performs the given action on every node in the [BitSet].

@@ -30,8 +30,10 @@ class ColorSet private constructor(
 
     operator fun get(bitIndex: Int): Boolean = (bits and (1L shl bitIndex)) != 0L
 
+    @Suppress("NOTHING_TO_INLINE")
     inline operator fun contains(color: Color): Boolean = get(color.value)
 
+    @Suppress("NOTHING_TO_INLINE")
     inline fun set(color: Color) {
         set(color.value)
     }
