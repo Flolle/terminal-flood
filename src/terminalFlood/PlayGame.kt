@@ -56,7 +56,7 @@ object PlayGame {
 
                     val currentGame = gameStack.peek()
                     val move = Color.fromValue(inputStr[0])
-                    if (currentGame.sensibleMoves[move.value])
+                    if (move in currentGame.sensibleMoves)
                         gameStack.push(currentGame.makeMove(move))
                     else
                         println("Move doesn't do anything!")

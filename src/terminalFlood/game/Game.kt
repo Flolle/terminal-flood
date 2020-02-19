@@ -38,7 +38,7 @@ class Game(
         val newNotFilledNotNeighbors = notFilledNotNeighbors.clone() as BitSet
         newNotFilledNotNeighbors.andNot(newNeighbors)
         val newSensibleMoves = ColorSet()
-        newNeighbors.forEachNode(gameBoard) { newSensibleMoves.set(it.color.value) }
+        newNeighbors.forEachNode(gameBoard) { newSensibleMoves.set(it.color) }
 
         return Game(
             gameBoard,
@@ -98,7 +98,7 @@ class Game(
             notFilledNotNeighbors.andNot(filled)
             notFilledNotNeighbors.andNot(neighbors)
             val sensibleMoves = ColorSet()
-            neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color.value) }
+            neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
 
             return Game(
                 gameBoard,

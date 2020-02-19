@@ -201,7 +201,7 @@ object AStar {
                     j = borderingNodes.nextSetBit(j + 1)
                 }
 
-                allowedMoves.set(color.value)
+                allowedMoves.set(color)
                 break
             }
         }
@@ -226,7 +226,7 @@ object AStar {
         val allowedMoves = ColorSet()
         gameState.sensibleMoves.forEachColor { nextMove ->
             if (shouldPlay(gameState, nextMove, gameState.getNeighborsWithColor(nextMove)!!))
-                allowedMoves.set(nextMove.value)
+                allowedMoves.set(nextMove)
         }
 
         return allowedMoves

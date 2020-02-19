@@ -86,7 +86,7 @@ interface GameState {
      * [BoardNode]s and the returned bitmap are linked through [BoardNode.id], meaning the id is used as the bit index.
      */
     fun getNeighborsWithColor(color: Color): BitSet? {
-        if (!sensibleMoves[color.value])
+        if (color !in sensibleMoves)
             return null
 
         val colorNodes = gameBoard.boardNodesByColor[color.value].clone() as BitSet

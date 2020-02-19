@@ -75,16 +75,13 @@ class MutableGame(
      * Updates the internal state.
      */
     private fun computeMove(move: Color, newNodes: BitSet) {
-        // Updates filled, neighbors, notFilledNotNeighbors and playedMoves
         filled.or(newNodes)
         newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
         neighbors.andNot(filled)
         notFilledNotNeighbors.andNot(neighbors)
         playedMoves += move
-
-        // Updates sensibleMoves
         sensibleMoves.clear()
-        neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color.value) }
+        neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
     }
 
     /**

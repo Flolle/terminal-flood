@@ -60,8 +60,7 @@ object AdmissibleStrategy : Strategy {
 
         var i = gameState.notFilledNotNeighbors.nextSetBit(0)
         while (i >= 0) {
-            val nodeColorValue = gameState.gameBoard.boardNodes[i].color.value
-            notEliminatedColors.set(nodeColorValue)
+            notEliminatedColors.set(gameState.gameBoard.boardNodes[i].color)
 
             if (notEliminatedColors.size == gameState.gameBoard.colorList.size)
                 break
