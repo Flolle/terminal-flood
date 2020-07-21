@@ -64,11 +64,7 @@ class ColorSet private constructor(
         return if (nextSetBitIndex < 64) nextSetBitIndex else -1
     }
 
-    inline fun forEachSetBit(action: (index: Int) -> Unit) {
-        forEachSetBit(0, action)
-    }
-
-    inline fun forEachSetBit(fromIndex: Int, action: (index: Int) -> Unit) {
+    inline fun forEachSetBit(fromIndex: Int = 0, action: (index: Int) -> Unit) {
         var i = nextSetBit(fromIndex)
         while (i >= 0) {
             action(i)
