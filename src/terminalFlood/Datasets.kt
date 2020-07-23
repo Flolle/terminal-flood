@@ -20,8 +20,14 @@ object Datasets {
         PlayGame.play(noMaxStepsGameBoard.withMaximumStepsLimitCopy())
     }
 
-    fun solveFromDataset(file: Path, lineNumber: Int, startPos: StartPos, strategy: AStarStrategies) {
-        Util.aStarSimulation(findGameBoardInDataset(file, lineNumber, startPos), strategy)
+    fun solveFromDataset(
+        file: Path,
+        lineNumber: Int,
+        startPos: StartPos,
+        strategy: AStarStrategies,
+        memoryScheme: MemorySavingScheme
+    ) {
+        Util.aStarSimulation(findGameBoardInDataset(file, lineNumber, startPos), strategy, memoryScheme)
     }
 
     private fun findGameBoardInDataset(file: Path, lineNumber: Int, startPos: StartPos): GameBoard {
@@ -85,7 +91,13 @@ object Datasets {
         println("Dataset created and saved to: $file")
     }
 
-    fun findSolutionsForDataset(file: Path, threads: Int, strategy: AStarStrategies, startPos: StartPos) {
+    fun findSolutionsForDataset(
+        file: Path,
+        threads: Int,
+        strategy: AStarStrategies,
+        startPos: StartPos,
+        memoryScheme: MemorySavingScheme
+    ) {
         if (!Files.exists(file) || Files.isDirectory(file))
             throw IllegalArgumentException("The file doesn't exist or is a directory!")
 
@@ -93,6 +105,7 @@ object Datasets {
         println("Number of threads used: $threads")
         println("Start position on the game boards: $startPos")
         println("Using strategy: $strategy")
+        println("Memory scheme: $memoryScheme")
 
         val executor = Executors.newFixedThreadPool(threads)
         val promisedGames = ArrayList<Future<GameResult>>(100_000)
@@ -106,7 +119,21 @@ object Datasets {
                 .forEach { line ->
                     promisedGames.add(executor.submit<GameResult> {
                         val gameBoard = GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE)
-                        val finishedGame = AStar.calculateMovesSequential(gameBoard, strategy)
+                        val finishedGame = when (memoryScheme) {
+                            MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMovesSequential(
+                                gameBoard,
+                                strategy
+                            )
+                            MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
+                                gameBoard,
+                                strategy,
+                                Int.MAX_VALUE
+                            )
+                            MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
+                                gameBoard,
+                                strategy
+                            )
+                        }
 
                         val i = index.incrementAndGet()
                         if (i % 100 == 0)

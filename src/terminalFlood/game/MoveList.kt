@@ -32,6 +32,20 @@ sealed class MoveList {
         return result
     }
 
+    fun toArray(): Array<Color> {
+        if (isEmpty)
+            return Array(1) { Color.DUMMY }
+
+        val result = Array(size) { Color.DUMMY }
+        var index = this
+        while (!index.isEmpty) {
+            result[index.size - 1] = index.lastMove
+            index = index.previousMoves
+        }
+
+        return result
+    }
+
     override fun toString(): String = toList().toString()
 
     companion object {

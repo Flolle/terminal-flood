@@ -2,7 +2,7 @@ This folder is dedicated to game board datasets and benchmarks based on them.
 
 terminal-flood allows you to create and solve datasets consisting of compact Flood-It game board strings. Compact strings are defined as holding the whole game board in one single line with no whitespace characters in them. The board size is derived from the length of the string. terminal-flood only supports square game boards, in which case `boardSize = sqrt(string.length)` will always be correct.
 
-Solving datasets will result in the output of two values, scores and time taken. Time taken should be self-explanatory and the score value is just the sum of the lengths of all solutions for the dataset. So lower values are better.
+Solving datasets will result in the output of two values, scores and time taken. Time taken should be self-explanatory, and the score value is just the sum of the lengths of all solutions for the dataset. So lower values are better.
 
 
 # Datasets
@@ -33,7 +33,7 @@ java -Xmx12G -jar terminal-flood.jar -solutionsForDataset 12 [strategy] ul "path
 
 Where `[strategy]` denotes the heuristic algorithm used with A* (see the `-help` documentation or the [documentation page](https://github.com/Flolle/terminal-flood/wiki/Documentation) for exact details).
 
-If you are using a Java version newer than 8, I recommend to use the ParallelGC garbage collector which in Java 8 is the default GC and gives better performance than G1 which is the default GC in Java 9 and newer. You can select it by using the `-XX:+UseParallelGC` program argument when running Java.
+If you are using a Java version newer than 8, I recommend using the ParallelGC garbage collector which in Java 8 is the default GC and gives better performance than G1 which is the default GC in Java 9 and newer. You can select it by using the `-XX:+UseParallelGC` program argument when running Java.
 
 
 ### dataset b10c15n1000
@@ -53,7 +53,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads, 14G heap) | 27635 | 391481 |
+| astar_a (-lessMemory) | 27635 | 363386 |
 | astar_ias | 27897 | 5441 |
 | astar_ia | 28236 | 3819 |
 | astar_iaf | 28435 | 1562 |
@@ -64,7 +64,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads) | 24582 | 223451 |
+| astar_a (-lessMemory) | 24582 | 217706 |
 | astar_ias | 24740 | 7104 |
 | astar_ia | 25061 | 2209 |
 | astar_iaf | 25256 | 1745 |
@@ -75,7 +75,7 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (6 threads) | 24837 | 308884 |
+| astar_a (-lessMemory) | 24837 | 289583 |
 | astar_ias | 24951 | 12325 |
 | astar_ia | 25266 | 3606 |
 | astar_iaf | 25530 | 2068 |
@@ -99,9 +99,12 @@ All benchmarks with this dataset where done using only 1 thread.
 
 I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so and it most likely would have needed more RAM than I have available in my PC.
 
+The closest thing to an optimal solutionset is mixing the best solutions from `astar_a (-lessMemoryQueueCutoff)` and `astar_ias` together. It is not guaranteed to be optimal, but it should be relatively close.
+
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | none | none |
+| best of astar_a (-lessMemoryQueueCutoff) and astar_ias | 31812 | none |
+| astar_a (-lessMemoryQueueCutoff, 4 threads) | 31886 | 27355757 |
 | astar_ias | 31968 | 344942 |
 | astar_ia | 32537 | 37393 |
 | astar_iaf | 33178 | 5812 |

@@ -14,6 +14,13 @@ fun main(args: Array<String>) {
         printHelp()
         return
     }
+
+    val memoryScheme = when {
+        args.contains("-lessMemoryQueueCutoff") -> MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF
+        args.contains("-lessMemory")            -> MemorySavingScheme.LESS_MEMORY
+        else                                    -> MemorySavingScheme.NO_MEMORY_SAVING
+    }
+
     if (args.contains("-solutionsForDataset")) {
         val arrayIndex = args.indexOf("-solutionsForDataset")
         val threads = args[arrayIndex + 1].toInt()
@@ -21,7 +28,7 @@ fun main(args: Array<String>) {
         val startPos = parseStartPosition(args[arrayIndex + 3])
         val file = Paths.get(args[arrayIndex + 4])
 
-        Datasets.findSolutionsForDataset(file, threads, strategy, startPos)
+        Datasets.findSolutionsForDataset(file, threads, strategy, startPos, memoryScheme)
         return
     }
     if (args.contains("-createDataset")) {
@@ -58,7 +65,7 @@ fun main(args: Array<String>) {
         val startPos = parseStartPosition(args[arrayIndex + 3])
         val file = Paths.get(args[arrayIndex + 4])
 
-        Datasets.solveFromDataset(file, lineNumber, startPos, strategy)
+        Datasets.solveFromDataset(file, lineNumber, startPos, strategy, memoryScheme)
         return
     }
 
@@ -88,11 +95,31 @@ fun main(args: Array<String>) {
     println("\n\n#############################################################\n\n")
 
     when {
-        args.contains("-astar_a")    -> Util.aStarSimulation(gameBoard, AStarStrategies.ADMISSIBLE)
-        args.contains("-astar_ia")   -> Util.aStarSimulation(gameBoard, AStarStrategies.INADMISSIBLE)
-        args.contains("-astar_iaf")  -> Util.aStarSimulation(gameBoard, AStarStrategies.INADMISSIBLE_FAST)
-        args.contains("-astar_iaff") -> Util.aStarSimulation(gameBoard, AStarStrategies.INADMISSIBLE_FASTEST)
-        args.contains("-astar_ias")  -> Util.aStarSimulation(gameBoard, AStarStrategies.INADMISSIBLE_SLOW)
+        args.contains("-astar_a")    -> Util.aStarSimulation(
+            gameBoard,
+            AStarStrategies.ADMISSIBLE,
+            memoryScheme
+        )
+        args.contains("-astar_ia")   -> Util.aStarSimulation(
+            gameBoard,
+            AStarStrategies.INADMISSIBLE,
+            memoryScheme
+        )
+        args.contains("-astar_iaf")  -> Util.aStarSimulation(
+            gameBoard,
+            AStarStrategies.INADMISSIBLE_FAST,
+            memoryScheme
+        )
+        args.contains("-astar_iaff") -> Util.aStarSimulation(
+            gameBoard,
+            AStarStrategies.INADMISSIBLE_FASTEST,
+            memoryScheme
+        )
+        args.contains("-astar_ias")  -> Util.aStarSimulation(
+            gameBoard,
+            AStarStrategies.INADMISSIBLE_SLOW,
+            memoryScheme
+        )
         else                         -> PlayGame.play(gameBoard)
     }
 }
@@ -158,6 +185,21 @@ private fun printHelp() {
     println("\t\tUses an A* algorithm. Uses an inadmissible heuristic, which means it will not always find")
     println("\t\tan optimal solution. Will find decent solutions, but usually not optimal ones. Is very")
     println("\t\tfast, even at high board sizes and a lot of colors.")
+
+    println("\n\nWhen trying to find solutions for game boards, you can turn on special memory saving modes with one")
+    println("of the following parameters:")
+    println("  -lessMemory            \t --")
+    println("\t\tThis mode will trade some performance in exchange for less memory needed for the")
+    println("\t\tcomputation. This can be a net plus for performance in cases of heavy memory requirements")
+    println("\t\twhere using this mode would result in less GC pauses or the ability to use more cores of")
+    println("\t\tyour CPU. The quality of the solutions is not impaired by this mode.")
+    println("  -lessMemoryQueueCutoff \t --")
+    println("\t\tThe points given for \"-lessMemory\" also apply to this mode, but additionally, this mode")
+    println("\t\twill also limit the size of the queue used by A* by discarding elements whenever a")
+    println("\t\tcertain cutoff limit is reached. The result is a clear upper bound in regards to the")
+    println("\t\tmaximum memory needed to compute a solution, but it also means that the quality of the")
+    println("\t\tsolution can be impaired by this mode. Don't use this mode together with \"astar_a\" when")
+    println("\t\ttrying to find guaranteed optimal results.")
 
     println("\n\nYou can also let the program find solutions for a whole file containing compact strings of game")
     println("boards using this command:")
@@ -266,4 +308,8 @@ private fun debug() {
     //Util.aStarSimulation(gameBoard, AStarStrategies.INADMISSIBLE)
     //Util.aStarSimulation(gameBoard, AStarStrategies.INADMISSIBLE_SLOW)
     //Util.aStarSimulation(gameBoard, AStarStrategies.ADMISSIBLE)
+}
+
+enum class MemorySavingScheme {
+    NO_MEMORY_SAVING, LESS_MEMORY, LESS_MEMORY_QUEUE_CUTOFF
 }

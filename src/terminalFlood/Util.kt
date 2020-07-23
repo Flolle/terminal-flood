@@ -29,11 +29,24 @@ object Util {
         return seed.toString()
     }
 
-    fun aStarSimulation(gameBoard: GameBoard, strategy: AStarStrategies) {
-        println("AStar $strategy")
+    fun aStarSimulation(
+        gameBoard: GameBoard,
+        strategy: AStarStrategies,
+        memoryScheme: MemorySavingScheme = MemorySavingScheme.NO_MEMORY_SAVING
+    ) {
+        println("Using strategy: $strategy")
+        println("Memory scheme: $memoryScheme")
         var simResult: Game? = null
         val t = measureTimeMillis {
-            simResult = AStar.calculateMovesParallel(gameBoard, strategy)
+            simResult = when (memoryScheme) {
+                MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMovesParallel(gameBoard, strategy)
+                MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
+                    gameBoard,
+                    strategy,
+                    Int.MAX_VALUE
+                )
+                MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(gameBoard, strategy)
+            }
         }
         simResult?.let {
             val isFoundWin = it.playedMoves.size <= gameBoard.maximumSteps
