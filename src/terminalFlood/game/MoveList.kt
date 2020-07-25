@@ -17,21 +17,6 @@ sealed class MoveList {
 
     operator fun plus(move: Color): MoveList = MoveListImpl(size + 1, move, this)
 
-    fun toList(): List<Color> {
-        if (isEmpty)
-            return emptyList()
-
-        val result = ArrayList<Color>(size)
-        var index = this
-        while (!index.isEmpty) {
-            result.add(index.lastMove)
-            index = index.previousMoves
-        }
-        result.reverse()
-
-        return result
-    }
-
     fun toArray(): Array<Color> {
         if (isEmpty)
             return Array(1) { Color.DUMMY }
@@ -45,6 +30,8 @@ sealed class MoveList {
 
         return result
     }
+
+    fun toList(): List<Color> = toArray().asList()
 
     override fun toString(): String = toList().toString()
 
