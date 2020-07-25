@@ -157,7 +157,7 @@ object Datasets {
                 if (!game.isWon)
                     outputWriter.append("game not won")
                 else
-                    game.playedMoves.toList().forEach { outputWriter.append(it.toString()) }
+                    game.playedMoves.forEach { outputWriter.append(it.toString()) }
                 outputWriter.newLine()
             }
         }

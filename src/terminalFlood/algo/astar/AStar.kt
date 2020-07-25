@@ -274,7 +274,7 @@ object AStar {
             return cachedGame
 
         val recomputedGame = initialGame.toMutableGame()
-        node.playedMoves.toArray().forEach { recomputedGame.makeMove(it) }
+        node.playedMoves.forEach { recomputedGame.makeMove(it) }
 
         return recomputedGame.toUnmodifiableView()
     }
@@ -447,7 +447,7 @@ private data class AStarNode(
     }
 }
 
-// The actual node class needs more memory than AStarNode, but it doesn't hold references to Game objects, which a far
+// The actual node class needs more memory than AStarNode, but it doesn't hold references to Game objects, which are far
 // more expensive than an Int and a MoveList object.
 private data class AStarNodeLessMemory(
     val index: Int,

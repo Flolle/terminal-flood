@@ -17,9 +17,12 @@ sealed class MoveList {
 
     operator fun plus(move: Color): MoveList = MoveListImpl(size + 1, move, this)
 
+    /**
+     * Returns an array representation of this MoveList with its elements in the order they were added to this MoveList.
+     */
     fun toArray(): Array<Color> {
         if (isEmpty)
-            return Array(1) { Color.DUMMY }
+            return emptyArray()
 
         val result = Array(size) { Color.DUMMY }
         var index = this
@@ -31,7 +34,18 @@ sealed class MoveList {
         return result
     }
 
+    /**
+     * Returns a list representation of this MoveList with its elements in the order they were added to this MoveList.
+     */
     fun toList(): List<Color> = toArray().asList()
+
+    /**
+     * Iterates over the elements of this MoveList in the order they were added to this MoveList.
+     */
+    inline fun forEach(action: (Color) -> Unit) {
+        for (color in toArray())
+            action(color)
+    }
 
     override fun toString(): String = toList().toString()
 
