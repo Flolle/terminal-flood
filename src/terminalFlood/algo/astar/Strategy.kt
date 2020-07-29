@@ -58,14 +58,10 @@ object AdmissibleStrategy : Strategy {
     private fun createNotEliminatedColorsSet(gameState: Game): ColorSet {
         val notEliminatedColors = gameState.sensibleMoves.copy()
 
-        var i = gameState.notFilledNotNeighbors.nextSetBit(0)
-        while (i >= 0) {
-            notEliminatedColors.set(gameState.gameBoard.boardNodes[i].color)
-
-            if (notEliminatedColors.size == gameState.gameBoard.colorList.size)
-                break
-
-            i = gameState.notFilledNotNeighbors.nextSetBit(i + 1)
+        for (color in gameState.gameBoard.colorList) {
+            val colorValue = color.value
+            if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
+                notEliminatedColors.set(colorValue)
         }
 
         return notEliminatedColors
@@ -74,15 +70,9 @@ object AdmissibleStrategy : Strategy {
     private fun findColorEliminations(gameState: SimplifiedGame, containedColors: ColorSet): ColorSet {
         val colorEliminations = containedColors.copy()
 
-        var i = gameState.notFilledNotNeighbors.nextSetBit(0)
-        while (i >= 0) {
-            val nodeColorValue = gameState.gameBoard.boardNodes[i].color.value
-            colorEliminations.clear(nodeColorValue)
-
-            if (colorEliminations.isEmpty)
-                break
-
-            i = gameState.notFilledNotNeighbors.nextSetBit(i + 1)
+        containedColors.forEachSetBit { colorValue ->
+            if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
+                colorEliminations.clear(colorValue)
         }
 
         return colorEliminations

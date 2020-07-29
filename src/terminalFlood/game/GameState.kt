@@ -101,15 +101,9 @@ interface GameState {
     fun findAllColorEliminationMoves(): ColorSet {
         val presentColors = sensibleMoves.copy()
 
-        var i = notFilledNotNeighbors.nextSetBit(0)
-        while (i >= 0) {
-            val nodeColor = gameBoard.boardNodes[i].color
-            presentColors.clear(nodeColor.value)
-
-            if (presentColors.isEmpty)
-                break
-
-            i = notFilledNotNeighbors.nextSetBit(i + 1)
+        sensibleMoves.forEachSetBit { colorValue ->
+            if (gameBoard.boardNodesByColor[colorValue].intersects(notFilledNotNeighbors))
+                presentColors.clear(colorValue)
         }
 
         return presentColors
