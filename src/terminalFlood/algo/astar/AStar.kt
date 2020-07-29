@@ -161,8 +161,8 @@ object AStar {
         frontier: PriorityQueue<AStarNode>
     ) {
         val boardState = BoardState(gameState.filled)
-        val isFastestWayToBoardState =
-            gameState.playedMoves.size < movesNeededForBoardState.getOrDefault(boardState, Int.MAX_VALUE)
+        val currentBestMoveValue = movesNeededForBoardState[boardState] ?: Int.MAX_VALUE
+        val isFastestWayToBoardState = gameState.playedMoves.size < currentBestMoveValue
 
         if (isFastestWayToBoardState) {
             movesNeededForBoardState[boardState] = gameState.playedMoves.size
@@ -292,8 +292,8 @@ object AStar {
         gameStateCache: GameStateCache
     ) {
         val boardState = BoardState(gameState.filled)
-        val isFastestWayToBoardState =
-            gameState.playedMoves.size < movesNeededForBoardState.getOrDefault(boardState, Int.MAX_VALUE)
+        val currentBestMoveValue = movesNeededForBoardState[boardState] ?: Int.MAX_VALUE
+        val isFastestWayToBoardState = gameState.playedMoves.size < currentBestMoveValue
 
         if (isFastestWayToBoardState) {
             movesNeededForBoardState[boardState] = gameState.playedMoves.size

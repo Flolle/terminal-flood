@@ -24,20 +24,21 @@ sealed class MoveList {
         if (isEmpty)
             return emptyArray()
 
-        val result = Array(size) { Color.DUMMY }
+        val result = arrayOfNulls<Color>(size)
         var index = this
         while (!index.isEmpty) {
             result[index.size - 1] = index.lastMove
             index = index.previousMoves
         }
 
-        return result
+        @Suppress("UNCHECKED_CAST")
+        return result as Array<Color>
     }
 
     /**
      * Returns a list representation of this MoveList with its elements in the order they were added to this MoveList.
      */
-    fun toList(): List<Color> = toArray().asList()
+    fun toList(): List<Color> = if (isEmpty) emptyList() else toArray().asList()
 
     /**
      * Iterates over the elements of this MoveList in the order they were added to this MoveList.
