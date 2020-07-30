@@ -491,7 +491,7 @@ private class GameStateCache(cacheSize: Int = 10000) {
      * cache anymore.
      */
     fun getGameState(index: Int): Game? {
-        if (index < lastUsedIndex - ringbus.size)
+        if (index <= lastUsedIndex - ringbus.size)
             return null
 
         return ringbus[index % ringbus.size]
