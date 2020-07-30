@@ -58,8 +58,7 @@ object AdmissibleStrategy : Strategy {
     private fun createNotEliminatedColorsSet(gameState: Game): ColorSet {
         val notEliminatedColors = gameState.sensibleMoves.copy()
 
-        for (color in gameState.gameBoard.colorList) {
-            val colorValue = color.value
+        gameState.gameBoard.colorSet.forEachSetBit { colorValue ->
             if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
                 notEliminatedColors.set(colorValue)
         }

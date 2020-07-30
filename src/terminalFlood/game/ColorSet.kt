@@ -28,6 +28,9 @@ class ColorSet private constructor(
     val size: Int
         get() = java.lang.Long.bitCount(bits)
 
+    val maximumColorValue: Int
+        get() = 63 - java.lang.Long.numberOfLeadingZeros(bits)
+
     operator fun get(bitIndex: Int): Boolean = (bits and (1L shl bitIndex)) != 0L
 
     @Suppress("NOTHING_TO_INLINE")

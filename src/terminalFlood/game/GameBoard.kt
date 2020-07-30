@@ -20,32 +20,32 @@ import kotlin.random.Random
  * @param boardNodes The [BoardNode]s of the game board.
  * @param boardNodesByColor The nodes of the game board grouped by color. [Color.value] is used as the array index. [BoardNode.id] is used as the bit index.
  * @param boardSize The size of the game board. Game boards are always squares, so a game board contains `boardSize*boardSize` fields.
- * @param colorList The collection of all colors used on the game board.
+ * @param colorSet The collection of all colors used on the game board.
  * @param startPos The start position of the game board.
  * @param maximumSteps The maximum amount of moves allowed to finish the game.
- * @throws IllegalArgumentException if [maximumSteps] is equal or below 0; if size of [colorList] is below 2 or equal or above [Character.MAX_RADIX]
+ * @throws IllegalArgumentException if [maximumSteps] is equal or below 0; if size of [colorSet] is below 2 or equal or above [Character.MAX_RADIX]
  */
 class GameBoard(
     val boardNodes: List<BoardNode>,
     val boardNodesByColor: Array<BitSet>,
     val boardSize: Int,
-    val colorList: List<Color>,
+    val colorSet: ColorSet,
     val startPos: Point,
     val maximumSteps: Int
 ) {
     init {
         if (maximumSteps < 1)
             throw IllegalArgumentException("The maximum amount of steps must be above 0!")
-        if (colorList.size < 2)
+        if (colorSet.size < 2)
             throw IllegalArgumentException("The amount of colors must be at least 2!")
-        if (colorList.size >= Character.MAX_RADIX)
+        if (colorSet.size >= Character.MAX_RADIX)
             throw IllegalArgumentException("The amount of colors must be below ${Character.MAX_RADIX}!")
     }
 
     /**
-     * The highest [Color.value] contained in [colorList].
+     * The highest [Color.value] contained in [colorSet].
      */
-    val maximumColorValue: Int = colorList.max()!!.value
+    val maximumColorValue: Int = colorSet.maximumColorValue
 
     /**
      * The total amount of fields contained within this game board.
@@ -100,12 +100,12 @@ class GameBoard(
      * Returns a copy of this [GameBoard] with the only difference being that its [maximumSteps] is set to the given
      * value.
      */
-    fun withMaximumStepsLimitCopy(maximumSteps: Int = 30 * (boardSize * colorList.size) / 100): GameBoard =
+    fun withMaximumStepsLimitCopy(maximumSteps: Int = 30 * (boardSize * colorSet.size) / 100): GameBoard =
         GameBoard(
             boardNodes,
             boardNodesByColor,
             boardSize,
-            colorList,
+            colorSet,
             startPos,
             maximumSteps
         )
@@ -208,7 +208,7 @@ class GameBoard(
             }
             boardNodes.forEachIndexed { i, node -> node.id = i }
 
-            val maximumColorValue = colors.toList().maxBy { it.value }!!.value
+            val maximumColorValue = colors.maximumColorValue
             val boardNodesByColor = Array(maximumColorValue + 1) { BitSet(boardNodes.size) }
             for (node in boardNodes) {
                 boardNodesByColor[node.color.value].set(node.id)
@@ -222,7 +222,7 @@ class GameBoard(
                 StartPos.MIDDLE      -> Point(boardSize / 2, boardSize / 2)
             }
             val gameBoard =
-                GameBoard(boardNodes, boardNodesByColor, boardSize, colors.toList(), startPoint, maximumSteps)
+                GameBoard(boardNodes, boardNodesByColor, boardSize, colors, startPoint, maximumSteps)
 
             for (node in boardNodes) {
                 val borderingNodes = HashSet<BoardNode>()

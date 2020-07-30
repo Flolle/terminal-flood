@@ -24,13 +24,16 @@ class MutableGame(
     override val notFilledNotNeighbors: BitSet,
     override val sensibleMoves: ColorSet
 ) : GameState {
+    private val cachedBitset = BitSet(gameBoard.boardNodes.size)
+
     /**
      * @see [GameState.makeMove]
      */
     override fun makeMove(move: Color): MutableGame {
-        val newNodes = gameBoard.boardNodesByColor[move.value].copy()
-        newNodes.and(neighbors)
-        computeMove(move, newNodes)
+        cachedBitset.clear()
+        cachedBitset.or(gameBoard.boardNodesByColor[move.value])
+        cachedBitset.and(neighbors)
+        computeMove(move, cachedBitset)
 
         return this
     }
@@ -39,10 +42,11 @@ class MutableGame(
      * Makes a move that takes all neighboring nodes of the given colors.
      */
     fun makeTwoColorMove(color1: Color, color2: Color): MutableGame {
-        val newNodes = gameBoard.boardNodesByColor[color1.value].copy()
-        newNodes.or(gameBoard.boardNodesByColor[color2.value])
-        newNodes.and(neighbors)
-        computeMove(Color.DUMMY, newNodes)
+        cachedBitset.clear()
+        cachedBitset.or(gameBoard.boardNodesByColor[color1.value])
+        cachedBitset.or(gameBoard.boardNodesByColor[color2.value])
+        cachedBitset.and(neighbors)
+        computeMove(Color.DUMMY, cachedBitset)
 
         return this
     }
@@ -52,12 +56,13 @@ class MutableGame(
      */
     fun makeMultiColorMove(colors: ColorSet): MutableGame {
         val firstColorValue = colors.nextSetBit(0)
-        val newNodes = gameBoard.boardNodesByColor[firstColorValue].copy()
+        cachedBitset.clear()
+        cachedBitset.or(gameBoard.boardNodesByColor[firstColorValue])
         colors.forEachSetBit(firstColorValue + 1) { colorValue ->
-            newNodes.or(gameBoard.boardNodesByColor[colorValue])
+            cachedBitset.or(gameBoard.boardNodesByColor[colorValue])
         }
-        newNodes.and(neighbors)
-        computeMove(Color.DUMMY, newNodes)
+        cachedBitset.and(neighbors)
+        computeMove(Color.DUMMY, cachedBitset)
 
         return this
     }
@@ -66,7 +71,9 @@ class MutableGame(
      * Makes a move that ignores all colors. This move takes all neighboring nodes of this game state.
      */
     fun makeColorBlindMove(): MutableGame {
-        computeMove(Color.DUMMY, neighbors.copy())
+        cachedBitset.clear()
+        cachedBitset.or(neighbors)
+        computeMove(Color.DUMMY, cachedBitset)
 
         return this
     }
@@ -81,7 +88,14 @@ class MutableGame(
         notFilledNotNeighbors.andNot(neighbors)
         playedMoves += move
         sensibleMoves.clear()
-        neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
+        if (neighbors.cardinality() < gameBoard.colorSet.size) {
+            neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
+        } else {
+            gameBoard.colorSet.forEachSetBit { colorValue ->
+                if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
+                    sensibleMoves.set(colorValue)
+            }
+        }
     }
 
     /**

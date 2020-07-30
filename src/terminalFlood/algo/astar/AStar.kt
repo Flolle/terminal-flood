@@ -253,7 +253,7 @@ object AStar {
             // If the queue gets too big, discard some of the highest priority nodes (high is worse). This operation can
             // result in worse solutions being found than normally possible with a given heuristic.
             if (frontier.size > queueMaxSizeCutoff) {
-                val newQueue = PriorityQueue<AStarNodeLessMemory>(queueMaxSizeCutoff + gameBoard.colorList.size)
+                val newQueue = PriorityQueue<AStarNodeLessMemory>(queueMaxSizeCutoff + gameBoard.colorSet.size)
                 repeat(queueMaxSizeCutoff - (queueMaxSizeCutoff / 5)) {
                     newQueue.offer(frontier.poll())
                 }

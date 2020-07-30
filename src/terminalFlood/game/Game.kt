@@ -38,7 +38,14 @@ class Game(
         val newNotFilledNotNeighbors = notFilledNotNeighbors.copy()
         newNotFilledNotNeighbors.andNot(newNeighbors)
         val newSensibleMoves = ColorSet()
-        newNeighbors.forEachNode(gameBoard) { newSensibleMoves.set(it.color) }
+        if (newNeighbors.cardinality() < gameBoard.colorSet.size) {
+            newNeighbors.forEachNode(gameBoard) { newSensibleMoves.set(it.color) }
+        } else {
+            gameBoard.colorSet.forEachSetBit { colorValue ->
+                if (gameBoard.boardNodesByColor[colorValue].intersects(newNeighbors))
+                    newSensibleMoves.set(colorValue)
+            }
+        }
 
         return Game(
             gameBoard,
@@ -98,7 +105,14 @@ class Game(
             notFilledNotNeighbors.andNot(filled)
             notFilledNotNeighbors.andNot(neighbors)
             val sensibleMoves = ColorSet()
-            neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
+            if (neighbors.cardinality() < gameBoard.colorSet.size) {
+                neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
+            } else {
+                gameBoard.colorSet.forEachSetBit { colorValue ->
+                    if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
+                        sensibleMoves.set(colorValue)
+                }
+            }
 
             return Game(
                 gameBoard,

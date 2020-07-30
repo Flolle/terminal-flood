@@ -17,6 +17,7 @@ class SimplifiedGame(
     val neighbors: BitSet,
     val notFilledNotNeighbors: BitSet
 ) {
+    private val cachedBitset = BitSet(gameBoard.boardNodes.size)
 
     /**
      * Creates a [SimplifiedGame] instance from the given [GameState]. It does so safely by creating deep copies of
@@ -34,16 +35,19 @@ class SimplifiedGame(
 
     fun makeMultiColorMove(colorSet: ColorSet) {
         val firstColorValue = colorSet.nextSetBit(0)
-        val newNodes = gameBoard.boardNodesByColor[firstColorValue].copy()
+        cachedBitset.clear()
+        cachedBitset.or(gameBoard.boardNodesByColor[firstColorValue])
         colorSet.forEachSetBit(firstColorValue + 1) { colorValue ->
-            newNodes.or(gameBoard.boardNodesByColor[colorValue])
+            cachedBitset.or(gameBoard.boardNodesByColor[colorValue])
         }
-        newNodes.and(neighbors)
-        computeMove(newNodes)
+        cachedBitset.and(neighbors)
+        computeMove(cachedBitset)
     }
 
     fun makeColorBlindMove() {
-        computeMove(neighbors.copy())
+        cachedBitset.clear()
+        cachedBitset.or(neighbors)
+        computeMove(cachedBitset)
     }
 
     private fun computeMove(newNodes: BitSet) {
