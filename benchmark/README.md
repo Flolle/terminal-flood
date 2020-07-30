@@ -42,44 +42,44 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 26717 | 43103 |
-| astar_ias | 27070 | 5110 |
-| astar_ia | 27161 | 4651 |
-| astar_iaf | 27363 | 2404 |
-| astar_iaff | 28053 | 1085 |
+| astar_a | 26717 | 38978 |
+| astar_ias | 27070 | 4859 |
+| astar_ia | 27161 | 4404 |
+| astar_iaf | 27363 | 2221 |
+| astar_iaff | 28053 | 1064 |
 
 
 ### dataset b12c12n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 27635 | 363386 |
-| astar_ias | 27897 | 5441 |
-| astar_ia | 28236 | 3819 |
-| astar_iaf | 28435 | 1562 |
-| astar_iaff | 29492 | 902 |
+| astar_a (-lessMemory) | 27635 | 343758 |
+| astar_ias | 27897 | 5080 |
+| astar_ia | 28236 | 3749 |
+| astar_iaf | 28435 | 1570 |
+| astar_iaff | 29492 | 944 |
 
 
 ### dataset b14c8n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 24582 | 217706 |
-| astar_ias | 24740 | 7104 |
-| astar_ia | 25061 | 2209 |
-| astar_iaf | 25256 | 1745 |
-| astar_iaff | 26356 | 932 |
+| astar_a (-lessMemory) | 24582 | 204314 |
+| astar_ias | 24740 | 6929 |
+| astar_ia | 25061 | 2496 |
+| astar_iaf | 25256 | 1790 |
+| astar_iaff | 26356 | 1010 |
 
 
 ### dataset b18c6n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 24837 | 289583 |
-| astar_ias | 24951 | 12325 |
-| astar_ia | 25266 | 3606 |
-| astar_iaf | 25530 | 2068 |
-| astar_iaff | 26707 | 1054 |
+| astar_a (-lessMemory) | 24837 | 279153 |
+| astar_ias | 24951 | 11982 |
+| astar_ia | 25266 | 3755 |
+| astar_iaf | 25530 | 2242 |
+| astar_iaff | 26707 | 1136 |
 
 
 ### dataset b24c4n1000
@@ -88,11 +88,11 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 21952 | 22835 |
-| astar_ias | 22062 | 10366 |
-| astar_ia | 22337 | 5006 |
-| astar_iaf | 22496 | 3762 |
-| astar_iaff | 23242 | 1952 |
+| astar_a | 21952 | 21511 |
+| astar_ias | 22062 | 10416 |
+| astar_ia | 22337 | 4862 |
+| astar_iaf | 22496 | 3780 |
+| astar_iaff | 23242 | 2025 |
 
 
 ### dataset b24c6n1000
@@ -104,11 +104,11 @@ The closest thing to an optimal solutionset is mixing the best solutions from `a
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
 | best of astar_a (-lessMemoryQueueCutoff) and astar_ias | 31812 | none |
-| astar_a (-lessMemoryQueueCutoff, 4 threads) | 31886 | 27355757 |
-| astar_ias | 31968 | 344942 |
-| astar_ia | 32537 | 37393 |
-| astar_iaf | 33178 | 5812 |
-| astar_iaff | 35117 | 1814 |
+| astar_a (-lessMemoryQueueCutoff, 4 threads) | 31886 | 27355757 (version 2.2) |
+| astar_ias (-lessMemory) | 31968 | 324077 |
+| astar_ia (-lessMemory) | 32537 | 35330 |
+| astar_iaf | 33178 | 5844 |
+| astar_iaff | 35117 | 1743 |
 
 
 ### dataset floodtest_simplified
@@ -120,10 +120,10 @@ I did not attempt to find an optimal solutionset with terminal-flood, because it
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
 | astar_a | 1985078 | none |
-| astar_ias | 1992612 | 1310318 |
-| astar_ia | 2007765 | 383041 |
-| astar_iaf | 2026214 | 141110 |
-| astar_iaff | 2135051 | 22922 |
+| astar_ias | 1992612 | 1292613 |
+| astar_ia | 2007765 | 382584 |
+| astar_iaf | 2026214 | 139199 |
+| astar_iaff | 2135051 | 22528 |
 
 
 ### dataset pc19
@@ -134,19 +134,19 @@ Results using 1 thread:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 25990 |
-| astar_ias | 20189 | 8378 |
-| astar_ia | 20428 | 3624 |
-| astar_iaf | 20529 | 2612 |
-| astar_iaff | 21250 | 1188 |
+| astar_a | 20086 | 24827 |
+| astar_ias | 20189 | 8104 |
+| astar_ia | 20428 | 3669 |
+| astar_iaf | 20529 | 2517 |
+| astar_iaff | 21250 | 1146 |
 
 
 Results using 12 threads:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 5510 |
-| astar_ias | 20189 | 2236 |
-| astar_ia | 20428 | 1418 |
-| astar_iaf | 20529 | 1116 |
-| astar_iaff | 21250 | 912 |
+| astar_a | 20086 | 5374 |
+| astar_ias | 20189 | 2612 |
+| astar_ia | 20428 | 1283 |
+| astar_iaf | 20529 | 1276 |
+| astar_iaff | 21250 | 955 |
