@@ -50,8 +50,13 @@ class SimplifiedGame(
 
     private fun computeMove(newNodes: BitSet) {
         filled.or(newNodes)
-        newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
-        neighbors.andNot(filled)
-        notFilledNotNeighbors.andNot(neighbors)
+        if (filled.cardinality() < gameBoard.amountOfNodes) {
+            newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
+            neighbors.andNot(filled)
+            notFilledNotNeighbors.andNot(neighbors)
+        } else {
+            neighbors.clear()
+            notFilledNotNeighbors.clear()
+        }
     }
 }

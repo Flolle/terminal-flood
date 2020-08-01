@@ -79,18 +79,24 @@ class MutableGame(
      */
     private fun computeMove(move: Color, newNodes: BitSet) {
         filled.or(newNodes)
-        newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
-        neighbors.andNot(filled)
-        notFilledNotNeighbors.andNot(neighbors)
         playedMoves += move
-        sensibleMoves.clear()
-        if (neighbors.cardinality() < gameBoard.colorSet.size) {
-            neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
-        } else {
-            gameBoard.colorSet.forEachSetBit { colorValue ->
-                if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
-                    sensibleMoves.set(colorValue)
+        if (filled.cardinality() < gameBoard.amountOfNodes) {
+            newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
+            neighbors.andNot(filled)
+            notFilledNotNeighbors.andNot(neighbors)
+            sensibleMoves.clear()
+            if (neighbors.cardinality() < gameBoard.colorSet.size) {
+                neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
+            } else {
+                gameBoard.colorSet.forEachSetBit { colorValue ->
+                    if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
+                        sensibleMoves.set(colorValue)
+                }
             }
+        } else {
+            neighbors.clear()
+            notFilledNotNeighbors.clear()
+            sensibleMoves.clear()
         }
     }
 
