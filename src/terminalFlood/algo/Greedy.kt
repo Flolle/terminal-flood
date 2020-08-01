@@ -15,8 +15,8 @@ object Greedy {
     fun calculateMoves(startingState: Game): GameState = calculateMoves(startingState.toMutableGame())
 
     fun calculateMoves(gameState: MutableGame): MutableGame {
-        val moveBorderNodes = BitSet(gameState.gameBoard.boardNodes.size)
-        val newBorderNodes = BitSet(gameState.gameBoard.boardNodes.size)
+        val moveBorderNodes = BitSet(gameState.gameBoard.amountOfBoardNodes)
+        val newBorderNodes = BitSet(gameState.gameBoard.amountOfBoardNodes)
 
         while (!gameState.isWon) {
             // If we can eliminate colors, that is always the optimal move.

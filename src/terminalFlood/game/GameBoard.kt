@@ -26,7 +26,7 @@ import kotlin.random.Random
  * @throws IllegalArgumentException if [maximumSteps] is equal or below 0; if size of [colorSet] is below 2 or equal or above [Character.MAX_RADIX]
  */
 class GameBoard(
-    val boardNodes: List<BoardNode>,
+    private val boardNodes: Array<BoardNode>,
     val boardNodesByColor: Array<BitSet>,
     val boardSize: Int,
     val colorSet: ColorSet,
@@ -48,6 +48,11 @@ class GameBoard(
     val maximumColorValue: Int = colorSet.maximumColorValue
 
     /**
+     * The total amount of [BoardNode]s in this game board.
+     */
+    val amountOfBoardNodes: Int = boardNodes.size
+
+    /**
      * The total amount of fields contained within this game board.
      */
     val amountOfFields = boardSize * boardSize
@@ -65,6 +70,11 @@ class GameBoard(
 
         return lookupTable
     }
+
+    /**
+     * Returns the [BoardNode] with the corresponding index value as its [BoardNode.id].
+     */
+    fun getBoardNodeWithIndex(index: Int): BoardNode = boardNodes[index]
 
     /**
      * Returns the node present at the given field position.
@@ -119,7 +129,7 @@ class GameBoard(
         if (boardSize != other.boardSize) return false
         if (startPos != other.startPos) return false
         if (maximumSteps != other.maximumSteps) return false
-        if (boardNodes != other.boardNodes) return false
+        if (!boardNodes.contentEquals(other.boardNodes)) return false
 
         return true
     }
@@ -222,7 +232,7 @@ class GameBoard(
                 StartPos.MIDDLE      -> Point(boardSize / 2, boardSize / 2)
             }
             val gameBoard =
-                GameBoard(boardNodes, boardNodesByColor, boardSize, colors, startPoint, maximumSteps)
+                GameBoard(boardNodes.toTypedArray(), boardNodesByColor, boardSize, colors, startPoint, maximumSteps)
 
             for (node in boardNodes) {
                 val borderingNodes = HashSet<BoardNode>()

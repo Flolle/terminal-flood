@@ -95,13 +95,13 @@ class Game(
          * Creates a new [Game] instance based on the given [GameBoard].
          */
         operator fun invoke(gameBoard: GameBoard): Game {
-            val filled = BitSet(gameBoard.boardNodes.size)
-            val neighbors = BitSet(gameBoard.boardNodes.size)
+            val filled = BitSet(gameBoard.amountOfBoardNodes)
+            val neighbors = BitSet(gameBoard.amountOfBoardNodes)
             val startNode = gameBoard.getNodeAtPosition(gameBoard.startPos.x, gameBoard.startPos.y)
             filled.set(startNode.id)
             neighbors.or(startNode.borderingNodes)
-            val notFilledNotNeighbors = BitSet(gameBoard.boardNodes.size)
-            notFilledNotNeighbors.set(0, gameBoard.boardNodes.size)
+            val notFilledNotNeighbors = BitSet(gameBoard.amountOfBoardNodes)
+            notFilledNotNeighbors.set(0, gameBoard.amountOfBoardNodes)
             notFilledNotNeighbors.andNot(filled)
             notFilledNotNeighbors.andNot(neighbors)
             val sensibleMoves = ColorSet()

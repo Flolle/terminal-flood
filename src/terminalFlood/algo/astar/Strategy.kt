@@ -98,8 +98,8 @@ object InadmissibleSlowStrategy : Strategy {
             return AdmissibleStrategy.heuristic(gameState)
 
         var minimumMovesLeft = 0
-        val neighborNodes = BitSet(gameState.gameBoard.boardNodes.size)
-        val newBorderNodes = BitSet(gameState.gameBoard.boardNodes.size)
+        val neighborNodes = BitSet(gameState.gameBoard.amountOfBoardNodes)
+        val newBorderNodes = BitSet(gameState.gameBoard.amountOfBoardNodes)
         val currentState = gameState.toMutableGame()
 
         while (!currentState.isWon) {

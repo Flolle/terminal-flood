@@ -24,7 +24,7 @@ class MutableGame(
     override val notFilledNotNeighbors: BitSet,
     override val sensibleMoves: ColorSet
 ) : GameState {
-    private val cachedBitset = BitSet(gameBoard.boardNodes.size)
+    private val cachedBitset = BitSet(gameBoard.amountOfBoardNodes)
 
     /**
      * @see [GameState.makeMove]
