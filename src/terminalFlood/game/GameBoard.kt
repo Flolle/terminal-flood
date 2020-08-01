@@ -152,7 +152,7 @@ class GameBoard(
         ): GameBoard {
             val boardSize = sqrt(boardString.length.toDouble()).toInt()
             val colorBoard = Array(boardSize) { IntArray(boardSize) }
-            val colors = HashSet<Int>()
+            val colors = ColorSet()
 
             for (i in boardString.indices) {
                 val column = i % boardSize
@@ -161,7 +161,7 @@ class GameBoard(
                 val fieldColor = java.lang.String.valueOf(boardString[i]).toInt(Character.MAX_RADIX)
 
                 colorBoard[column][row] = fieldColor
-                colors.add(fieldColor)
+                colors.set(fieldColor)
             }
 
             return initBoard(colorBoard, boardSize, colors.size, startPos, maxSteps)
