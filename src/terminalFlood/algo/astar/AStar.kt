@@ -2,104 +2,14 @@ package terminalFlood.algo.astar
 
 import terminalFlood.game.*
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import kotlin.collections.ArrayList
 
 object AStar {
-
     /**
      * Computes a solution for the given [GameBoard] using an A* algorithm with the given strategy. The returned [Game]
      * instance is the game in its computed solved state. For example, use [Game.playedMoves] if you are interested
      * in the move list necessary to get to this solution.
-     *
-     * This method uses threads for its computation, but its intended use case is to find a solution for a single game
-     * board. If you want to find solutions for multiple game boards it is recommended to use [calculateMovesSequential]
-     * with multiple threads instead as that will result in better performance than calling this method sequentially
-     * for every game board.
      */
-    fun calculateMovesParallel(
-        gameBoard: GameBoard,
-        strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST
-    ): Game {
-        val executor = Executors.newCachedThreadPool()
-        val taskList = ArrayList<Future<AStarNode?>>()
-        val heuristicStrategy = when (strategy) {
-            AStarStrategies.ADMISSIBLE           -> AdmissibleStrategy
-            AStarStrategies.INADMISSIBLE_SLOW    -> InadmissibleSlowStrategy
-            AStarStrategies.INADMISSIBLE         -> InadmissibleStrategy
-            AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy
-            AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
-        }
-        val movesNeededForBoardState = ConcurrentHashMap<BoardState, Int>(100000)
-        val frontier = PriorityQueue<AStarNode>()
-        val noMaxStepsGameBoard = gameBoard.noMaximumStepsLimitCopy()
-        frontier.offer(AStarNode(Game(noMaxStepsGameBoard), false, 0))
-
-        while (frontier.isNotEmpty()) {
-            val currentNode = frontier.poll()
-            var currentGameState = currentNode.gameState
-
-            if (currentGameState.isWon) {
-                executor.shutdown()
-                return currentGameState
-            }
-
-            // Pruning technique for inadmissible heuristics: If we can eliminate colors, we only do that. This can
-            // sometimes result in slightly worse solutions, but speeds up the algorithm.
-            if (strategy != AStarStrategies.ADMISSIBLE) {
-                val colorEliminationMoves = currentGameState.findAllColorEliminationMoves()
-                colorEliminationMoves.forEachColor {
-                    currentGameState = currentGameState.makeMove(it)
-                }
-                if (!colorEliminationMoves.isEmpty) {
-                    addToQueue(currentGameState, true, movesNeededForBoardState, heuristicStrategy, frontier)
-                    continue
-                }
-            }
-
-            // Continue with A* but prune the possible moves first.
-            val nextMoves =
-                if (strategy != AStarStrategies.ADMISSIBLE)
-                    pruneSymmetries(currentGameState, currentNode.isIslandEliminationSpecialCase)
-                else
-                    pruneSymmetriesAdmissible(currentGameState)
-            nextMoves.forEachColor { move ->
-                taskList.add(executor.submit<AStarNode?> {
-                    val newGameState = currentGameState.makeMove(move)
-                    val boardState = BoardState(newGameState.filled)
-                    val isFastestWayToBoardState =
-                        newGameState.playedMoves.size < movesNeededForBoardState.getOrDefault(boardState, Int.MAX_VALUE)
-
-                    if (isFastestWayToBoardState) {
-                        movesNeededForBoardState[boardState] = newGameState.playedMoves.size
-                        val priority = newGameState.playedMoves.size + heuristicStrategy.heuristic(newGameState)
-
-                        AStarNode(newGameState, false, priority)
-                    } else {
-                        null
-                    }
-                })
-            }
-            for (task in taskList)
-                task.get()?.let { frontier.offer(it) }
-            taskList.clear()
-        }
-
-        executor.shutdown()
-        error("Algorithm error!")
-    }
-
-    /**
-     * Computes a solution for the given [GameBoard] using an A* algorithm with the given strategy. The returned [Game]
-     * instance is the game in its computed solved state. For example, use [Game.playedMoves] if you are interested
-     * in the move list necessary to get to this solution.
-     *
-     * This method is single-threaded. If you want to find a solution for a single game board it is recommended to use
-     * [calculateMovesParallel] as that will result in better performance.
-     */
-    fun calculateMovesSequential(
+    fun calculateMoves(
         gameBoard: GameBoard,
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST
     ): Game {
@@ -184,8 +94,6 @@ object AStar {
      * worse) when the queue size reaches the cutoff value denoted by [queueMaxSizeCutoff]. This operation can result
      * in worse solutions being found than normally possible with a given heuristic. If you prefer to not use this
      * memory saving scheme, use [Int.MAX_VALUE] as the [queueMaxSizeCutoff] parameter value.
-     *
-     * This method is single-threaded.
      */
     fun calculateMovesLessMemory(
         gameBoard: GameBoard,

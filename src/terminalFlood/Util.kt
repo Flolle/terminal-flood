@@ -39,7 +39,7 @@ object Util {
         var simResult: Game? = null
         val t = measureTimeMillis {
             simResult = when (memoryScheme) {
-                MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMovesParallel(gameBoard, strategy)
+                MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMoves(gameBoard, strategy)
                 MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
                     gameBoard,
                     strategy,

@@ -120,7 +120,7 @@ object Datasets {
                     promisedGames.add(executor.submit<GameResult> {
                         val gameBoard = GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE)
                         val finishedGame = when (memoryScheme) {
-                            MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMovesSequential(
+                            MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMoves(
                                 gameBoard,
                                 strategy
                             )
