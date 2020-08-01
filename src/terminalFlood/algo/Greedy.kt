@@ -15,6 +15,7 @@ object Greedy {
     fun calculateMoves(startingState: Game): GameState = calculateMoves(startingState.toMutableGame())
 
     fun calculateMoves(gameState: MutableGame): MutableGame {
+        val moveBorderNodes = BitSet(gameState.gameBoard.boardNodes.size)
         val newBorderNodes = BitSet(gameState.gameBoard.boardNodes.size)
 
         while (!gameState.isWon) {
@@ -34,7 +35,7 @@ object Greedy {
             var bestColor = Color.DUMMY
             var amountBestColor = Int.MIN_VALUE
             gameState.sensibleMoves.forEachColor { move ->
-                val moveBorderNodes = gameState.getNeighborsWithColor(move)!!
+                moveBorderNodes.setToNeighborsWithColor(gameState, move)
                 newBorderNodes.clear()
                 moveBorderNodes.forEachNode(gameState.gameBoard) { node ->
                     newBorderNodes.or(node.borderingNodes)

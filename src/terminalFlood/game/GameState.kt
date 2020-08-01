@@ -81,21 +81,6 @@ interface GameState {
     fun makeMove(move: Color): GameState
 
     /**
-     * Returns the neighboring [BoardNode]s with the given [Color] or null if no nodes with that color are present.
-     *
-     * [BoardNode]s and the returned bitmap are linked through [BoardNode.id], meaning the id is used as the bit index.
-     */
-    fun getNeighborsWithColor(color: Color): BitSet? {
-        if (color !in sensibleMoves)
-            return null
-
-        val colorNodes = gameBoard.boardNodesByColor[color.value].copy()
-        colorNodes.and(neighbors)
-
-        return colorNodes
-    }
-
-    /**
      * Returns a collection of all the colors that can be completely eliminated.
      */
     fun findAllColorEliminationMoves(): ColorSet {
@@ -112,6 +97,19 @@ interface GameState {
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun BitSet.copy(): BitSet = this.clone() as BitSet
+
+/**
+ * Sets this bitset to the neighboring [BoardNode]s with the given [Color]. The bitset will be empty if no nodes with
+ * that color are present.
+ *
+ * [BoardNode]s and this bitset are linked through [BoardNode.id], meaning the id is used as the bit index.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun BitSet.setToNeighborsWithColor(gameState: GameState, color: Color) {
+    this.clear()
+    this.or(gameState.gameBoard.boardNodesByColor[color.value])
+    this.and(gameState.neighbors)
+}
 
 /**
  * Performs the given action on every node in the [BitSet].

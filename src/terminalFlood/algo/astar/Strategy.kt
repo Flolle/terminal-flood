@@ -1,10 +1,7 @@
 package terminalFlood.algo.astar
 
 import terminalFlood.algo.Greedy
-import terminalFlood.game.Color
-import terminalFlood.game.ColorSet
-import terminalFlood.game.Game
-import terminalFlood.game.forEachNode
+import terminalFlood.game.*
 import java.util.*
 
 /**
@@ -101,6 +98,7 @@ object InadmissibleSlowStrategy : Strategy {
             return AdmissibleStrategy.heuristic(gameState)
 
         var minimumMovesLeft = 0
+        val neighborNodes = BitSet(gameState.gameBoard.boardNodes.size)
         val newBorderNodes = BitSet(gameState.gameBoard.boardNodes.size)
         val currentState = gameState.toMutableGame()
 
@@ -122,7 +120,7 @@ object InadmissibleSlowStrategy : Strategy {
                     var amountBestColor = Int.MIN_VALUE
                     var amountSecondBestColor = Int.MIN_VALUE
                     currentState.sensibleMoves.forEachColor { color ->
-                        val neighborNodes = currentState.getNeighborsWithColor(color)!!
+                        neighborNodes.setToNeighborsWithColor(currentState, color)
                         newBorderNodes.clear()
                         neighborNodes.forEachNode(currentState.gameBoard) { node ->
                             newBorderNodes.or(node.borderingNodes)
