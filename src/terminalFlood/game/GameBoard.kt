@@ -2,7 +2,6 @@ package terminalFlood.game
 
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -235,32 +234,28 @@ class GameBoard(
                 GameBoard(boardNodes.toTypedArray(), boardNodesByColor, boardSize, colors, startPoint, maximumSteps)
 
             for (node in boardNodes) {
-                val borderingNodes = HashSet<BoardNode>()
-
                 for (field in node.occupiedFields) {
                     if (field.x > 0) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x - 1][field.y]
                         if (borderingNode !== node)
-                            borderingNodes.add(borderingNode)
+                            node.borderingNodes.set(borderingNode.id)
                     }
                     if (field.y > 0) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x][field.y - 1]
                         if (borderingNode !== node)
-                            borderingNodes.add(borderingNode)
+                            node.borderingNodes.set(borderingNode.id)
                     }
                     if (field.x < colorBoard.size - 1) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x + 1][field.y]
                         if (borderingNode !== node)
-                            borderingNodes.add(borderingNode)
+                            node.borderingNodes.set(borderingNode.id)
                     }
                     if (field.y < colorBoard.size - 1) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x][field.y + 1]
                         if (borderingNode !== node)
-                            borderingNodes.add(borderingNode)
+                            node.borderingNodes.set(borderingNode.id)
                     }
                 }
-
-                borderingNodes.forEach { node.borderingNodes.set(it.id) }
             }
 
             return gameBoard
@@ -318,11 +313,13 @@ private class BoardNodeImpl(
     /**
      * Caching the hashCode because the fields that are used for the computation are set in stone at instance creation.
      */
-    private val hash: Int = {
+    private val hash: Int
+
+    init {
         var result = color.hashCode()
         result = 31 * result + occupiedFields.hashCode()
-        result
-    }()
+        hash = result
+    }
 
     /**
      * Only checks reference equality because we only create the nodes once at board creation and then operate on the
