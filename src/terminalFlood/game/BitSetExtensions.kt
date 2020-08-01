@@ -6,6 +6,15 @@ import java.util.*
 inline fun BitSet.copy(): BitSet = this.clone() as BitSet
 
 /**
+ * Sets the contents of this bitset to that of the given bitset.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun BitSet.setTo(bitset: BitSet) {
+    this.clear()
+    this.or(bitset)
+}
+
+/**
  * Sets this bitset to the neighboring [BoardNode]s with the given [Color]. The bitset will be empty if no nodes with
  * that color are present.
  *
@@ -13,8 +22,7 @@ inline fun BitSet.copy(): BitSet = this.clone() as BitSet
  */
 @Suppress("NOTHING_TO_INLINE")
 inline fun BitSet.setToNeighborsWithColor(gameState: GameState, color: Color) {
-    this.clear()
-    this.or(gameState.gameBoard.boardNodesByColor[color.value])
+    this.setTo(gameState.gameBoard.boardNodesByColor[color.value])
     this.and(gameState.neighbors)
 }
 

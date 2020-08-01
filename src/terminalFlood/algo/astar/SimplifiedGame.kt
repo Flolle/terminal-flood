@@ -35,8 +35,7 @@ class SimplifiedGame(
 
     fun makeMultiColorMove(colorSet: ColorSet) {
         val firstColorValue = colorSet.nextSetBit(0)
-        cachedBitset.clear()
-        cachedBitset.or(gameBoard.boardNodesByColor[firstColorValue])
+        cachedBitset.setTo(gameBoard.boardNodesByColor[firstColorValue])
         colorSet.forEachSetBit(firstColorValue + 1) { colorValue ->
             cachedBitset.or(gameBoard.boardNodesByColor[colorValue])
         }
@@ -45,8 +44,7 @@ class SimplifiedGame(
     }
 
     fun makeColorBlindMove() {
-        cachedBitset.clear()
-        cachedBitset.or(neighbors)
+        cachedBitset.setTo(neighbors)
         computeMove(cachedBitset)
     }
 
