@@ -26,7 +26,7 @@ inline fun BitSet.setToNeighborsWithColor(gameState: GameState, color: Color) {
 inline fun BitSet.forEachNode(gameBoard: GameBoard, action: (node: BoardNode) -> Unit) {
     var i = this.nextSetBit(0)
     while (i >= 0) {
-        action(gameBoard.getBoardNodeWithIndex(i))
+        action(gameBoard.getNodeWithIndex(i))
         i = this.nextSetBit(i + 1)
     }
 }

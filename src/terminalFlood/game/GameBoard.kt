@@ -49,7 +49,7 @@ class GameBoard(
     /**
      * The total amount of [BoardNode]s in this game board.
      */
-    val amountOfBoardNodes: Int = boardNodes.size
+    val amountOfNodes: Int = boardNodes.size
 
     /**
      * The total amount of fields contained within this game board.
@@ -73,7 +73,7 @@ class GameBoard(
     /**
      * Returns the [BoardNode] with the corresponding index value as its [BoardNode.id].
      */
-    fun getBoardNodeWithIndex(index: Int): BoardNode = boardNodes[index]
+    fun getNodeWithIndex(index: Int): BoardNode = boardNodes[index]
 
     /**
      * Returns the node present at the given field position.

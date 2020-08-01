@@ -17,7 +17,7 @@ class SimplifiedGame(
     val neighbors: BitSet,
     val notFilledNotNeighbors: BitSet
 ) {
-    private val cachedBitset = BitSet(gameBoard.amountOfBoardNodes)
+    private val cachedBitset = BitSet(gameBoard.amountOfNodes)
 
     /**
      * Creates a [SimplifiedGame] instance from the given [GameState]. It does so safely by creating deep copies of

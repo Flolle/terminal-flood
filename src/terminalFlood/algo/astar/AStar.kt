@@ -322,15 +322,15 @@ object AStar {
         // Only allow a move if the previous move added new border nodes of the next move's color.
         val allowedMoves = ColorSet()
         val previousMove = gameState.playedMoves.lastMove
-        val nextMoveNeighbors = BitSet(gameState.gameBoard.amountOfBoardNodes)
+        val nextMoveNeighbors = BitSet(gameState.gameBoard.amountOfNodes)
         gameState.sensibleMoves.forEachColor { color ->
             nextMoveNeighbors.setToNeighborsWithColor(gameState, color)
             var i = nextMoveNeighbors.nextSetBit(0)
             outerLoop@ while (i >= 0) {
-                val borderingNodes = gameState.gameBoard.getBoardNodeWithIndex(i).borderingNodes
+                val borderingNodes = gameState.gameBoard.getNodeWithIndex(i).borderingNodes
                 var j = borderingNodes.nextSetBit(0)
                 while (j >= 0) {
-                    if (gameState.gameBoard.getBoardNodeWithIndex(j).color !== previousMove && gameState.filled[j]) {
+                    if (gameState.gameBoard.getNodeWithIndex(j).color !== previousMove && gameState.filled[j]) {
                         i = nextMoveNeighbors.nextSetBit(i + 1)
                         continue@outerLoop
                     }
@@ -360,7 +360,7 @@ object AStar {
             return gameState.sensibleMoves
 
         val allowedMoves = ColorSet()
-        val borderNodesByColor = BitSet(gameState.gameBoard.amountOfBoardNodes)
+        val borderNodesByColor = BitSet(gameState.gameBoard.amountOfNodes)
         gameState.sensibleMoves.forEachColor { nextMove ->
             borderNodesByColor.setToNeighborsWithColor(gameState, nextMove)
             if (shouldPlay(gameState, nextMove, borderNodesByColor))
@@ -390,10 +390,10 @@ object AStar {
         var isNewBorderNodes = false
         var i = borderNodesByColor.nextSetBit(0)
         outerLoop@ while (i >= 0) {
-            val borderingNodes = gameState.gameBoard.getBoardNodeWithIndex(i).borderingNodes
+            val borderingNodes = gameState.gameBoard.getNodeWithIndex(i).borderingNodes
             var j = borderingNodes.nextSetBit(0)
             while (j >= 0) {
-                if (gameState.gameBoard.getBoardNodeWithIndex(j).color !== previousMove && gameState.filled[j]) {
+                if (gameState.gameBoard.getNodeWithIndex(j).color !== previousMove && gameState.filled[j]) {
                     i = borderNodesByColor.nextSetBit(i + 1)
                     continue@outerLoop
                 }
@@ -411,10 +411,10 @@ object AStar {
             // Should nextMove have been played before previousMove?
             i = borderNodesByColor.nextSetBit(0)
             while (i >= 0) {
-                val borderingNodes = gameState.gameBoard.getBoardNodeWithIndex(i).borderingNodes
+                val borderingNodes = gameState.gameBoard.getNodeWithIndex(i).borderingNodes
                 var j = borderingNodes.nextSetBit(0)
                 while (j >= 0) {
-                    if (gameState.gameBoard.getBoardNodeWithIndex(j).color === previousMove && !gameState.filled[j]) {
+                    if (gameState.gameBoard.getNodeWithIndex(j).color === previousMove && !gameState.filled[j]) {
                         return false
                     }
                     j = borderingNodes.nextSetBit(j + 1)
