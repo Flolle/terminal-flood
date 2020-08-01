@@ -129,7 +129,7 @@ object InadmissibleSlowStrategy : Strategy {
 
                         var amountOfNewFields = 0
                         newBorderNodes.forEachNode(currentState.gameBoard) { node ->
-                            amountOfNewFields += node.occupiedFields.size
+                            amountOfNewFields += node.amountOfFields
                         }
 
                         if (amountOfNewFields > amountBestColor) {

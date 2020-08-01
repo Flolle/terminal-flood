@@ -69,7 +69,7 @@ interface GameState {
         get() {
             var amountOfTakenFields = 0
             filled.forEachNode(gameBoard) {
-                amountOfTakenFields += it.occupiedFields.size
+                amountOfTakenFields += it.amountOfFields
             }
 
             return amountOfTakenFields

@@ -44,7 +44,7 @@ object Greedy {
 
                 var amountOfNewFields = 0
                 newBorderNodes.forEachNode(gameState.gameBoard) { node ->
-                    amountOfNewFields += node.occupiedFields.size
+                    amountOfNewFields += node.amountOfFields
                 }
 
                 if (amountOfNewFields > amountBestColor) {

@@ -24,6 +24,12 @@ interface BoardNode : Comparable<BoardNode> {
      */
     val id: Int
 
+    /**
+     * Returns the amount of occupied fields.
+     */
+    val amountOfFields: Int
+        get() = occupiedFields.size
+
     override fun compareTo(other: BoardNode): Int {
         if (color != other.color)
             return color.compareTo(other.color)
