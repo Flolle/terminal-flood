@@ -1,7 +1,10 @@
 package terminalFlood.algo.astar
 
 import terminalFlood.algo.Greedy
-import terminalFlood.game.*
+import terminalFlood.game.ColorSet
+import terminalFlood.game.Game
+import terminalFlood.game.forEachNode
+import terminalFlood.game.setToNeighborsWithColor
 import java.util.*
 
 /**
@@ -98,8 +101,10 @@ object InadmissibleSlowStrategy : Strategy {
             return AdmissibleStrategy.heuristic(gameState)
 
         var minimumMovesLeft = 0
-        val neighborNodes = BitSet(gameState.gameBoard.amountOfNodes)
         val newBorderNodes = BitSet(gameState.gameBoard.amountOfNodes)
+        var neighborNodes = BitSet(gameState.gameBoard.amountOfNodes)
+        var bestColorNodes = BitSet(gameState.gameBoard.amountOfNodes)
+        var secondBestColorNodes = BitSet(gameState.gameBoard.amountOfNodes)
         val currentState = gameState.toMutableGame()
 
         while (!currentState.isWon) {
@@ -115,8 +120,6 @@ object InadmissibleSlowStrategy : Strategy {
                     currentState.makeColorBlindMove()
                     minimumMovesLeft++
                 } else {
-                    var bestColor = Color.DUMMY
-                    var secondBestColor = Color.DUMMY
                     var amountBestColor = Int.MIN_VALUE
                     var amountSecondBestColor = Int.MIN_VALUE
                     currentState.sensibleMoves.forEachColor { color ->
@@ -133,17 +136,26 @@ object InadmissibleSlowStrategy : Strategy {
                         }
 
                         if (amountOfNewFields > amountBestColor) {
-                            secondBestColor = bestColor
                             amountSecondBestColor = amountBestColor
-                            bestColor = color
                             amountBestColor = amountOfNewFields
+
+                            val t = secondBestColorNodes
+                            secondBestColorNodes = bestColorNodes
+                            bestColorNodes = neighborNodes
+                            // reuse bitset
+                            neighborNodes = t
                         } else if (amountOfNewFields > amountSecondBestColor) {
-                            secondBestColor = color
                             amountSecondBestColor = amountOfNewFields
+
+                            val t = secondBestColorNodes
+                            secondBestColorNodes = neighborNodes
+                            // reuse bitset
+                            neighborNodes = t
                         }
                     }
 
-                    currentState.makeTwoColorMove(bestColor, secondBestColor)
+                    bestColorNodes.or(secondBestColorNodes)
+                    currentState.takeGivenNodes(bestColorNodes)
                     minimumMovesLeft++
                 }
             }

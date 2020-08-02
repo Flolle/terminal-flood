@@ -40,18 +40,6 @@ class MutableGame(
     /**
      * Makes a move that takes all neighboring nodes of the given colors.
      */
-    fun makeTwoColorMove(color1: Color, color2: Color): MutableGame {
-        cachedBitset.setTo(gameBoard.boardNodesByColor[color1.value])
-        cachedBitset.or(gameBoard.boardNodesByColor[color2.value])
-        cachedBitset.and(neighbors)
-        computeMove(Color.DUMMY, cachedBitset)
-
-        return this
-    }
-
-    /**
-     * Makes a move that takes all neighboring nodes of the given colors.
-     */
     fun makeMultiColorMove(colors: ColorSet): MutableGame {
         val firstColorValue = colors.nextSetBit(0)
         cachedBitset.setTo(gameBoard.boardNodesByColor[firstColorValue])
@@ -72,6 +60,13 @@ class MutableGame(
         computeMove(Color.DUMMY, cachedBitset)
 
         return this
+    }
+
+    /**
+     * Makes a move that takes the given nodes.
+     */
+    fun takeGivenNodes(nodes: BitSet) {
+        computeMove(Color.DUMMY, nodes)
     }
 
     /**
