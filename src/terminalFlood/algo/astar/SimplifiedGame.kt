@@ -1,7 +1,9 @@
 package terminalFlood.algo.astar
 
-import terminalFlood.game.*
-import java.util.*
+import terminalFlood.game.ColorSet
+import terminalFlood.game.GameBoard
+import terminalFlood.game.GameState
+import terminalFlood.game.NodeSet
 
 /**
  * This is a stripped down version of a [GameState] that only contains the bare minimum functionality necessary for
@@ -13,11 +15,11 @@ import java.util.*
  */
 class SimplifiedGame(
     val gameBoard: GameBoard,
-    val filled: BitSet,
-    val neighbors: BitSet,
-    val notFilledNotNeighbors: BitSet
+    val filled: NodeSet,
+    val neighbors: NodeSet,
+    val notFilledNotNeighbors: NodeSet
 ) {
-    private val cachedBitset = BitSet(gameBoard.amountOfNodes)
+    private val cachedBitset = NodeSet(gameBoard.amountOfNodes)
 
     /**
      * Creates a [SimplifiedGame] instance from the given [GameState]. It does so safely by creating deep copies of
@@ -48,7 +50,7 @@ class SimplifiedGame(
         computeMove(cachedBitset)
     }
 
-    private fun computeMove(newNodes: BitSet) {
+    private fun computeMove(newNodes: NodeSet) {
         filled.or(newNodes)
         if (filled.cardinality() < gameBoard.amountOfNodes) {
             newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }

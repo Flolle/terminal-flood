@@ -3,9 +3,7 @@ package terminalFlood.algo.astar
 import terminalFlood.algo.Greedy
 import terminalFlood.game.ColorSet
 import terminalFlood.game.Game
-import terminalFlood.game.forEachNode
-import terminalFlood.game.setToNeighborsWithColor
-import java.util.*
+import terminalFlood.game.NodeSet
 
 /**
  * The heuristic used by the A* algorithm.
@@ -101,10 +99,10 @@ object InadmissibleSlowStrategy : Strategy {
             return AdmissibleStrategy.heuristic(gameState)
 
         var minimumMovesLeft = 0
-        val newBorderNodes = BitSet(gameState.gameBoard.amountOfNodes)
-        var neighborNodes = BitSet(gameState.gameBoard.amountOfNodes)
-        var bestColorNodes = BitSet(gameState.gameBoard.amountOfNodes)
-        var secondBestColorNodes = BitSet(gameState.gameBoard.amountOfNodes)
+        val newBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
+        var neighborNodes = NodeSet(gameState.gameBoard.amountOfNodes)
+        var bestColorNodes = NodeSet(gameState.gameBoard.amountOfNodes)
+        var secondBestColorNodes = NodeSet(gameState.gameBoard.amountOfNodes)
         val currentState = gameState.toMutableGame()
 
         while (!currentState.isWon) {

@@ -1,7 +1,5 @@
 package terminalFlood.game
 
-import java.util.*
-
 /**
  * This interface defines all the necessary data to represent any given Flood-It game state.
  */
@@ -21,14 +19,14 @@ interface GameState {
      *
      * [BoardNode]s and this bitmap are linked through [BoardNode.id], meaning the id is used as the bit index.
      */
-    val filled: BitSet
+    val filled: NodeSet
 
     /**
      * The nodes bordering [filled].
      *
      * [BoardNode]s and this bitmap are linked through [BoardNode.id], meaning the id is used as the bit index.
      */
-    val neighbors: BitSet
+    val neighbors: NodeSet
 
     /**
      * The nodes that are neither in [filled] nor in [neighbors]. Basically all not taken nodes that don't directly
@@ -36,7 +34,7 @@ interface GameState {
      *
      * [BoardNode]s and this bitmap are linked through [BoardNode.id], meaning the id is used as the bit index.
      */
-    val notFilledNotNeighbors: BitSet
+    val notFilledNotNeighbors: NodeSet
 
     /**
      * All the moves that would make sense to play in this game state. In effect this bitmap contains all the

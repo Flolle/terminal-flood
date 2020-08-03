@@ -1,7 +1,5 @@
 package terminalFlood.game
 
-import java.util.*
-
 /**
  * This class represents any given Flood-It game state.
  *
@@ -12,19 +10,19 @@ import java.util.*
  *
  * Warning:
  * Do not modify the exposed fields, since doing so will invalidate the game state. For example, if you want to do
- * modifying operations on the [BitSet]s, you must create copies of them.
+ * modifying operations on the [NodeSet]s, you must create copies of them.
  *
  * This class is not thread safe.
  */
 class MutableGame(
     override val gameBoard: GameBoard,
     override var playedMoves: MoveList,
-    override val filled: BitSet,
-    override val neighbors: BitSet,
-    override val notFilledNotNeighbors: BitSet,
+    override val filled: NodeSet,
+    override val neighbors: NodeSet,
+    override val notFilledNotNeighbors: NodeSet,
     override val sensibleMoves: ColorSet
 ) : GameState {
-    private val cachedBitset = BitSet(gameBoard.amountOfNodes)
+    private val cachedBitset = NodeSet(gameBoard.amountOfNodes)
 
     /**
      * @see [GameState.makeMove]
@@ -65,14 +63,14 @@ class MutableGame(
     /**
      * Makes a move that takes the given nodes.
      */
-    fun takeGivenNodes(nodes: BitSet) {
+    fun takeGivenNodes(nodes: NodeSet) {
         computeMove(Color.DUMMY, nodes)
     }
 
     /**
      * Updates the internal state.
      */
-    private fun computeMove(move: Color, newNodes: BitSet) {
+    private fun computeMove(move: Color, newNodes: NodeSet) {
         filled.or(newNodes)
         playedMoves += move
         if (filled.cardinality() < gameBoard.amountOfNodes) {

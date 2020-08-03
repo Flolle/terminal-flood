@@ -1,7 +1,5 @@
 package terminalFlood.game
 
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -26,7 +24,7 @@ import kotlin.random.Random
  */
 class GameBoard(
     private val boardNodes: Array<BoardNode>,
-    val boardNodesByColor: Array<BitSet>,
+    val boardNodesByColor: Array<NodeSet>,
     val boardSize: Int,
     val colorSet: ColorSet,
     val startPos: Point,
@@ -211,14 +209,14 @@ class GameBoard(
                         exploreColorNode(nodeFields, colorBoard, checkedFields, colorValue, x, y)
 
                         colors.set(colorValue)
-                        boardNodes.add(BoardNodeImpl(Color.colorCache[colorValue], BitSet(), nodeFields))
+                        boardNodes.add(BoardNodeImpl(Color.colorCache[colorValue], nodeFields))
                     }
                 }
             }
             boardNodes.forEachIndexed { i, node -> node.id = i }
 
             val maximumColorValue = colors.maximumColorValue
-            val boardNodesByColor = Array(maximumColorValue + 1) { BitSet(boardNodes.size) }
+            val boardNodesByColor = Array(maximumColorValue + 1) { NodeSet(boardNodes.size) }
             for (node in boardNodes) {
                 boardNodesByColor[node.color.value].set(node.id)
             }
@@ -234,28 +232,30 @@ class GameBoard(
                 GameBoard(boardNodes.toTypedArray(), boardNodesByColor, boardSize, colors, startPoint, maximumSteps)
 
             for (node in boardNodes) {
+                val neighbors = NodeSet(gameBoard.amountOfNodes)
                 for (field in node.occupiedFields) {
                     if (field.x > 0) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x - 1][field.y]
                         if (borderingNode !== node)
-                            node.borderingNodes.set(borderingNode.id)
+                            neighbors.set(borderingNode.id)
                     }
                     if (field.y > 0) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x][field.y - 1]
                         if (borderingNode !== node)
-                            node.borderingNodes.set(borderingNode.id)
+                            neighbors.set(borderingNode.id)
                     }
                     if (field.x < colorBoard.size - 1) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x + 1][field.y]
                         if (borderingNode !== node)
-                            node.borderingNodes.set(borderingNode.id)
+                            neighbors.set(borderingNode.id)
                     }
                     if (field.y < colorBoard.size - 1) {
                         val borderingNode = gameBoard.nodeLookupTable[field.x][field.y + 1]
                         if (borderingNode !== node)
-                            node.borderingNodes.set(borderingNode.id)
+                            neighbors.set(borderingNode.id)
                     }
                 }
+                node.borderingNodes = neighbors
             }
 
             return gameBoard
@@ -305,9 +305,10 @@ class GameBoard(
  */
 private class BoardNodeImpl(
     override val color: Color,
-    override val borderingNodes: BitSet,
     override val occupiedFields: List<Point>
 ) : BoardNode {
+    override lateinit var borderingNodes: NodeSet
+
     override var id: Int = -1
 
     /**

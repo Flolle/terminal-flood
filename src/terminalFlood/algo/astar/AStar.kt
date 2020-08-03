@@ -230,7 +230,7 @@ object AStar {
         // Only allow a move if the previous move added new border nodes of the next move's color.
         val allowedMoves = ColorSet()
         val previousMove = gameState.playedMoves.lastMove
-        val nextMoveNeighbors = BitSet(gameState.gameBoard.amountOfNodes)
+        val nextMoveNeighbors = NodeSet(gameState.gameBoard.amountOfNodes)
         gameState.sensibleMoves.forEachColor { color ->
             nextMoveNeighbors.setToNeighborsWithColor(gameState, color)
             var i = nextMoveNeighbors.nextSetBit(0)
@@ -268,7 +268,7 @@ object AStar {
             return gameState.sensibleMoves
 
         val allowedMoves = ColorSet()
-        val borderNodesByColor = BitSet(gameState.gameBoard.amountOfNodes)
+        val borderNodesByColor = NodeSet(gameState.gameBoard.amountOfNodes)
         gameState.sensibleMoves.forEachColor { nextMove ->
             borderNodesByColor.setToNeighborsWithColor(gameState, nextMove)
             if (shouldPlay(gameState, nextMove, borderNodesByColor))
@@ -289,7 +289,7 @@ object AStar {
      * We try to break symmetry. A lower color move is only permitted if the last move (could have) made new nodes
      * of this color accessible. Otherwise we could just do the lower color move first.
      */
-    private fun shouldPlay(gameState: Game, nextMove: Color, borderNodesByColor: BitSet): Boolean {
+    private fun shouldPlay(gameState: Game, nextMove: Color, borderNodesByColor: NodeSet): Boolean {
         if (gameState.playedMoves.isEmpty)
             return true
 
@@ -419,7 +419,7 @@ private class GameStateCache(cacheSize: Int = 10000) {
     }
 }
 
-private class BoardState(val filled: BitSet) {
+private class BoardState(val filled: NodeSet) {
     private val hash = filled.hashCode()
 
     override fun equals(other: Any?): Boolean {

@@ -1,7 +1,5 @@
 package terminalFlood.game
 
-import java.util.*
-
 /**
  * This class represents any given Flood-It game state.
  *
@@ -11,17 +9,17 @@ import java.util.*
  * create [MutableGame] instances from [Game] objects.
  *
  * Warning:
- * Do not modify the exposed bitmaps or [Array]s, since doing so will invalidate the game state. If you want to do
- * modifying operations on those collections, you must create copies of them.
+ * Do not modify the exposed [NodeSet]s, since doing so will invalidate the game state. If you want to do modifying
+ * operations on those collections, you must create copies of them.
  *
  * This class is thread safe.
  */
 class Game(
     override val gameBoard: GameBoard,
     override val playedMoves: MoveList,
-    override val filled: BitSet,
-    override val neighbors: BitSet,
-    override val notFilledNotNeighbors: BitSet,
+    override val filled: NodeSet,
+    override val neighbors: NodeSet,
+    override val notFilledNotNeighbors: NodeSet,
     override val sensibleMoves: ColorSet
 ) : GameState {
     /**
@@ -95,15 +93,14 @@ class Game(
          * Creates a new [Game] instance based on the given [GameBoard].
          */
         operator fun invoke(gameBoard: GameBoard): Game {
-            val filled = BitSet(gameBoard.amountOfNodes)
-            val neighbors = BitSet(gameBoard.amountOfNodes)
+            val filled = NodeSet(gameBoard.amountOfNodes)
+            val neighbors = NodeSet(gameBoard.amountOfNodes)
             val startNode = gameBoard.getNodeAtPosition(gameBoard.startPos.x, gameBoard.startPos.y)
             filled.set(startNode.id)
             neighbors.or(startNode.borderingNodes)
-            val notFilledNotNeighbors = BitSet(gameBoard.amountOfNodes)
-            notFilledNotNeighbors.set(0, gameBoard.amountOfNodes)
-            notFilledNotNeighbors.andNot(filled)
-            notFilledNotNeighbors.andNot(neighbors)
+            val notFilledNotNeighbors = filled.copy()
+            notFilledNotNeighbors.or(neighbors)
+            notFilledNotNeighbors.flipAll()
             val sensibleMoves = ColorSet()
             if (neighbors.cardinality() < gameBoard.colorSet.size) {
                 neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }

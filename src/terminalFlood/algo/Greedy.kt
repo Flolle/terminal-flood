@@ -1,7 +1,6 @@
 package terminalFlood.algo
 
 import terminalFlood.game.*
-import java.util.*
 
 /**
  * A simple greedy algorithm to find solutions for Flood-It boards.
@@ -15,8 +14,8 @@ object Greedy {
     fun calculateMoves(startingState: Game): GameState = calculateMoves(startingState.toMutableGame())
 
     fun calculateMoves(gameState: MutableGame): MutableGame {
-        val moveBorderNodes = BitSet(gameState.gameBoard.amountOfNodes)
-        val newBorderNodes = BitSet(gameState.gameBoard.amountOfNodes)
+        val moveBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
+        val newBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
 
         while (!gameState.isWon) {
             // If we can eliminate colors, that is always the optimal move.

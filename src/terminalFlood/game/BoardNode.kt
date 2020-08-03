@@ -1,11 +1,9 @@
 package terminalFlood.game
 
-import java.util.*
-
 /**
  * Represents a continuous collection of fields on the game board that all have the same color.
  *
- * Do not try to modify the [BitSet] returned by this interface, as no guarantees are made towards whether the
+ * Do not try to modify the [NodeSet] returned by this interface, as no guarantees are made towards whether the
  * [BoardNode]s internal state will stay valid if you do. Instead, always create copies of the BitSet if you
  * intend to use modifying operations on it.
  *
@@ -13,7 +11,7 @@ import java.util.*
  */
 interface BoardNode : Comparable<BoardNode> {
     val color: Color
-    val borderingNodes: BitSet
+    val borderingNodes: NodeSet
     val occupiedFields: List<Point>
 
     /**
@@ -47,7 +45,7 @@ interface BoardNode : Comparable<BoardNode> {
     companion object {
         val DUMMY_NODE: BoardNode = object : BoardNode {
             override val color: Color = Color.DUMMY
-            override val borderingNodes: BitSet = BitSet()
+            override val borderingNodes: NodeSet = NodeSet(1)
             override val occupiedFields: List<Point> = emptyList()
             override val id: Int = -1
         }
