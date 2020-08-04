@@ -28,8 +28,7 @@ class MutableGame(
      * @see [GameState.makeMove]
      */
     override fun makeMove(move: Color): MutableGame {
-        cachedBitset.setTo(gameBoard.boardNodesByColor[move.value])
-        cachedBitset.and(neighbors)
+        cachedBitset.setToNeighborsWithColor(this, move)
         computeMove(move, cachedBitset)
 
         return this

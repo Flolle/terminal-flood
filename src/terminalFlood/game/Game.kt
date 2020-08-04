@@ -93,11 +93,10 @@ class Game(
          * Creates a new [Game] instance based on the given [GameBoard].
          */
         operator fun invoke(gameBoard: GameBoard): Game {
-            val filled = NodeSet(gameBoard.amountOfNodes)
-            val neighbors = NodeSet(gameBoard.amountOfNodes)
             val startNode = gameBoard.getNodeAtPosition(gameBoard.startPos.x, gameBoard.startPos.y)
+            val filled = NodeSet(gameBoard.amountOfNodes)
             filled.set(startNode.id)
-            neighbors.or(startNode.borderingNodes)
+            val neighbors = startNode.borderingNodes.copy()
             val notFilledNotNeighbors = filled.copy()
             notFilledNotNeighbors.or(neighbors)
             notFilledNotNeighbors.flipAll()
