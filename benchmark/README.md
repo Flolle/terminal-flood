@@ -42,44 +42,57 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 26717 | 38978 |
-| astar_ias | 27070 | 4859 |
-| astar_ia | 27161 | 4404 |
-| astar_iaf | 27363 | 2221 |
-| astar_iaff | 28053 | 1064 |
+| astar_a | 26717 | 29656 |
+| astar_ias | 27070 | 3309 |
+| astar_ia | 27161 | 3014 |
+| astar_iaf | 27363 | 1562 |
+| astar_iaff | 28053 | 720 |
+
+
+### dataset b10c35n1000
+
+All benchmarks with this dataset where done using only 1 thread.
+
+| strategy | score | time in milliseconds |
+| :--- | ---: | ---: |
+| astar_a | 41751 | 16009 |
+| astar_ias | 42445 | 1473 |
+| astar_ia | 42712 | 1140 |
+| astar_iaf | 42689 | 1533 |
+| astar_iaff | 43186 | 833 |
 
 
 ### dataset b12c12n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 27635 | 343758 |
-| astar_ias | 27897 | 5080 |
-| astar_ia | 28236 | 3749 |
-| astar_iaf | 28435 | 1570 |
-| astar_iaff | 29492 | 944 |
+| astar_a (-lessMemory) | 27635 | 297602 |
+| astar_ias | 27897 | 3470 |
+| astar_ia | 28236 | 2512 |
+| astar_iaf | 28435 | 807 |
+| astar_iaff | 29492 | 478 |
 
 
 ### dataset b14c8n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 24582 | 204314 |
-| astar_ias | 24740 | 6929 |
-| astar_ia | 25061 | 2496 |
-| astar_iaf | 25256 | 1790 |
-| astar_iaff | 26356 | 1010 |
+| astar_a (-lessMemory) | 24582 | 170978 |
+| astar_ias | 24740 | 4296 |
+| astar_ia | 25061 | 1291 |
+| astar_iaf | 25256 | 867 |
+| astar_iaff | 26356 | 491 |
 
 
 ### dataset b18c6n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 24837 | 279153 |
-| astar_ias | 24951 | 11982 |
-| astar_ia | 25266 | 3755 |
-| astar_iaf | 25530 | 2242 |
-| astar_iaff | 26707 | 1136 |
+| astar_a (-lessMemory) | 24837 | 205937 |
+| astar_ias | 24951 | 6972 |
+| astar_ia | 25266 | 2157 |
+| astar_iaf | 25530 | 1090 |
+| astar_iaff | 26707 | 581 |
 
 
 ### dataset b24c4n1000
@@ -88,11 +101,11 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 21952 | 21511 |
-| astar_ias | 22062 | 10416 |
-| astar_ia | 22337 | 4862 |
-| astar_iaf | 22496 | 3780 |
-| astar_iaff | 23242 | 2025 |
+| astar_a | 21952 | 11368 |
+| astar_ias | 22062 | 5454 |
+| astar_ia | 22337 | 2722 |
+| astar_iaf | 22496 | 1768 |
+| astar_iaff | 23242 | 1055 |
 
 
 ### dataset b24c6n1000
@@ -105,10 +118,10 @@ The closest thing to an optimal solutionset is mixing the best solutions from `a
 | :--- | ---: | ---: |
 | best of astar_a (-lessMemoryQueueCutoff) and astar_ias | 31812 | none |
 | astar_a (-lessMemoryQueueCutoff, 4 threads) | 31886 | 27355757 (version 2.2) |
-| astar_ias (-lessMemory) | 31968 | 324077 |
-| astar_ia (-lessMemory) | 32537 | 35330 |
-| astar_iaf | 33178 | 5844 |
-| astar_iaff | 35117 | 1743 |
+| astar_ias (-lessMemory) | 31968 | 197695 |
+| astar_ia (-lessMemory) | 32537 | 21806 |
+| astar_iaf | 33178 | 3050 |
+| astar_iaff | 35117 | 854 |
 
 
 ### dataset floodtest_simplified
@@ -120,10 +133,10 @@ I did not attempt to find an optimal solutionset with terminal-flood, because it
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
 | astar_a | 1985078 | none |
-| astar_ias | 1992612 | 1292613 |
-| astar_ia | 2007765 | 382584 |
-| astar_iaf | 2026214 | 139199 |
-| astar_iaff | 2135051 | 22528 |
+| astar_ias | 1992612 | 755298 |
+| astar_ia | 2007765 | 221729 |
+| astar_iaf | 2026214 | 75095 |
+| astar_iaff | 2135051 | 12219 |
 
 
 ### dataset pc19
@@ -134,19 +147,19 @@ Results using 1 thread:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 24827 |
-| astar_ias | 20189 | 8104 |
-| astar_ia | 20428 | 3669 |
-| astar_iaf | 20529 | 2517 |
-| astar_iaff | 21250 | 1146 |
+| astar_a | 20086 | 17031 |
+| astar_ias | 20189 | 5033 |
+| astar_ia | 20428 | 2237 |
+| astar_iaf | 20529 | 1592 |
+| astar_iaff | 21250 | 714 |
 
 
 Results using 12 threads:
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 5374 |
-| astar_ias | 20189 | 2612 |
-| astar_ia | 20428 | 1283 |
-| astar_iaf | 20529 | 1276 |
-| astar_iaff | 21250 | 955 |
+| astar_a | 20086 | 3917 |
+| astar_ias | 20189 | 1244 |
+| astar_ia | 20428 | 803 |
+| astar_iaf | 20529 | 578 |
+| astar_iaff | 21250 | 379 |
