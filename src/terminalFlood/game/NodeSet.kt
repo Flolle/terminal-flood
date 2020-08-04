@@ -25,6 +25,18 @@ class NodeSet private constructor(
     private val amountOfWords: Int = words.size
 
     /**
+     * Returns true if this bitset contains no bits set to true.
+     */
+    val isEmpty: Boolean
+        get() {
+            for (word in words)
+                if (word != 0L)
+                    return false
+
+            return true
+        }
+
+    /**
      * Returns the population count of this bitset. Or in simpler terms: The amount of bits set to true.
      */
     fun cardinality(): Int {
@@ -33,17 +45,6 @@ class NodeSet private constructor(
             result += java.lang.Long.bitCount(word)
 
         return result
-    }
-
-    /**
-     * Returns true if this bitset contains no bits set to true.
-     */
-    fun isEmpty(): Boolean {
-        for (word in words)
-            if (word != 0L)
-                return false
-
-        return true
     }
 
     /**
@@ -156,7 +157,7 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun intersects(nodes: NodeSet): Boolean {
-        var i: Int = amountOfWords
+        var i = amountOfWords
         while (--i >= 0)
             if (words[i] and nodes.words[i] != 0L)
                 return true
@@ -172,7 +173,7 @@ class NodeSet private constructor(
             return -1
 
         var i = index shr 6 // div 64
-        var word: Long = words[i] shr index // skip all the bits to the right of index
+        var word = words[i] shr index // skip all the bits to the right of index
 
         if (word != 0L)
             return index + java.lang.Long.numberOfTrailingZeros(word)
@@ -224,8 +225,8 @@ class NodeSet private constructor(
     }
 
     override fun hashCode(): Int {
-        var h: Long = 0
-        var i: Int = amountOfWords
+        var h = 0L
+        var i = amountOfWords
         while (--i >= 0) {
             h = h xor words[i]
             h = h shl 1 or (h ushr 63) // rotate left
