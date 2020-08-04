@@ -10,6 +10,7 @@ Solving datasets will result in the output of two values, scores and time taken.
 While terminal-flood allows you to create your own datasets, for the purpose of comparison it is useful to base benchmarks on the same datasets, which is why a variety of them are part of this repository. Most of them follow a systematic naming scheme that directly tells you the basic parameters of the dataset. (`b[boardSize]c[numberOfColors]n[numberOfBoards]`)
 
 - dataset b10c15n1000
+- dataset b10c35n1000
 - dataset b12c12n1000
 - dataset b14c8n1000
 - dataset b18c6n1000
