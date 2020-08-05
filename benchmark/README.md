@@ -129,11 +129,9 @@ The closest thing to an optimal solutionset is mixing the best solutions from `a
 
 This dataset was used in a code challenge [here](https://codegolf.stackexchange.com/questions/26232/create-a-flood-paint-ai). Please note that the starting position for this dataset is in the middle.
 
-I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so (probably multiple days of runtime) and it most likely would have needed more RAM than I have available in my PC. Luckily, smack42 (creator of [ColorFill](https://github.com/smack42/ColorFill)) did compute an optimal solutionset, allowing us to at least know the score that `astar_a` would have gotten.
-
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 1985078 | none |
+| astar_a (-lessMemory, 6 threads) | 1985078 | 20559726 |
 | astar_ias | 1992612 | 755298 |
 | astar_ia | 2007765 | 221729 |
 | astar_iaf | 2026214 | 75095 |
