@@ -1,7 +1,6 @@
 package terminalFlood.algo.astar
 
 import terminalFlood.algo.Greedy
-import terminalFlood.game.ColorSet
 import terminalFlood.game.Game
 import terminalFlood.game.NodeSet
 
@@ -34,10 +33,10 @@ object AdmissibleStrategy : Strategy {
     override fun heuristic(gameState: Game): Int {
         var minimumMovesLeft = 0
         val currentState = SimplifiedGame(gameState)
-        val notEliminatedColors = createNotEliminatedColorsSet(gameState)
+        val notEliminatedColors = SimplifiedGame.createNotEliminatedColorsSet(gameState)
 
         while (!currentState.isWon) {
-            val colorEliminationMoves = findColorEliminations(currentState, notEliminatedColors)
+            val colorEliminationMoves = SimplifiedGame.findColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
                 // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
@@ -51,28 +50,6 @@ object AdmissibleStrategy : Strategy {
         }
 
         return minimumMovesLeft
-    }
-
-    private fun createNotEliminatedColorsSet(gameState: Game): ColorSet {
-        val notEliminatedColors = gameState.sensibleMoves.copy()
-
-        gameState.gameBoard.colorSet.forEachSetBit { colorValue ->
-            if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
-                notEliminatedColors.set(colorValue)
-        }
-
-        return notEliminatedColors
-    }
-
-    private fun findColorEliminations(gameState: SimplifiedGame, containedColors: ColorSet): ColorSet {
-        val colorEliminations = containedColors.copy()
-
-        containedColors.forEachSetBit { colorValue ->
-            if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
-                colorEliminations.clear(colorValue)
-        }
-
-        return colorEliminations
     }
 }
 
@@ -103,25 +80,27 @@ object InadmissibleSlowStrategy : Strategy {
         var neighborNodes = NodeSet(gameState.gameBoard.amountOfNodes)
         var bestColorNodes = NodeSet(gameState.gameBoard.amountOfNodes)
         var secondBestColorNodes = NodeSet(gameState.gameBoard.amountOfNodes)
-        val currentState = gameState.toMutableGame()
+        val currentState = SimplifiedGame(gameState)
+        val notEliminatedColors = SimplifiedGame.createNotEliminatedColorsSet(gameState)
 
         while (!currentState.isWon) {
-            val colorEliminationMoves = currentState.findAllColorEliminationMoves()
+            val colorEliminationMoves = SimplifiedGame.findColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
                 // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
+                notEliminatedColors.andNot(colorEliminationMoves)
                 minimumMovesLeft += colorEliminationMoves.size
             } else {
                 // If we didn't eliminate colors, take at most two of the adjacent colors. If there are more than two colors
                 // present, choose the two colors that give access to the most new border fields.
-                if (currentState.sensibleMoves.size < 3) {
-                    currentState.makeColorBlindMove()
-                    minimumMovesLeft++
-                } else {
-                    var amountBestColor = Int.MIN_VALUE
-                    var amountSecondBestColor = Int.MIN_VALUE
-                    currentState.sensibleMoves.forEachColor { color ->
-                        neighborNodes.setToNeighborsWithColor(currentState, color)
+                var amountBestColor = Int.MIN_VALUE
+                var amountSecondBestColor = Int.MIN_VALUE
+                notEliminatedColors.forEachSetBit { colorValue ->
+                    neighborNodes.setToIntersection(
+                        currentState.gameBoard.boardNodesByColor[colorValue],
+                        currentState.neighbors
+                    )
+                    if (!neighborNodes.isEmpty) {
                         newBorderNodes.clear()
                         neighborNodes.forEachNode(currentState.gameBoard) { node ->
                             newBorderNodes.or(node.borderingNodes)
@@ -151,11 +130,11 @@ object InadmissibleSlowStrategy : Strategy {
                             neighborNodes = t
                         }
                     }
-
-                    bestColorNodes.or(secondBestColorNodes)
-                    currentState.takeGivenNodes(bestColorNodes)
-                    minimumMovesLeft++
                 }
+
+                bestColorNodes.or(secondBestColorNodes)
+                currentState.takeGivenNodes(bestColorNodes)
+                minimumMovesLeft++
             }
         }
 

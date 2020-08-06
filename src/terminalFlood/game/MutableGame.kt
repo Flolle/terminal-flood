@@ -29,67 +29,22 @@ class MutableGame(
      */
     override fun makeMove(move: Color): MutableGame {
         cachedBitset.setToNeighborsWithColor(this, move)
-        computeMove(move, cachedBitset)
-
-        return this
-    }
-
-    /**
-     * Makes a move that takes all neighboring nodes of the given colors.
-     */
-    fun makeMultiColorMove(colors: ColorSet): MutableGame {
-        val firstColorValue = colors.nextSetBit(0)
-        cachedBitset.setTo(gameBoard.boardNodesByColor[firstColorValue])
-        colors.forEachSetBit(firstColorValue + 1) { colorValue ->
-            cachedBitset.or(gameBoard.boardNodesByColor[colorValue])
-        }
-        cachedBitset.and(neighbors)
-        computeMove(Color.DUMMY, cachedBitset)
-
-        return this
-    }
-
-    /**
-     * Makes a move that ignores all colors. This move takes all neighboring nodes of this game state.
-     */
-    fun makeColorBlindMove(): MutableGame {
-        cachedBitset.setTo(neighbors)
-        computeMove(Color.DUMMY, cachedBitset)
-
-        return this
-    }
-
-    /**
-     * Makes a move that takes the given nodes.
-     */
-    fun takeGivenNodes(nodes: NodeSet) {
-        computeMove(Color.DUMMY, nodes)
-    }
-
-    /**
-     * Updates the internal state.
-     */
-    private fun computeMove(move: Color, newNodes: NodeSet) {
-        filled.or(newNodes)
+        filled.or(cachedBitset)
         playedMoves += move
-        if (filled.cardinality() < gameBoard.amountOfNodes) {
-            newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
-            neighbors.andNot(filled)
-            notFilledNotNeighbors.andNot(neighbors)
-            sensibleMoves.clear()
-            if (neighbors.cardinality() < gameBoard.colorSet.size) {
-                neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
-            } else {
-                gameBoard.colorSet.forEachSetBit { colorValue ->
-                    if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
-                        sensibleMoves.set(colorValue)
-                }
-            }
+        cachedBitset.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
+        neighbors.andNot(filled)
+        notFilledNotNeighbors.andNot(neighbors)
+        sensibleMoves.clear()
+        if (neighbors.cardinality() < gameBoard.colorSet.size) {
+            neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
         } else {
-            neighbors.clear()
-            notFilledNotNeighbors.clear()
-            sensibleMoves.clear()
+            gameBoard.colorSet.forEachSetBit { colorValue ->
+                if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
+                    sensibleMoves.set(colorValue)
+            }
         }
+
+        return this
     }
 
     /**

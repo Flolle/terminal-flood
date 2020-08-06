@@ -94,12 +94,19 @@ class NodeSet private constructor(
      * bitset of the given color.
      */
     // Assumes both NodeSets have the same internal array size.
-    fun setToNeighborsWithColor(gameState: GameState, color: Color) {
-        val colorNodeSet = gameState.gameBoard.boardNodesByColor[color.value]
-        val neighbors = gameState.neighbors
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun setToNeighborsWithColor(gameState: GameState, color: Color) {
+        setToIntersection(gameState.gameBoard.boardNodesByColor[color.value], gameState.neighbors)
+    }
+
+    /**
+     * Will set this bitset to the intersection of the two given bitsets.
+     */
+    // Assumes both NodeSets have the same internal array size.
+    fun setToIntersection(bitset1: NodeSet, bitset2: NodeSet) {
         var i = amountOfWords
         while (--i >= 0)
-            words[i] = colorNodeSet.words[i] and neighbors.words[i]
+            words[i] = bitset1.words[i] and bitset2.words[i]
     }
 
     /**
