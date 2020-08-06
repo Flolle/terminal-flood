@@ -39,13 +39,14 @@ class NodeSet private constructor(
     /**
      * Returns the population count of this bitset. Or in simpler terms: The amount of bits set to true.
      */
-    fun cardinality(): Int {
-        var result = 0
-        for (word in words)
-            result += java.lang.Long.bitCount(word)
+    val cardinality: Int
+        get() {
+            var result = 0
+            for (word in words)
+                result += java.lang.Long.bitCount(word)
 
-        return result
-    }
+            return result
+        }
 
     /**
      * Returns true if the bit at the given index is set to true.

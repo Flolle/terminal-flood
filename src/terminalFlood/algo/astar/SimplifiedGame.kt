@@ -30,7 +30,7 @@ class SimplifiedGame(
     )
 
     val isWon: Boolean
-        get() = neighbors.cardinality() == 0
+        get() = neighbors.cardinality == 0
 
     /**
      * Makes a move that takes all neighboring nodes of the given colors.
@@ -65,7 +65,7 @@ class SimplifiedGame(
      */
     private fun computeMove(newNodes: NodeSet) {
         filled.or(newNodes)
-        if (filled.cardinality() < gameBoard.amountOfNodes) {
+        if (filled.cardinality < gameBoard.amountOfNodes) {
             newNodes.forEachNode(gameBoard) { neighbors.or(it.borderingNodes) }
             neighbors.andNot(filled)
             notFilledNotNeighbors.andNot(neighbors)

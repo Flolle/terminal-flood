@@ -35,7 +35,7 @@ class MutableGame(
         neighbors.andNot(filled)
         notFilledNotNeighbors.andNot(neighbors)
         sensibleMoves.clear()
-        if (neighbors.cardinality() < gameBoard.colorSet.size) {
+        if (neighbors.cardinality < gameBoard.colorSet.size) {
             neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
         } else {
             gameBoard.colorSet.forEachSetBit { colorValue ->
