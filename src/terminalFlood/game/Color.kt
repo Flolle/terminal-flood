@@ -1,7 +1,5 @@
 package terminalFlood.game
 
-import terminalFlood.algo.astar.SimplifiedGame
-
 /**
  * This class represents the color of a field. This class is immutable.
  *
@@ -30,8 +28,7 @@ class Color private constructor(
     companion object {
         /**
          * A sort of default color. It is not a valid color value for playing the game. Use this if you don't need/want
-         * to specify a specific color. For example, [SimplifiedGame.makeColorBlindMove] will use this as the played move
-         * value.
+         * to specify a specific color.
          */
         val DUMMY: Color = Color(-1)
 

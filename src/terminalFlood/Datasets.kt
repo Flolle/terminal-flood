@@ -126,12 +126,12 @@ object Datasets {
                             )
                             MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
                                 gameBoard,
-                                strategy,
-                                Int.MAX_VALUE
+                                strategy
                             )
                             MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
                                 gameBoard,
-                                strategy
+                                strategy,
+                                1_000_000
                             )
                         }
 

@@ -41,13 +41,4 @@ interface BoardNode : Comparable<BoardNode> {
 
         return 0
     }
-
-    companion object {
-        val DUMMY_NODE: BoardNode = object : BoardNode {
-            override val color: Color = Color.DUMMY
-            override val borderingNodes: NodeSet = NodeSet(1)
-            override val occupiedFields: List<Point> = emptyList()
-            override val id: Int = -1
-        }
-    }
 }

@@ -57,7 +57,7 @@ class GameBoard(
     private val nodeLookupTable: Array<Array<BoardNode>> = calculateLookupTable()
 
     private fun calculateLookupTable(): Array<Array<BoardNode>> {
-        val lookupTable = Array(boardSize) { Array(boardSize) { BoardNode.DUMMY_NODE } }
+        val lookupTable = Array(boardSize) { arrayOfNulls<BoardNode>(boardSize) }
 
         for (node in boardNodes) {
             for (field in node.occupiedFields) {
@@ -65,7 +65,8 @@ class GameBoard(
             }
         }
 
-        return lookupTable
+        @Suppress("UNCHECKED_CAST")
+        return lookupTable as Array<Array<BoardNode>>
     }
 
     /**

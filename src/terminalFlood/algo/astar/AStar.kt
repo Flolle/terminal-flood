@@ -2,8 +2,17 @@ package terminalFlood.algo.astar
 
 import terminalFlood.game.*
 import java.util.*
+import kotlin.Comparator
 
 object AStar {
+    private val CUTOFF_COMPARATOR = Comparator<AStarNodeLessMemory> { o1, o2 ->
+        val comp = o1.compareTo(o2)
+        if (comp == 0)
+            return@Comparator o2.index - o1.index
+
+        comp
+    }
+
     /**
      * Computes a solution for the given [GameBoard] using an A* algorithm with the given strategy. The returned [Game]
      * instance is the game in its computed solved state. For example, use [Game.playedMoves] if you are interested
@@ -98,7 +107,7 @@ object AStar {
     fun calculateMovesLessMemory(
         gameBoard: GameBoard,
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST,
-        queueMaxSizeCutoff: Int = 1_000_000
+        queueMaxSizeCutoff: Int = Int.MAX_VALUE
     ): Game {
         val heuristicStrategy = when (strategy) {
             AStarStrategies.ADMISSIBLE           -> AdmissibleStrategy
@@ -161,11 +170,12 @@ object AStar {
             // If the queue gets too big, discard some of the highest priority nodes (high is worse). This operation can
             // result in worse solutions being found than normally possible with a given heuristic.
             if (frontier.size > queueMaxSizeCutoff) {
-                val newQueue = PriorityQueue<AStarNodeLessMemory>(queueMaxSizeCutoff + gameBoard.colorSet.size)
+                val currentNodes = frontier.toTypedArray()
+                frontier = PriorityQueue(queueMaxSizeCutoff + gameBoard.colorSet.size)
+                currentNodes.sortWith(CUTOFF_COMPARATOR)
                 repeat(queueMaxSizeCutoff - (queueMaxSizeCutoff / 5)) {
-                    newQueue.offer(frontier.poll())
+                    frontier.offer(currentNodes[it])
                 }
-                frontier = newQueue
             }
         }
 

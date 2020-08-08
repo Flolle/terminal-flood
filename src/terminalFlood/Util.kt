@@ -40,12 +40,12 @@ object Util {
         val t = measureTimeMillis {
             simResult = when (memoryScheme) {
                 MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMoves(gameBoard, strategy)
-                MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
+                MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(gameBoard, strategy)
+                MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
                     gameBoard,
                     strategy,
-                    Int.MAX_VALUE
+                    1_000_000
                 )
-                MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(gameBoard, strategy)
             }
         }
         simResult?.let {
