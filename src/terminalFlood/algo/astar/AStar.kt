@@ -1,18 +1,10 @@
 package terminalFlood.algo.astar
 
+import terminalFlood.algo.Greedy
 import terminalFlood.game.*
 import java.util.*
-import kotlin.Comparator
 
 object AStar {
-    private val CUTOFF_COMPARATOR = Comparator<AStarNodeLessMemory> { o1, o2 ->
-        val comp = o1.compareTo(o2)
-        if (comp == 0)
-            return@Comparator o2.index - o1.index
-
-        comp
-    }
-
     /**
      * Computes a solution for the given [GameBoard] using an A* algorithm with the given strategy. The returned [Game]
      * instance is the game in its computed solved state. For example, use [Game.playedMoves] if you are interested
@@ -167,14 +159,24 @@ object AStar {
                 )
             }
 
-            // If the queue gets too big, discard some of the highest priority nodes (high is worse). This operation can
+            // If the queue gets too big, run a greedy algorithm over all nodes and take the half that seems to have the
+            // highest potential for good solutions. Use the nodes' priority as the tie breaker. This operation can
             // result in worse solutions being found than normally possible with a given heuristic.
             if (frontier.size > queueMaxSizeCutoff) {
-                val currentNodes = frontier.toTypedArray()
+                val nodes = arrayOfNulls<QueueNode>(frontier.size)
+                frontier.forEachIndexed { i, aStarNode ->
+                    var cachedGame = gameStateCache.getGameState(aStarNode.index)?.toMutableGame()
+                    if (cachedGame == null) {
+                        cachedGame = initialGame.toMutableGame()
+                        aStarNode.playedMoves.forEach { cachedGame.makeMove(it) }
+                    }
+                    Greedy.calculateMoves(cachedGame)
+                    nodes[i] = QueueNode(aStarNode, cachedGame.playedMoves.size)
+                }
                 frontier = PriorityQueue(queueMaxSizeCutoff + gameBoard.colorSet.size)
-                currentNodes.sortWith(CUTOFF_COMPARATOR)
-                repeat(queueMaxSizeCutoff - (queueMaxSizeCutoff / 5)) {
-                    frontier.offer(currentNodes[it])
+                nodes.sort()
+                repeat(queueMaxSizeCutoff / 2) {
+                    frontier.offer(nodes[it]!!.node)
                 }
             }
         }
@@ -426,6 +428,19 @@ private class GameStateCache(cacheSize: Int = 10000) {
         ringbus[nextArrayIndex] = gameState
 
         return lastUsedIndex
+    }
+}
+
+private data class QueueNode(
+    val node: AStarNodeLessMemory,
+    val greedyPrediction: Int
+) : Comparable<QueueNode> {
+    override fun compareTo(other: QueueNode): Int {
+        val comp = greedyPrediction - other.greedyPrediction
+        if (comp != 0)
+            return comp
+
+        return node.compareTo(other.node)
     }
 }
 

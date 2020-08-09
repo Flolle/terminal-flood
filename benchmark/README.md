@@ -113,12 +113,11 @@ All benchmarks with this dataset where done using only 1 thread.
 
 I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so and it most likely would have needed more RAM than I have available in my PC.
 
-The closest thing to an optimal solutionset is mixing the best solutions from `astar_a with custom queue cutoff` and `astar_ias` together. It is not guaranteed to be optimal, but it should be relatively close.
+`astar_a (-lessMemoryQueueCutoff)` is the closest thing to an optimal solutionset that I have. It is not guaranteed to be optimal, but it should be relatively close.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| best of queue cutoff and astar_ias | 31807 | none |
-| astar_a with custom queue cutoff | 31849 | none |
+| astar_a (-lessMemoryQueueCutoff, 4 threads) | 31804 | 32974595 (post version 2.4) |
 | astar_ias (-lessMemory) | 31968 | 197695 |
 | astar_ia (-lessMemory) | 32537 | 21806 |
 | astar_iaf | 33178 | 3050 |

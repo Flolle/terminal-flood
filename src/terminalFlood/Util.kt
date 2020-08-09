@@ -44,7 +44,7 @@ object Util {
                 MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
                     gameBoard,
                     strategy,
-                    1_000_000
+                    2_000_000
                 )
             }
         }
