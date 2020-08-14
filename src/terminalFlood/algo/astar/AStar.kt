@@ -22,7 +22,8 @@ object AStar {
             AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy(noMaxStepsGameBoard)
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
-        val movesNeededForBoardState = HashMap<BoardState, Int>(10000)
+        val colorEliminationMoves = ColorSet()
+        val movesNeededForBoardState = HashMap<GameBoardState, Int>(10000)
         val frontier = PriorityQueue<AStarNode>()
         frontier.offer(AStarNode(Game(noMaxStepsGameBoard), false, 0))
 
@@ -36,7 +37,7 @@ object AStar {
             // Pruning technique for inadmissible heuristics: If we can eliminate colors, we only do that. This can
             // sometimes result in slightly worse solutions, but speeds up the algorithm.
             if (strategy != AStarStrategies.ADMISSIBLE) {
-                val colorEliminationMoves = currentGameState.findAllColorEliminationMoves()
+                colorEliminationMoves.setToColorEliminations(currentGameState)
                 colorEliminationMoves.forEachColor {
                     currentGameState = currentGameState.makeMove(it)
                 }
@@ -67,11 +68,11 @@ object AStar {
     private fun addToQueue(
         gameState: Game,
         isIslandEliminationSpecialCase: Boolean,
-        movesNeededForBoardState: MutableMap<BoardState, Int>,
+        movesNeededForBoardState: MutableMap<GameBoardState, Int>,
         heuristicStrategy: Strategy,
         frontier: PriorityQueue<AStarNode>
     ) {
-        val boardState = BoardState(gameState.filled)
+        val boardState = GameBoardState(gameState.filled)
         val currentBestMoveValue = movesNeededForBoardState[boardState] ?: Int.MAX_VALUE
         val isFastestWayToBoardState = gameState.playedMoves.size < currentBestMoveValue
 
@@ -109,7 +110,8 @@ object AStar {
             AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy(noMaxStepsGameBoard)
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
-        val movesNeededForBoardState = HashMap<BoardState, Int>(10000)
+        val colorEliminationMoves = ColorSet()
+        val movesNeededForBoardState = HashMap<GameBoardState, Int>(10000)
         var frontier = PriorityQueue<AStarNodeLessMemory>()
         val gameStateCache = GameStateCache()
         val initialGame = Game(noMaxStepsGameBoard)
@@ -125,7 +127,7 @@ object AStar {
             // Pruning technique for inadmissible heuristics: If we can eliminate colors, we only do that. This can
             // sometimes result in slightly worse solutions, but speeds up the algorithm.
             if (strategy != AStarStrategies.ADMISSIBLE) {
-                val colorEliminationMoves = currentGameState.findAllColorEliminationMoves()
+                colorEliminationMoves.setToColorEliminations(currentGameState)
                 colorEliminationMoves.forEachColor {
                     currentGameState = currentGameState.makeMove(it)
                 }
@@ -206,12 +208,12 @@ object AStar {
     private fun addToQueueLessMemory(
         gameState: Game,
         isIslandEliminationSpecialCase: Boolean,
-        movesNeededForBoardState: MutableMap<BoardState, Int>,
+        movesNeededForBoardState: MutableMap<GameBoardState, Int>,
         heuristicStrategy: Strategy,
         frontier: PriorityQueue<AStarNodeLessMemory>,
         gameStateCache: GameStateCache
     ) {
-        val boardState = BoardState(gameState.filled)
+        val boardState = GameBoardState(gameState.filled)
         val currentBestMoveValue = movesNeededForBoardState[boardState] ?: Int.MAX_VALUE
         val isFastestWayToBoardState = gameState.playedMoves.size < currentBestMoveValue
 
@@ -444,14 +446,14 @@ private data class QueueNode(
     }
 }
 
-private class BoardState(val filled: NodeSet) {
+private class GameBoardState(val filled: NodeSet) {
     private val hash = filled.hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as BoardState
+        other as GameBoardState
 
         return filled == other.filled
     }

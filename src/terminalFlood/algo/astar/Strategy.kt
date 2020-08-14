@@ -32,7 +32,7 @@ interface Strategy {
  * reaches the filled state.
  */
 open class AdmissibleStrategy(gameBoard: GameBoard) : Strategy {
-    protected val currentState = SimplifiedGame(gameBoard)
+    protected val currentState = SimpleBoardState(gameBoard)
 
     protected val notEliminatedColors = ColorSet()
 

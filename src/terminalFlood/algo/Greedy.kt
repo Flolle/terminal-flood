@@ -16,12 +16,13 @@ object Greedy {
     fun calculateMoves(gameState: MutableGame): MutableGame {
         val moveBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
         val newBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
+        val colorEliminationMoves = ColorSet()
 
         while (!gameState.isWon) {
             // If we can eliminate colors, that is always the optimal move.
-            // Note: We can't use makeMultiColorMove because we actually need to log every single move.
             var isColorEliminationFound = false
-            gameState.findAllColorEliminationMoves().forEachColor {
+            colorEliminationMoves.setToColorEliminations(gameState)
+            colorEliminationMoves.forEachColor {
                 isColorEliminationFound = true
                 gameState.makeMove(it)
             }

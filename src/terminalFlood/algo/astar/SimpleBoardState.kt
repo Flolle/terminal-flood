@@ -1,28 +1,28 @@
 package terminalFlood.algo.astar
 
+import terminalFlood.game.BoardState
 import terminalFlood.game.ColorSet
 import terminalFlood.game.GameBoard
-import terminalFlood.game.GameState
 import terminalFlood.game.NodeSet
 
 /**
- * This is a stripped down version of a [GameState] that only contains the bare minimum functionality necessary for
+ * This is a simple implementation of [BoardState] that contains the bare minimum functionality necessary for
  * [AdmissibleStrategy] and [InadmissibleSlowStrategy] to have better performance characteristics.
  *
  * This class shouldn't be used to actually play the game.
  *
  * This class doesn't implement hashCode and equals. This class is not thread safe.
  */
-class SimplifiedGame(
-    val gameBoard: GameBoard,
-    val filled: NodeSet,
-    val neighbors: NodeSet,
-    val notFilledNotNeighbors: NodeSet
-) {
+class SimpleBoardState(
+    override val gameBoard: GameBoard,
+    override val filled: NodeSet,
+    override val neighbors: NodeSet,
+    override val notFilledNotNeighbors: NodeSet
+) : BoardState {
     private val cachedBitset = NodeSet(gameBoard.amountOfNodes)
 
     /**
-     * Creates an empty [SimplifiedGame] instance with the given [GameBoard].
+     * Creates an empty [SimpleBoardState] instance with the given [GameBoard].
      */
     constructor(gameBoard: GameBoard) : this(
         gameBoard,
@@ -35,12 +35,12 @@ class SimplifiedGame(
         get() = neighbors.cardinality == 0
 
     /**
-     * Sets the state of this SimplifiedGame to the state of the given [GameState].
+     * Sets the state of this SimpleBoardState to the state of the given [BoardState].
      *
-     * Please note that this SimplifiedGame and the given [GameState] have to be based on the [GameBoard], otherwise
-     * this method may throw an exception or this SimplifiedGame will end up in an invalid state.
+     * Please note that this SimpleBoardState and the given [BoardState] have to be based on the [GameBoard], otherwise
+     * this method may throw an exception or this SimpleBoardState will end up in an invalid state.
      */
-    fun setToState(gameState: GameState) {
+    fun setToState(gameState: BoardState) {
         filled.setTo(gameState.filled)
         neighbors.setTo(gameState.neighbors)
         notFilledNotNeighbors.setTo(gameState.notFilledNotNeighbors)

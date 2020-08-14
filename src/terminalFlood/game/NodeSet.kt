@@ -91,13 +91,13 @@ class NodeSet private constructor(
     }
 
     /**
-     * Will set this bitset to the intersection of the [GameState.neighbors] bitset and the [GameBoard.boardNodesByColor]
+     * Will set this bitset to the intersection of the [BoardState.neighbors] bitset and the [GameBoard.boardNodesByColor]
      * bitset of the given color.
      */
     // Assumes both NodeSets have the same internal array size.
     @Suppress("NOTHING_TO_INLINE")
-    inline fun setToNeighborsWithColor(gameState: GameState, color: Color) {
-        setToIntersection(gameState.gameBoard.boardNodesByColor[color.value], gameState.neighbors)
+    inline fun setToNeighborsWithColor(boardState: BoardState, color: Color) {
+        setToIntersection(boardState.gameBoard.boardNodesByColor[color.value], boardState.neighbors)
     }
 
     /**
