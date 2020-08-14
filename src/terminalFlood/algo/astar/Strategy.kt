@@ -1,7 +1,9 @@
 package terminalFlood.algo.astar
 
 import terminalFlood.algo.Greedy
+import terminalFlood.game.ColorSet
 import terminalFlood.game.Game
+import terminalFlood.game.GameBoard
 import terminalFlood.game.NodeSet
 
 /**
@@ -29,14 +31,20 @@ interface Strategy {
  * move as it combines the effects of all possible moves. This procedure will reduce the given state until it
  * reaches the filled state.
  */
-object AdmissibleStrategy : Strategy {
+open class AdmissibleStrategy(gameBoard: GameBoard) : Strategy {
+    protected val currentState = SimplifiedGame(gameBoard)
+
+    protected val notEliminatedColors = ColorSet()
+
+    protected val colorEliminationMoves = ColorSet()
+
     override fun heuristic(gameState: Game): Int {
         var minimumMovesLeft = 0
-        val currentState = SimplifiedGame(gameState)
-        val notEliminatedColors = SimplifiedGame.createNotEliminatedColorsSet(gameState)
+        currentState.setToState(gameState)
+        notEliminatedColors.setToNotEliminatedColors(gameState)
 
         while (!currentState.isWon) {
-            val colorEliminationMoves = SimplifiedGame.findColorEliminations(currentState, notEliminatedColors)
+            colorEliminationMoves.setToColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
                 // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
@@ -70,29 +78,37 @@ object AdmissibleStrategy : Strategy {
  * For the pc19 dataset see
  * [https://web.archive.org/web/20150909200653/http://cplus.about.com/od/programmingchallenges/a/challenge19.htm]
  */
-object InadmissibleSlowStrategy : Strategy {
+open class InadmissibleSlowStrategy(gameBoard: GameBoard) : AdmissibleStrategy(gameBoard) {
+    private val newBorderNodes = NodeSet(gameBoard.amountOfNodes)
+
+    private var neighborNodes = NodeSet(gameBoard.amountOfNodes)
+
+    private var bestColorNodes = NodeSet(gameBoard.amountOfNodes)
+
+    private var secondBestColorNodes = NodeSet(gameBoard.amountOfNodes)
+
     override fun heuristic(gameState: Game): Int {
         if (gameState.amountOfTakenFields > gameState.gameBoard.amountOfFields / 2)
-            return AdmissibleStrategy.heuristic(gameState)
+            return super.heuristic(gameState)
 
         var minimumMovesLeft = 0
-        val newBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
-        var neighborNodes = NodeSet(gameState.gameBoard.amountOfNodes)
-        var bestColorNodes = NodeSet(gameState.gameBoard.amountOfNodes)
-        var secondBestColorNodes = NodeSet(gameState.gameBoard.amountOfNodes)
-        val currentState = SimplifiedGame(gameState)
-        val notEliminatedColors = SimplifiedGame.createNotEliminatedColorsSet(gameState)
+        currentState.setToState(gameState)
+        notEliminatedColors.setToNotEliminatedColors(gameState)
+        // Clearing bestColorNodes to make sure leftover state from previous heuristic() calls doesn't interfere with
+        // the algorithm. bestColorNodes is the only bitset that needs to be cleared manually since the other bitsets
+        // will be guaranteed to be set to specific states while running the algorithm.
+        bestColorNodes.clear()
 
         while (!currentState.isWon) {
-            val colorEliminationMoves = SimplifiedGame.findColorEliminations(currentState, notEliminatedColors)
+            colorEliminationMoves.setToColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
                 // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
                 notEliminatedColors.andNot(colorEliminationMoves)
                 minimumMovesLeft += colorEliminationMoves.size
             } else {
-                // If we didn't eliminate colors, take at most two of the adjacent colors. If there are more than two colors
-                // present, choose the two colors that give access to the most new border fields.
+                // If we didn't eliminate colors, take at most two of the adjacent colors. If there are more than two
+                // colors present, choose the two colors that give access to the most new border fields.
                 var amountBestColor = Int.MIN_VALUE
                 var amountSecondBestColor = Int.MIN_VALUE
                 notEliminatedColors.forEachSetBit { colorValue ->
@@ -147,9 +163,9 @@ object InadmissibleSlowStrategy : Strategy {
  * a 13th (rounded down) to the cost to prune a bunch of paths in A* and thus make the algorithm finish faster while
  * giving slightly less optimal results.
  */
-object InadmissibleStrategy : Strategy {
+class InadmissibleStrategy(gameBoard: GameBoard) : InadmissibleSlowStrategy(gameBoard) {
     override fun heuristic(gameState: Game): Int {
-        val estimatedCost = InadmissibleSlowStrategy.heuristic(gameState)
+        val estimatedCost = super.heuristic(gameState)
         return estimatedCost + estimatedCost / 13
     }
 }
@@ -158,9 +174,9 @@ object InadmissibleStrategy : Strategy {
  * An inadmissible heuristic for Flood-It. This uses the average (rounded down) of the cost between [AdmissibleStrategy]
  * and [InadmissibleFastestStrategy] with the latter having double the weight.
  */
-object InadmissibleFastStrategy : Strategy {
+class InadmissibleFastStrategy(gameBoard: GameBoard) : AdmissibleStrategy(gameBoard) {
     override fun heuristic(gameState: Game): Int {
-        val cost = AdmissibleStrategy.heuristic(gameState) + InadmissibleFastestStrategy.heuristic(gameState) * 2
+        val cost = super.heuristic(gameState) + InadmissibleFastestStrategy.heuristic(gameState) * 2
 
         return cost / 3
     }

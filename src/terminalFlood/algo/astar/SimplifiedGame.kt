@@ -1,6 +1,9 @@
 package terminalFlood.algo.astar
 
-import terminalFlood.game.*
+import terminalFlood.game.ColorSet
+import terminalFlood.game.GameBoard
+import terminalFlood.game.GameState
+import terminalFlood.game.NodeSet
 
 /**
  * This is a stripped down version of a [GameState] that only contains the bare minimum functionality necessary for
@@ -19,18 +22,29 @@ class SimplifiedGame(
     private val cachedBitset = NodeSet(gameBoard.amountOfNodes)
 
     /**
-     * Creates a [SimplifiedGame] instance from the given [GameState]. It does so safely by creating deep copies of
-     * the necessary state.
+     * Creates an empty [SimplifiedGame] instance with the given [GameBoard].
      */
-    constructor(gameState: GameState) : this(
-        gameState.gameBoard,
-        gameState.filled.copy(),
-        gameState.neighbors.copy(),
-        gameState.notFilledNotNeighbors.copy()
+    constructor(gameBoard: GameBoard) : this(
+        gameBoard,
+        NodeSet(gameBoard.amountOfNodes),
+        NodeSet(gameBoard.amountOfNodes),
+        NodeSet(gameBoard.amountOfNodes)
     )
 
     val isWon: Boolean
         get() = neighbors.cardinality == 0
+
+    /**
+     * Sets the state of this SimplifiedGame to the state of the given [GameState].
+     *
+     * Please note that this SimplifiedGame and the given [GameState] have to be based on the [GameBoard], otherwise
+     * this method may throw an exception or this SimplifiedGame will end up in an invalid state.
+     */
+    fun setToState(gameState: GameState) {
+        filled.setTo(gameState.filled)
+        neighbors.setTo(gameState.neighbors)
+        notFilledNotNeighbors.setTo(gameState.notFilledNotNeighbors)
+    }
 
     /**
      * Makes a move that takes all neighboring nodes of the given colors.
@@ -72,30 +86,6 @@ class SimplifiedGame(
         } else {
             neighbors.clear()
             notFilledNotNeighbors.clear()
-        }
-    }
-
-    companion object {
-        fun createNotEliminatedColorsSet(gameState: Game): ColorSet {
-            val notEliminatedColors = gameState.sensibleMoves.copy()
-
-            gameState.gameBoard.colorSet.forEachSetBit { colorValue ->
-                if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
-                    notEliminatedColors.set(colorValue)
-            }
-
-            return notEliminatedColors
-        }
-
-        fun findColorEliminations(gameState: SimplifiedGame, containedColors: ColorSet): ColorSet {
-            val colorEliminations = containedColors.copy()
-
-            containedColors.forEachSetBit { colorValue ->
-                if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
-                    colorEliminations.clear(colorValue)
-            }
-
-            return colorEliminations
         }
     }
 }

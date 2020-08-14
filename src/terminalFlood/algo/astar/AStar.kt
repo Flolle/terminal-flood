@@ -14,16 +14,16 @@ object AStar {
         gameBoard: GameBoard,
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST
     ): Game {
+        val noMaxStepsGameBoard = gameBoard.noMaximumStepsLimitCopy()
         val heuristicStrategy = when (strategy) {
-            AStarStrategies.ADMISSIBLE           -> AdmissibleStrategy
-            AStarStrategies.INADMISSIBLE_SLOW    -> InadmissibleSlowStrategy
-            AStarStrategies.INADMISSIBLE         -> InadmissibleStrategy
-            AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy
+            AStarStrategies.ADMISSIBLE           -> AdmissibleStrategy(noMaxStepsGameBoard)
+            AStarStrategies.INADMISSIBLE_SLOW    -> InadmissibleSlowStrategy(noMaxStepsGameBoard)
+            AStarStrategies.INADMISSIBLE         -> InadmissibleStrategy(noMaxStepsGameBoard)
+            AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy(noMaxStepsGameBoard)
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
         val movesNeededForBoardState = HashMap<BoardState, Int>(10000)
         val frontier = PriorityQueue<AStarNode>()
-        val noMaxStepsGameBoard = gameBoard.noMaximumStepsLimitCopy()
         frontier.offer(AStarNode(Game(noMaxStepsGameBoard), false, 0))
 
         while (frontier.isNotEmpty()) {
@@ -101,16 +101,16 @@ object AStar {
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST,
         queueMaxSizeCutoff: Int = Int.MAX_VALUE
     ): Game {
+        val noMaxStepsGameBoard = gameBoard.noMaximumStepsLimitCopy()
         val heuristicStrategy = when (strategy) {
-            AStarStrategies.ADMISSIBLE           -> AdmissibleStrategy
-            AStarStrategies.INADMISSIBLE_SLOW    -> InadmissibleSlowStrategy
-            AStarStrategies.INADMISSIBLE         -> InadmissibleStrategy
-            AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy
+            AStarStrategies.ADMISSIBLE           -> AdmissibleStrategy(noMaxStepsGameBoard)
+            AStarStrategies.INADMISSIBLE_SLOW    -> InadmissibleSlowStrategy(noMaxStepsGameBoard)
+            AStarStrategies.INADMISSIBLE         -> InadmissibleStrategy(noMaxStepsGameBoard)
+            AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy(noMaxStepsGameBoard)
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
         val movesNeededForBoardState = HashMap<BoardState, Int>(10000)
         var frontier = PriorityQueue<AStarNodeLessMemory>()
-        val noMaxStepsGameBoard = gameBoard.noMaximumStepsLimitCopy()
         val gameStateCache = GameStateCache()
         val initialGame = Game(noMaxStepsGameBoard)
         frontier.offer(AStarNodeLessMemory(gameStateCache.addGameState(initialGame), initialGame.playedMoves, false, 0))

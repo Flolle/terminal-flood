@@ -1,5 +1,7 @@
 package terminalFlood.game
 
+import terminalFlood.algo.astar.SimplifiedGame
+
 /**
  * This is a bitmap implementation specific to [Color]s.
  *
@@ -80,6 +82,24 @@ class ColorSet private constructor(
         while (i >= 0) {
             action(Color.colorCache[i])
             i = nextSetBit(i + 1)
+        }
+    }
+
+    fun setToNotEliminatedColors(gameState: GameState) {
+        bits = gameState.sensibleMoves.bits
+
+        gameState.gameBoard.colorSet.forEachSetBit { colorValue ->
+            if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
+                set(colorValue)
+        }
+    }
+
+    fun setToColorEliminations(gameState: SimplifiedGame, containedColors: ColorSet) {
+        bits = containedColors.bits
+
+        containedColors.forEachSetBit { colorValue ->
+            if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
+                clear(colorValue)
         }
     }
 
