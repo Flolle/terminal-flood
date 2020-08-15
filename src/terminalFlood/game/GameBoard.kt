@@ -303,10 +303,8 @@ class GameBoard(
 /**
  * We only need a private implementation of the [BoardNode] interface because board nodes are only created once when
  * a [GameBoard] gets created and are *not* to be modified again afterwards.
- *
- * This class doesn't implement hashCode and equals.
  */
-private class BoardNodeImpl(
+private data class BoardNodeImpl(
     val colorValue: Byte,
     override val occupiedFields: List<Point>
 ) : BoardNode {
