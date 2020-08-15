@@ -9,13 +9,19 @@ package terminalFlood.game
  */
 sealed class MoveList {
     abstract val size: Int
-    abstract val lastMove: Color
+
+    // Uses a Byte to store the color to save space. This is OK since only 36 colors are supported.
+    protected abstract val lastMoveColorValue: Byte
+
     abstract val previousMoves: MoveList
+
+    val lastMove: Color
+        get() = Color.colorCache[lastMoveColorValue.toInt()]
 
     val isEmpty: Boolean
         get() = size == 0
 
-    operator fun plus(move: Color): MoveList = MoveListImpl(size + 1, move, this)
+    operator fun plus(move: Color): MoveList = MoveListImpl(size + 1, move.value.toByte(), this)
 
     /**
      * Returns an array representation of this MoveList with its elements in the order they were added to this MoveList.
@@ -66,7 +72,7 @@ sealed class MoveList {
 private object EmptyMoveList : MoveList() {
     override val size: Int = 0
 
-    override val lastMove: Nothing
+    override val lastMoveColorValue: Nothing
         get() = throw NoSuchElementException("The move list is empty!")
 
     override val previousMoves: Nothing
@@ -75,7 +81,7 @@ private object EmptyMoveList : MoveList() {
 
 private class MoveListImpl(
     override val size: Int,
-    override val lastMove: Color,
+    override val lastMoveColorValue: Byte,
     override val previousMoves: MoveList
 ) : MoveList() {
     override fun equals(other: Any?): Boolean {
@@ -85,7 +91,7 @@ private class MoveListImpl(
         other as MoveListImpl
 
         if (size != other.size) return false
-        if (lastMove != other.lastMove) return false
+        if (lastMoveColorValue != other.lastMoveColorValue) return false
         if (previousMoves != other.previousMoves) return false
 
         return true
@@ -93,7 +99,7 @@ private class MoveListImpl(
 
     override fun hashCode(): Int {
         var result = size
-        result = 31 * result + lastMove.hashCode()
+        result = 31 * result + lastMoveColorValue
         result = 31 * result + previousMoves.hashCode()
         return result
     }
