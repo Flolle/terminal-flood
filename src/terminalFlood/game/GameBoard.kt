@@ -210,7 +210,7 @@ class GameBoard(
                         exploreColorNode(nodeFields, colorBoard, checkedFields, colorValue, x, y)
 
                         colors.set(colorValue)
-                        boardNodes.add(BoardNodeImpl(Color.colorCache[colorValue], nodeFields))
+                        boardNodes.add(BoardNodeImpl(colorValue.toByte(), nodeFields))
                     }
                 }
             }
@@ -305,10 +305,13 @@ class GameBoard(
  * a [GameBoard] gets created and are *not* to be modified again afterwards.
  */
 private class BoardNodeImpl(
-    override val color: Color,
+    val colorValue: Byte,
     override val occupiedFields: List<Point>
 ) : BoardNode {
     override lateinit var borderingNodes: NodeSet
+
+    override val color: Color
+        get() = Color.colorCache[colorValue.toInt()]
 
     override var id: Int = -1
 
@@ -318,7 +321,7 @@ private class BoardNodeImpl(
     private val hash: Int
 
     init {
-        var result = color.hashCode()
+        var result = colorValue.toInt()
         result = 31 * result + occupiedFields.hashCode()
         hash = result
     }
