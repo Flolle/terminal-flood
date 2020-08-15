@@ -303,6 +303,8 @@ class GameBoard(
 /**
  * We only need a private implementation of the [BoardNode] interface because board nodes are only created once when
  * a [GameBoard] gets created and are *not* to be modified again afterwards.
+ *
+ * This class doesn't implement hashCode and equals.
  */
 private class BoardNodeImpl(
     val colorValue: Byte,
@@ -314,25 +316,6 @@ private class BoardNodeImpl(
         get() = Color.colorCache[colorValue.toInt()]
 
     override var id: Int = -1
-
-    /**
-     * Caching the hashCode because the fields that are used for the computation are set in stone at instance creation.
-     */
-    private val hash: Int
-
-    init {
-        var result = colorValue.toInt()
-        result = 31 * result + occupiedFields.hashCode()
-        hash = result
-    }
-
-    /**
-     * Only checks reference equality because we only create the nodes once at board creation and then operate on the
-     * same nodes without changing them.
-     */
-    override fun equals(other: Any?): Boolean = this === other
-
-    override fun hashCode(): Int = hash
 
     override fun toString(): String = "BoardNode(color=$color,occupiedFields=$occupiedFields)"
 }
