@@ -18,7 +18,7 @@ interface BoardNode : Comparable<BoardNode> {
      * All [BoardNode]s of a [GameBoard] should have a continuously increasing id value starting from 0 up until
      * the amount of [BoardNode]s minus 1 with no [BoardNode] having the same id.
      *
-     * The id is for example used by [GameState]s to have easy reference links between array indexes and [BoardNode]s.
+     * The id is for example used by [Game]s to have easy reference links between array indexes and [BoardNode]s.
      */
     val id: Int
 

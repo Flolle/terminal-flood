@@ -3,7 +3,6 @@ package terminalFlood
 import terminalFlood.game.Color
 import terminalFlood.game.Game
 import terminalFlood.game.GameBoard
-import terminalFlood.game.GameState
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -78,7 +77,7 @@ object PlayGame {
             println("\nYou've lost! Better luck next time.")
     }
 
-    private fun printCurrentState(gameState: GameState) {
+    private fun printCurrentState(gameState: Game) {
         println("Game board:\n")
         for (y in 0 until gameState.gameBoard.boardSize) {
             for (x in 0 until gameState.gameBoard.boardSize) {

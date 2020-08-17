@@ -1,10 +1,7 @@
 package terminalFlood.algo.astar
 
 import terminalFlood.algo.Greedy
-import terminalFlood.game.ColorSet
-import terminalFlood.game.Game
-import terminalFlood.game.GameBoard
-import terminalFlood.game.NodeSet
+import terminalFlood.game.*
 
 /**
  * The heuristic used by the A* algorithm.

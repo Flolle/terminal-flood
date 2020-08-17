@@ -1,10 +1,8 @@
-package terminalFlood.algo.astar
-
-import terminalFlood.game.*
+package terminalFlood.game
 
 /**
- * This is a simple implementation of [BoardState] that contains the bare minimum functionality necessary for
- * [AdmissibleStrategy] and [InadmissibleSlowStrategy] to have better performance characteristics.
+ * This is a simple implementation of [BoardState] that contains the bare minimum functionality necessary to have better
+ * performance characteristics.
  *
  * This class shouldn't be used to actually play the game.
  *

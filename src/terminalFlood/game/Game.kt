@@ -1,33 +1,45 @@
 package terminalFlood.game
 
-import terminalFlood.algo.astar.SimpleBoardState
-
 /**
  * This class represents any given Flood-It game state.
  *
  * No methods or accessors of this class modify its internal state and making moves will create new [Game] objects.
- * As a result, instances can be freely shared. If you do not need to share or remember previous game states, you can
- * use [MutableGame] instead to take advantage of its better performance characteristics. Use [toMutableGame] to
- * create [MutableGame] instances from [Game] objects.
+ * As a result, instances can be freely shared. If you do not need to share or remember previous board states, you can
+ * use [SimpleBoardState] instead to take advantage of its better performance characteristics. Use [toSimpleBoardState]
+ * to create [SimpleBoardState] instances from [Game] objects.
  *
  * Warning:
  * Do not modify the exposed [NodeSet]s, since doing so will invalidate the game state. If you want to do modifying
  * operations on those collections, you must create copies of them.
  *
  * This class is thread safe.
+ *
+ * @param playedMoves The moves played so far.
+ * @param sensibleMoves All the moves that would make sense to play in this game state. In effect this bitset contains
+ * all the distinct colors of the nodes in [neighbors].
  */
 class Game(
     override val gameBoard: GameBoard,
-    override val playedMoves: MoveList,
+    val playedMoves: MoveList,
     override val filled: NodeSet,
     override val neighbors: NodeSet,
     override val notFilledNotNeighbors: NodeSet,
-    override val sensibleMoves: ColorSet
-) : GameState {
+    val sensibleMoves: ColorSet
+) : BoardState {
+    override val isWon: Boolean
+        get() = sensibleMoves.isEmpty
+
     /**
-     * @see [GameState.makeMove]
+     * Returns true if the game is finished. Games are considered finished if they are won or if the move limit
+     * is reached.
      */
-    override fun makeMove(move: Color): Game {
+    val isFinished: Boolean
+        get() = playedMoves.size == gameBoard.maximumSteps || isWon
+
+    /**
+     * Makes a move that takes all [neighbors] of the given color and returns the new state.
+     */
+    fun makeMove(move: Color): Game {
         val newNodes = gameBoard.boardNodesByColor[move.value].copy()
         newNodes.and(neighbors)
         val newFilled = filled.copy()
@@ -66,19 +78,6 @@ class Game(
             filled.copy(),
             neighbors.copy(),
             notFilledNotNeighbors.copy()
-        )
-
-    /**
-     * Returns a mutable version of this game state.
-     */
-    fun toMutableGame(): MutableGame =
-        MutableGame(
-            gameBoard,
-            playedMoves,
-            filled.copy(),
-            neighbors.copy(),
-            notFilledNotNeighbors.copy(),
-            sensibleMoves.copy()
         )
 
     override fun equals(other: Any?): Boolean {
