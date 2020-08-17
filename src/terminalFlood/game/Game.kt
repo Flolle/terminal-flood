@@ -1,5 +1,7 @@
 package terminalFlood.game
 
+import terminalFlood.algo.astar.SimpleBoardState
+
 /**
  * This class represents any given Flood-It game state.
  *
@@ -56,6 +58,17 @@ class Game(
     }
 
     /**
+     * Returns a [SimpleBoardState] version of this game state.
+     */
+    fun toSimpleBoardState(): SimpleBoardState =
+        SimpleBoardState(
+            gameBoard,
+            filled.copy(),
+            neighbors.copy(),
+            notFilledNotNeighbors.copy()
+        )
+
+    /**
      * Returns a mutable version of this game state.
      */
     fun toMutableGame(): MutableGame =
@@ -100,6 +113,18 @@ class Game(
             val notFilledNotNeighbors = filled.copy()
             notFilledNotNeighbors.or(neighbors)
             notFilledNotNeighbors.flipAll()
+
+            return Game(
+                gameBoard,
+                MoveList.emptyMoveList(),
+                filled,
+                neighbors,
+                notFilledNotNeighbors,
+                createSensibleMoveSet(gameBoard, neighbors)
+            )
+        }
+
+        fun createSensibleMoveSet(gameBoard: GameBoard, neighbors: NodeSet): ColorSet {
             val sensibleMoves = ColorSet()
             if (neighbors.cardinality < gameBoard.colorSet.size) {
                 neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
@@ -110,14 +135,7 @@ class Game(
                 }
             }
 
-            return Game(
-                gameBoard,
-                MoveList.emptyMoveList(),
-                filled,
-                neighbors,
-                notFilledNotNeighbors,
-                sensibleMoves
-            )
+            return sensibleMoves
         }
     }
 }

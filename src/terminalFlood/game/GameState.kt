@@ -35,6 +35,12 @@ interface BoardState {
     val notFilledNotNeighbors: NodeSet
 
     /**
+     * Returns true if the board is in a won state. Boards are considered won if there are no more bordering nodes.
+     */
+    val isWon: Boolean
+        get() = neighbors.isEmpty
+
+    /**
      * The amount of fields already filled.
      *
      * Please note that this property is computed on every call and has O(n) runtime, where n is the amount of nodes in
@@ -68,10 +74,7 @@ interface GameState : BoardState {
      */
     val sensibleMoves: ColorSet
 
-    /**
-     * Returns true if the game is won. Games are considered won if there are no more bordering nodes.
-     */
-    val isWon: Boolean
+    override val isWon: Boolean
         get() = sensibleMoves.isEmpty
 
     /**

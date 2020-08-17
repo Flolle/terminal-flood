@@ -167,13 +167,8 @@ object AStar {
             if (frontier.size > queueMaxSizeCutoff) {
                 val nodes = arrayOfNulls<QueueNode>(frontier.size)
                 frontier.forEachIndexed { i, aStarNode ->
-                    var cachedGame = gameStateCache.getGameState(aStarNode.index)?.toMutableGame()
-                    if (cachedGame == null) {
-                        cachedGame = initialGame.toMutableGame()
-                        aStarNode.playedMoves.forEach { cachedGame.makeMove(it) }
-                    }
-                    Greedy.calculateMoves(cachedGame)
-                    nodes[i] = QueueNode(aStarNode, cachedGame.playedMoves.size)
+                    val game = getGameFromCacheOrRecompute(aStarNode, gameStateCache, initialGame)
+                    nodes[i] = QueueNode(aStarNode, Greedy.calculateAmountOfMovesNeeded(game))
                 }
                 frontier = PriorityQueue(queueMaxSizeCutoff + gameBoard.colorSet.size)
                 nodes.sort()
@@ -195,10 +190,17 @@ object AStar {
         if (cachedGame != null)
             return cachedGame
 
-        val recomputedGame = initialGame.toMutableGame()
-        node.playedMoves.forEach { recomputedGame.makeMove(it) }
+        val recomputedState = initialGame.toSimpleBoardState()
+        node.playedMoves.forEach { recomputedState.makeMove(it) }
 
-        return recomputedGame.toUnmodifiableView()
+        return Game(
+            recomputedState.gameBoard,
+            node.playedMoves,
+            recomputedState.filled,
+            recomputedState.neighbors,
+            recomputedState.notFilledNotNeighbors,
+            Game.createSensibleMoveSet(recomputedState.gameBoard, recomputedState.neighbors)
+        )
     }
 
     /**

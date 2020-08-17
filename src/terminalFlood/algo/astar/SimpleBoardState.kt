@@ -1,9 +1,6 @@
 package terminalFlood.algo.astar
 
-import terminalFlood.game.BoardState
-import terminalFlood.game.ColorSet
-import terminalFlood.game.GameBoard
-import terminalFlood.game.NodeSet
+import terminalFlood.game.*
 
 /**
  * This is a simple implementation of [BoardState] that contains the bare minimum functionality necessary for
@@ -31,9 +28,6 @@ class SimpleBoardState(
         NodeSet(gameBoard.amountOfNodes)
     )
 
-    val isWon: Boolean
-        get() = neighbors.cardinality == 0
-
     /**
      * Sets the state of this SimpleBoardState to the state of the given [BoardState].
      *
@@ -44,6 +38,14 @@ class SimpleBoardState(
         filled.setTo(gameState.filled)
         neighbors.setTo(gameState.neighbors)
         notFilledNotNeighbors.setTo(gameState.notFilledNotNeighbors)
+    }
+
+    /**
+     * Makes a move that takes all neighboring nodes of the given color.
+     */
+    fun makeMove(color: Color) {
+        cachedBitset.setToNeighborsWithColor(this, color)
+        computeMove(cachedBitset)
     }
 
     /**

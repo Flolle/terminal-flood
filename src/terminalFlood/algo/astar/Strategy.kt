@@ -194,7 +194,7 @@ object InadmissibleFastestStrategy : Strategy {
         if (gameState.isWon)
             return 0
 
-        return Greedy.calculateMoves(gameState).playedMoves.size - gameState.playedMoves.size
+        return Greedy.calculateAmountOfMovesNeeded(gameState) - gameState.playedMoves.size
     }
 }
 

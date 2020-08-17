@@ -1,6 +1,8 @@
 package terminalFlood.algo
 
-import terminalFlood.game.*
+import terminalFlood.game.ColorSet
+import terminalFlood.game.Game
+import terminalFlood.game.NodeSet
 
 /**
  * A simple greedy algorithm to find solutions for Flood-It boards.
@@ -9,53 +11,61 @@ import terminalFlood.game.*
  * border fields as its next move.
  */
 object Greedy {
-    fun calculateMoves(gameBoard: GameBoard): GameState = calculateMoves(Game(gameBoard))
 
-    fun calculateMoves(startingState: Game): GameState = calculateMoves(startingState.toMutableGame())
-
-    fun calculateMoves(gameState: MutableGame): MutableGame {
-        val moveBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
-        val newBorderNodes = NodeSet(gameState.gameBoard.amountOfNodes)
+    /**
+     * Returns the total amount of moves needed to reach a winning state. This includes both the amount of moves already
+     * played and the additional amount of moves this algorithm computes.
+     */
+    fun calculateAmountOfMovesNeeded(gameState: Game): Int {
+        val currentState = gameState.toSimpleBoardState()
+        var neighborNodes = NodeSet(currentState.gameBoard.amountOfNodes)
+        var bestColorNodes = NodeSet(currentState.gameBoard.amountOfNodes)
+        val newBorderNodes = NodeSet(currentState.gameBoard.amountOfNodes)
+        val notEliminatedColors = ColorSet()
+        notEliminatedColors.setToNotEliminatedColors(gameState)
         val colorEliminationMoves = ColorSet()
+        var amountOfMoves = gameState.playedMoves.size
 
-        while (!gameState.isWon) {
+        while (!currentState.isWon) {
             // If we can eliminate colors, that is always the optimal move.
-            var isColorEliminationFound = false
-            colorEliminationMoves.setToColorEliminations(gameState)
-            colorEliminationMoves.forEachColor {
-                isColorEliminationFound = true
-                gameState.makeMove(it)
-            }
-
             // If we eliminated colors, start the loop over.
-            if (isColorEliminationFound)
+            colorEliminationMoves.setToColorEliminations(currentState, notEliminatedColors)
+            if (!colorEliminationMoves.isEmpty) {
+                currentState.makeMultiColorMove(colorEliminationMoves)
+                notEliminatedColors.andNot(colorEliminationMoves)
+                amountOfMoves += colorEliminationMoves.size
                 continue
+            }
 
             // If we couldn't eliminate colors, find the move that results in the most amount of new border fields.
-            var bestColor = Color.DUMMY
             var amountBestColor = Int.MIN_VALUE
-            gameState.sensibleMoves.forEachColor { move ->
-                moveBorderNodes.setToNeighborsWithColor(gameState, move)
-                newBorderNodes.clear()
-                moveBorderNodes.forEachNode(gameState.gameBoard) { node ->
-                    newBorderNodes.or(node.borderingNodes)
-                }
-                newBorderNodes.and(gameState.notFilledNotNeighbors)
+            notEliminatedColors.forEachColor { move ->
+                neighborNodes.setToNeighborsWithColor(currentState, move)
+                if (!neighborNodes.isEmpty) {
+                    newBorderNodes.clear()
+                    neighborNodes.forEachNode(currentState.gameBoard) { node ->
+                        newBorderNodes.or(node.borderingNodes)
+                    }
+                    newBorderNodes.and(currentState.notFilledNotNeighbors)
 
-                var amountOfNewFields = 0
-                newBorderNodes.forEachNode(gameState.gameBoard) { node ->
-                    amountOfNewFields += node.amountOfFields
-                }
+                    var amountOfNewFields = 0
+                    newBorderNodes.forEachNode(currentState.gameBoard) { node ->
+                        amountOfNewFields += node.amountOfFields
+                    }
 
-                if (amountOfNewFields > amountBestColor) {
-                    bestColor = move
-                    amountBestColor = amountOfNewFields
+                    if (amountOfNewFields > amountBestColor) {
+                        amountBestColor = amountOfNewFields
+                        val t = bestColorNodes
+                        bestColorNodes = neighborNodes
+                        neighborNodes = t
+                    }
                 }
             }
 
-            gameState.makeMove(bestColor)
+            currentState.takeGivenNodes(bestColorNodes)
+            amountOfMoves++
         }
 
-        return gameState
+        return amountOfMoves
     }
 }
