@@ -26,10 +26,10 @@ class ColorSet private constructor(
         get() = bits == 0L
 
     val size: Int
-        get() = java.lang.Long.bitCount(bits)
+        get() = bits.countOneBits()
 
     val maximumColorValue: Int
-        get() = 63 - java.lang.Long.numberOfLeadingZeros(bits)
+        get() = 63 - bits.countLeadingZeroBits()
 
     operator fun get(bitIndex: Int): Boolean = (bits and (1L shl bitIndex)) != 0L
 
@@ -62,7 +62,7 @@ class ColorSet private constructor(
             return -1
 
         val bitsWithZerosBelowIndex = bits and (ALL_ONES_MASK shl fromIndex)
-        val nextSetBitIndex = java.lang.Long.numberOfTrailingZeros(bitsWithZerosBelowIndex)
+        val nextSetBitIndex = bitsWithZerosBelowIndex.countTrailingZeroBits()
 
         return if (nextSetBitIndex < 64) nextSetBitIndex else -1
     }

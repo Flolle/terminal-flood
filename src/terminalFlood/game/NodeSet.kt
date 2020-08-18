@@ -43,7 +43,7 @@ class NodeSet private constructor(
         get() {
             var result = 0
             for (word in words)
-                result += java.lang.Long.bitCount(word)
+                result += word.countOneBits()
 
             return result
         }
@@ -184,12 +184,12 @@ class NodeSet private constructor(
         var word = words[i] shr index // skip all the bits to the right of index
 
         if (word != 0L)
-            return index + java.lang.Long.numberOfTrailingZeros(word)
+            return index + word.countTrailingZeroBits()
 
         while (++i < amountOfWords) {
             word = words[i]
             if (word != 0L)
-                return (i shl 6) + java.lang.Long.numberOfTrailingZeros(word)
+                return (i shl 6) + word.countTrailingZeroBits()
         }
 
         return -1
