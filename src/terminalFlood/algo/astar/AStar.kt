@@ -448,8 +448,10 @@ private data class QueueNode(
     }
 }
 
-private class GameBoardState(val filled: NodeSet) {
-    private val hash = filled.hashCode()
+private class GameBoardState(nodes: NodeSet) {
+    private val state: LongArray = nodes.words
+
+    private val hash = nodes.hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -457,7 +459,7 @@ private class GameBoardState(val filled: NodeSet) {
 
         other as GameBoardState
 
-        return filled == other.filled
+        return state.contentEquals(other.state)
     }
 
     override fun hashCode(): Int = hash

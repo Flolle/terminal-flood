@@ -13,7 +13,7 @@ package terminalFlood.game
  * @see BoardNode
  */
 class NodeSet private constructor(
-    private val words: LongArray,
+    val words: LongArray,
     private val amountOfBits: Int
 ) {
     companion object {
