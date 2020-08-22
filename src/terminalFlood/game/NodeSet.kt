@@ -18,6 +18,20 @@ class NodeSet private constructor(
 ) {
     companion object {
         private fun bitsToWords(amountOfBits: Int): Int = ((amountOfBits - 1) shr 6) + 1
+
+        /**
+         * Generates a hash value from the given long values.
+         *
+         * The range used is startIndex (inclusive) to endIndex (exclusive).
+         */
+        fun wordsToHash(words: LongArray, startIndex: Int, endIndex: Int): Long {
+            var h = 0L
+            var i = endIndex
+            while (--i >= startIndex)
+                h = java.lang.Long.rotateLeft(h xor words[i], 1)
+
+            return h
+        }
     }
 
     constructor(amountOfBits: Int) : this(LongArray(bitsToWords(amountOfBits)), amountOfBits)
@@ -233,12 +247,7 @@ class NodeSet private constructor(
     }
 
     override fun hashCode(): Int {
-        var h = 0L
-        var i = amountOfWords
-        while (--i >= 0) {
-            h = h xor words[i]
-            h = h shl 1 or (h ushr 63) // rotate left
-        }
+        val h = wordsToHash(words, 0, amountOfWords)
         // fold leftmost bits into right and add a constant to prevent
         // empty sets from returning 0, which is too common.
         return (h shr 32 xor h).toInt() + -0x6789edcc

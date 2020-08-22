@@ -23,7 +23,7 @@ object AStar {
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
         val colorEliminationMoves = ColorSet()
-        val movesNeededForBoardState = HashMap<GameBoardState, Int>(10000)
+        val movesNeededForBoardState = BoardStateHashMap(noMaxStepsGameBoard)
         val frontier = PriorityQueue<AStarNode>()
         frontier.offer(AStarNode(Game(noMaxStepsGameBoard), false, 0))
 
@@ -68,16 +68,13 @@ object AStar {
     private fun addToQueue(
         gameState: Game,
         isIslandEliminationSpecialCase: Boolean,
-        movesNeededForBoardState: MutableMap<GameBoardState, Int>,
+        movesNeededForBoardState: BoardStateHashMap,
         heuristicStrategy: Strategy,
         frontier: PriorityQueue<AStarNode>
     ) {
-        val boardState = GameBoardState(gameState.filled)
-        val currentBestMoveValue = movesNeededForBoardState[boardState] ?: Int.MAX_VALUE
-        val isFastestWayToBoardState = gameState.playedMoves.size < currentBestMoveValue
+        val isFastestWayToBoardState = movesNeededForBoardState.putIfLess(gameState.filled, gameState.playedMoves.size)
 
         if (isFastestWayToBoardState) {
-            movesNeededForBoardState[boardState] = gameState.playedMoves.size
             val priority = gameState.playedMoves.size + heuristicStrategy.heuristic(gameState)
             frontier.offer(AStarNode(gameState, isIslandEliminationSpecialCase, priority))
         }
@@ -111,7 +108,7 @@ object AStar {
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
         val colorEliminationMoves = ColorSet()
-        val movesNeededForBoardState = HashMap<GameBoardState, Int>(10000)
+        val movesNeededForBoardState = BoardStateHashMap(noMaxStepsGameBoard)
         var frontier = PriorityQueue<AStarNodeLessMemory>()
         val gameStateCache = GameStateCache()
         val initialGame = Game(noMaxStepsGameBoard)
@@ -210,17 +207,14 @@ object AStar {
     private fun addToQueueLessMemory(
         gameState: Game,
         isIslandEliminationSpecialCase: Boolean,
-        movesNeededForBoardState: MutableMap<GameBoardState, Int>,
+        movesNeededForBoardState: BoardStateHashMap,
         heuristicStrategy: Strategy,
         frontier: PriorityQueue<AStarNodeLessMemory>,
         gameStateCache: GameStateCache
     ) {
-        val boardState = GameBoardState(gameState.filled)
-        val currentBestMoveValue = movesNeededForBoardState[boardState] ?: Int.MAX_VALUE
-        val isFastestWayToBoardState = gameState.playedMoves.size < currentBestMoveValue
+        val isFastestWayToBoardState = movesNeededForBoardState.putIfLess(gameState.filled, gameState.playedMoves.size)
 
         if (isFastestWayToBoardState) {
-            movesNeededForBoardState[boardState] = gameState.playedMoves.size
             val priority = gameState.playedMoves.size + heuristicStrategy.heuristic(gameState)
             frontier.offer(
                 AStarNodeLessMemory(
@@ -446,21 +440,4 @@ private data class QueueNode(
 
         return node.compareTo(other.node)
     }
-}
-
-private class GameBoardState(nodes: NodeSet) {
-    private val state: LongArray = nodes.words
-
-    private val hash = nodes.hashCode()
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as GameBoardState
-
-        return state.contentEquals(other.state)
-    }
-
-    override fun hashCode(): Int = hash
 }
