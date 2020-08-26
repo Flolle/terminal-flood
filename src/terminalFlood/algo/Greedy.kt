@@ -13,8 +13,7 @@ import terminalFlood.game.NodeSet
 object Greedy {
 
     /**
-     * Returns the total amount of moves needed to reach a winning state. This includes both the amount of moves already
-     * played and the additional amount of moves this algorithm computes.
+     * Returns the amount of moves needed to reach a winning state from the given [Game].
      */
     fun calculateAmountOfMovesNeeded(gameState: Game): Int {
         val currentState = gameState.toSimpleBoardState()
@@ -24,7 +23,7 @@ object Greedy {
         val notEliminatedColors = ColorSet()
         notEliminatedColors.setToNotEliminatedColors(gameState)
         val colorEliminationMoves = ColorSet()
-        var amountOfMoves = gameState.playedMoves.size
+        var amountOfMoves = 0
 
         while (!currentState.isWon) {
             // If we can eliminate colors, that is always the optimal move.

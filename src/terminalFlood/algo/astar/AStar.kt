@@ -165,7 +165,7 @@ object AStar {
                 val nodes = arrayOfNulls<QueueNode>(frontier.size)
                 frontier.forEachIndexed { i, aStarNode ->
                     val game = getGameFromCacheOrRecompute(aStarNode, gameStateCache, initialGame)
-                    nodes[i] = QueueNode(aStarNode, Greedy.calculateAmountOfMovesNeeded(game))
+                    nodes[i] = QueueNode(aStarNode, Greedy.calculateAmountOfMovesNeeded(game) + game.playedMoves.size)
                 }
                 frontier = PriorityQueue(queueMaxSizeCutoff + gameBoard.colorSet.size)
                 nodes.sort()
