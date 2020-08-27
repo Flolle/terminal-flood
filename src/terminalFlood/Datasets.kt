@@ -12,6 +12,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
 import kotlin.streams.asSequence
+import kotlin.system.exitProcess
 
 object Datasets {
     fun playFromDataset(file: Path, lineNumber: Int, startPos: StartPos) {
@@ -80,7 +81,7 @@ object Datasets {
                     startPos = StartPos.UPPER_LEFT // Doesn't matter
                 )
 
-                outputWriter.appendln(gameBoard.createCompactString())
+                outputWriter.appendLine(gameBoard.createCompactString())
 
                 val index = i + 1
                 if (index % 100 == 0)
@@ -118,21 +119,26 @@ object Datasets {
                 .filter { line -> line.isNotEmpty() }
                 .forEach { line ->
                     promisedGames.add(executor.submit<GameResult> {
-                        val gameBoard = GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE)
-                        val finishedGame = when (memoryScheme) {
-                            MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMoves(
-                                gameBoard,
-                                strategy
-                            )
-                            MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
-                                gameBoard,
-                                strategy
-                            )
-                            MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
-                                gameBoard,
-                                strategy,
-                                1_000_000
-                            )
+                        val finishedGame = try {
+                            when (memoryScheme) {
+                                MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMoves(
+                                    GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE),
+                                    strategy
+                                )
+                                MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
+                                    GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE),
+                                    strategy
+                                )
+                                MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
+                                    GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE),
+                                    strategy,
+                                    1_000_000
+                                )
+                            }
+                        } catch (ex: Exception) {
+                            // Print stacktrace and stop the program.
+                            ex.printStackTrace()
+                            exitProcess(-1)
                         }
 
                         val i = index.incrementAndGet()
