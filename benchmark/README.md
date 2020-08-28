@@ -2,7 +2,7 @@ This folder is dedicated to game board datasets and benchmarks based on them.
 
 terminal-flood allows you to create and solve datasets consisting of compact Flood-It game board strings. Compact strings are defined as holding the whole game board in one single line with no whitespace characters in them. The board size is derived from the length of the string. terminal-flood only supports square game boards, in which case `boardSize = sqrt(string.length)` will always be correct.
 
-Solving datasets will result in the output of two values, scores and time taken. Time taken should be self-explanatory, and the score value is just the sum of the lengths of all solutions for the dataset. So lower values are better.
+Solving datasets will result in the output of two values, score and time taken. Time taken should be self-explanatory, and the score value is just the sum of the lengths of all solutions for the dataset. So lower values are better.
 
 
 # Datasets
@@ -21,7 +21,7 @@ While terminal-flood allows you to create your own datasets, for the purpose of 
 
 pc19 and floodtest_simplified are popular datasets used as benchmarks/programming challenges, see [pc19](https://web.archive.org/web/20150909200653/http://cplus.about.com/od/programmingchallenges/a/challenge19.htm) and [floodtest](https://codegolf.stackexchange.com/questions/26232/create-a-flood-paint-ai). The original floodtest dataset has a slightly different format, but for the purpose of only having to support a single dataset format, it was transformed to the compact string format used by terminal-flood.
 
-Additionally, this repository contains either optimal solutionsets or in the case of b24c6n1000 a solutionset based on `astar_ias`, because running the admissible heuristic needs more RAM than I have in my machine and would have taken *a lot* of time to compute.
+Additionally, this repository contains either optimal solutionsets or in the case of b24c6n1000 a solutionset based on `astar_a (-lessMemoryQueueCutoff)`, because running the admissible heuristic without limits needs more RAM than I have in my machine and would have taken *a lot* of time to compute.
 
 
 # Benchmark results
