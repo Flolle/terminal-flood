@@ -14,7 +14,7 @@ While terminal-flood allows you to create your own datasets, for the purpose of 
 - dataset b12c12n1000
 - dataset b14c8n1000
 - dataset b18c6n1000
-- dataset b24c4n1000
+- dataset b24c4n10000
 - dataset b24c6n1000
 - dataset floodtest_simplified (b19c6n100000)
 - dataset pc19 (b14c6n1000)
