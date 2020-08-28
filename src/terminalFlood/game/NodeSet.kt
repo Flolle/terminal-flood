@@ -105,6 +105,27 @@ class NodeSet private constructor(
     }
 
     /**
+     * Will set this bitset to the bordering nodes of the given bitset.
+     *
+     * @see [BoardNode.borderingNodes]
+     */
+    // Assumes both NodeSets have the same internal array size.
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun setToBorderingNodesOf(gameBoard: GameBoard, nodes: NodeSet) {
+        var i = nodes.nextSetBit(0)
+        if (i == -1) {
+            clear()
+            return
+        }
+        setTo(gameBoard.getNodeWithIndex(i).borderingNodes)
+        i = nodes.nextSetBit(i + 1)
+        while (i > 0) {
+            or(gameBoard.getNodeWithIndex(i).borderingNodes)
+            i = nodes.nextSetBit(i + 1)
+        }
+    }
+
+    /**
      * Will set this bitset to the intersection of the [BoardState.neighbors] bitset and the [GameBoard.boardNodesByColor]
      * bitset of the given color.
      */

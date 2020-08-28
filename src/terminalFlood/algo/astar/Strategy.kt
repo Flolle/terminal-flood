@@ -114,10 +114,7 @@ open class InadmissibleSlowStrategy(gameBoard: GameBoard) : AdmissibleStrategy(g
                         currentState.neighbors
                     )
                     if (!neighborNodes.isEmpty) {
-                        newBorderNodes.clear()
-                        neighborNodes.forEachNode(currentState.gameBoard) { node ->
-                            newBorderNodes.or(node.borderingNodes)
-                        }
+                        newBorderNodes.setToBorderingNodesOf(currentState.gameBoard, neighborNodes)
                         newBorderNodes.and(currentState.notFilledNotNeighbors)
 
                         var amountOfNewFields = 0
