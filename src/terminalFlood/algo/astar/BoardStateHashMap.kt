@@ -47,7 +47,7 @@ class BoardStateHashMap(gameBoard: GameBoard) {
     private var values: ShortArray = ShortArray(INITIAL_SIZE)
 
     // The power of two the current size of key and value buckets is based on.
-    private var currentPowerOfTwo = INITIAL_POWER_OF_TWO
+    private var currentPowerOfTwo: Int = INITIAL_POWER_OF_TWO
 
     private var loadThreshold: Int = (INITIAL_SIZE * LOAD_FACTOR).toInt()
 

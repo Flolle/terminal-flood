@@ -44,11 +44,7 @@ object Greedy {
                     newBorderNodes.setToBorderingNodesOf(currentState.gameBoard, neighborNodes)
                     newBorderNodes.and(currentState.notFilledNotNeighbors)
 
-                    var amountOfNewFields = 0
-                    newBorderNodes.forEachNode(currentState.gameBoard) { node ->
-                        amountOfNewFields += node.amountOfFields
-                    }
-
+                    val amountOfNewFields = newBorderNodes.amountOfFields(currentState.gameBoard)
                     if (amountOfNewFields > amountBestColor) {
                         amountBestColor = amountOfNewFields
                         val t = bestColorNodes

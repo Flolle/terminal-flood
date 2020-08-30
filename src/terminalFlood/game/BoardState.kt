@@ -47,12 +47,5 @@ interface BoardState {
      * [filled].
      */
     val amountOfTakenFields: Int
-        get() {
-            var amountOfTakenFields = 0
-            filled.forEachNode(gameBoard) {
-                amountOfTakenFields += it.amountOfFields
-            }
-
-            return amountOfTakenFields
-        }
+        get() = filled.amountOfFields(gameBoard)
 }

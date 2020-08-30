@@ -63,6 +63,16 @@ class NodeSet private constructor(
         }
 
     /**
+     * Returns the amount of fields occupied by the nodes within this [NodeSet].
+     */
+    fun amountOfFields(gameBoard: GameBoard): Int {
+        var amountOfFields = 0
+        forEachNode(gameBoard) { amountOfFields += it.amountOfFields }
+
+        return amountOfFields
+    }
+
+    /**
      * Returns true if the bit at the given index is set to true.
      */
     operator fun get(index: Int): Boolean {

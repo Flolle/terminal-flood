@@ -52,7 +52,7 @@ class GameBoard(
     /**
      * The total amount of fields contained within this game board.
      */
-    val amountOfFields = boardSize * boardSize
+    val amountOfFields: Int = boardSize * boardSize
 
     private val nodeLookupTable: Array<Array<BoardNode>> = calculateLookupTable()
 
