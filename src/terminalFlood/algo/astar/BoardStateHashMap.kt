@@ -78,8 +78,7 @@ class BoardStateHashMap(gameBoard: GameBoard) {
 
         if (oldValue == NO_KEY_SET_VALUE) {
             val keyIndex = index * keySize
-            for (i in 0 until keySize)
-                keys[keyIndex + i] = key[i]
+            System.arraycopy(key, 0, keys, keyIndex, keySize)
             values[index] = value.toShort()
 
             if (++size > loadThreshold)
@@ -141,8 +140,7 @@ class BoardStateHashMap(gameBoard: GameBoard) {
                         newIndex = 0
                 }
                 val newKeyIndex = newIndex * keySize
-                for (i in 0 until keySize)
-                    newKeys[newKeyIndex + i] = keys[keyIndex + i]
+                System.arraycopy(keys, keyIndex, newKeys, newKeyIndex, keySize)
                 newValues[newIndex] = value
             }
         }
