@@ -2,8 +2,8 @@ package terminalFlood
 
 import terminalFlood.algo.astar.AStar
 import terminalFlood.algo.astar.AStarStrategies
+import terminalFlood.game.Color
 import terminalFlood.game.GameBoard
-import terminalFlood.game.MoveList
 import terminalFlood.game.StartPos
 import java.nio.file.Files
 import java.nio.file.Path
@@ -109,7 +109,7 @@ object Datasets {
         println("Memory scheme: $memoryScheme")
 
         val executor = Executors.newFixedThreadPool(threads)
-        val promisedGames = ArrayList<Future<GameResult>>(100_000)
+        val promisedGames = ArrayList<Future<Array<Color>>>(100_000)
         val index = AtomicInteger(0)
         val t = System.nanoTime()
 
@@ -118,8 +118,8 @@ object Datasets {
                 .map { line -> line.trim() }
                 .filter { line -> line.isNotEmpty() }
                 .forEach { line ->
-                    promisedGames.add(executor.submit<GameResult> {
-                        val finishedGame = try {
+                    promisedGames.add(executor.submit<Array<Color>> {
+                        val solution = try {
                             when (memoryScheme) {
                                 MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMoves(
                                     GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE),
@@ -145,7 +145,7 @@ object Datasets {
                         if (i % 100 == 0)
                             println("$i boards finished")
 
-                        GameResult(finishedGame.isWon, finishedGame.playedMoves)
+                        solution
                     })
                 }
         }
@@ -159,22 +159,14 @@ object Datasets {
             Files.delete(output)
 
         Files.newBufferedWriter(output, Charsets.UTF_8).use { outputWriter ->
-            for (game in finishedGames) {
-                if (!game.isWon)
-                    outputWriter.append("game not won")
-                else
-                    game.playedMoves.forEach { outputWriter.append(it.toString()) }
+            for (moves in finishedGames) {
+                moves.forEach { outputWriter.append(it.toString()) }
                 outputWriter.newLine()
             }
         }
 
         println("\n\nSolutions saved to: $output")
         println("Time taken: ${(time / 1_000_000.0).roundToInt()}ms")
-        println("Total score: ${finishedGames.sumBy { it.playedMoves.size }}")
+        println("Total score: ${finishedGames.sumBy { it.size }}")
     }
 }
-
-private data class GameResult(
-    val isWon: Boolean,
-    val playedMoves: MoveList
-)

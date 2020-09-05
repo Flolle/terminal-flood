@@ -15,8 +15,6 @@ package terminalFlood.game
  * This class is thread safe.
  *
  * @param playedMoves The moves played so far.
- * @param sensibleMoves All the moves that would make sense to play in this game state. In effect this bitset contains
- * all the distinct colors of the nodes in [neighbors].
  */
 class Game(
     override val gameBoard: GameBoard,
@@ -24,10 +22,37 @@ class Game(
     override val filled: NodeSet,
     override val neighbors: NodeSet,
     override val notFilledNotNeighbors: NodeSet,
-    val sensibleMoves: ColorSet
-) : BoardState {
-    override val isWon: Boolean
-        get() = sensibleMoves.isEmpty
+    override val sensibleMoves: ColorSet
+) : GameState {
+    companion object {
+        /**
+         * Creates a new [Game] instance based on the given [GameBoard].
+         */
+        operator fun invoke(gameBoard: GameBoard): Game {
+            val startNode = gameBoard.getNodeAtPosition(gameBoard.startPos.x, gameBoard.startPos.y)
+            val filled = NodeSet(gameBoard.amountOfNodes)
+            filled.set(startNode.id)
+            val neighbors = startNode.borderingNodes.copy()
+            val notFilledNotNeighbors = filled.copy()
+            notFilledNotNeighbors.or(neighbors)
+            notFilledNotNeighbors.flipAll()
+
+            return Game(
+                gameBoard,
+                MoveList.emptyMoveList(),
+                filled,
+                neighbors,
+                notFilledNotNeighbors,
+                GameState.createSensibleMoveSet(gameBoard, neighbors)
+            )
+        }
+    }
+
+    override val lastMove: Color
+        get() = playedMoves.lastMove
+
+    override val amountOfMovesMade: Int
+        get() = playedMoves.size
 
     /**
      * Returns true if the game is finished. Games are considered finished if they are won or if the move limit
@@ -56,20 +81,9 @@ class Game(
             newFilled,
             newNeighbors,
             newNotFilledNotNeighbors,
-            createSensibleMoveSet(gameBoard, newNeighbors)
+            GameState.createSensibleMoveSet(gameBoard, newNeighbors)
         )
     }
-
-    /**
-     * Returns a [SimpleBoardState] version of this game state.
-     */
-    fun toSimpleBoardState(): SimpleBoardState =
-        SimpleBoardState(
-            gameBoard,
-            filled.copy(),
-            neighbors.copy(),
-            notFilledNotNeighbors.copy()
-        )
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -89,43 +103,5 @@ class Game(
         result = 31 * result + playedMoves.hashCode()
         result = 31 * result + filled.hashCode()
         return result
-    }
-
-    companion object {
-        /**
-         * Creates a new [Game] instance based on the given [GameBoard].
-         */
-        operator fun invoke(gameBoard: GameBoard): Game {
-            val startNode = gameBoard.getNodeAtPosition(gameBoard.startPos.x, gameBoard.startPos.y)
-            val filled = NodeSet(gameBoard.amountOfNodes)
-            filled.set(startNode.id)
-            val neighbors = startNode.borderingNodes.copy()
-            val notFilledNotNeighbors = filled.copy()
-            notFilledNotNeighbors.or(neighbors)
-            notFilledNotNeighbors.flipAll()
-
-            return Game(
-                gameBoard,
-                MoveList.emptyMoveList(),
-                filled,
-                neighbors,
-                notFilledNotNeighbors,
-                createSensibleMoveSet(gameBoard, neighbors)
-            )
-        }
-
-        fun createSensibleMoveSet(gameBoard: GameBoard, neighbors: NodeSet): ColorSet {
-            val sensibleMoves = ColorSet()
-            if (neighbors.cardinality < gameBoard.colorSet.size) {
-                neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
-            } else {
-                gameBoard.colorSet.forEachSetBit { colorValue ->
-                    if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
-                        sensibleMoves.set(colorValue)
-                }
-            }
-
-            return sensibleMoves
-        }
     }
 }

@@ -1,7 +1,7 @@
 package terminalFlood.algo
 
 import terminalFlood.game.ColorSet
-import terminalFlood.game.Game
+import terminalFlood.game.GameState
 import terminalFlood.game.NodeSet
 
 /**
@@ -13,9 +13,9 @@ import terminalFlood.game.NodeSet
 object Greedy {
 
     /**
-     * Returns the amount of moves needed to reach a winning state from the given [Game].
+     * Returns the amount of moves needed to reach a winning state from the given [GameState].
      */
-    fun calculateAmountOfMovesNeeded(gameState: Game): Int {
+    fun calculateAmountOfMovesNeeded(gameState: GameState): Int {
         val currentState = gameState.toSimpleBoardState()
         var neighborNodes = NodeSet(currentState.gameBoard.amountOfNodes)
         var bestColorNodes = NodeSet(currentState.gameBoard.amountOfNodes)

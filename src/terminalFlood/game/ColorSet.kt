@@ -83,7 +83,7 @@ class ColorSet private constructor(
         }
     }
 
-    fun setToNotEliminatedColors(gameState: Game) {
+    fun setToNotEliminatedColors(gameState: GameState) {
         bits = gameState.sensibleMoves.bits
 
         gameState.gameBoard.colorSet.forEachSetBit { colorValue ->
@@ -93,7 +93,7 @@ class ColorSet private constructor(
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    inline fun setToColorEliminations(gameState: Game) {
+    inline fun setToColorEliminations(gameState: GameState) {
         setToColorEliminations(gameState, gameState.sensibleMoves)
     }
 

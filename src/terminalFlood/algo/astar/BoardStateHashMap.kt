@@ -37,10 +37,10 @@ class BoardStateHashMap(gameBoard: GameBoard) {
     // This looks a bit silly, but this way we can have the constructor only require a GameBoard to create a new map.
     private val keySize: Int = gameBoard.boardNodesByColor[gameBoard.colorSet.nextSetBit(0)].words.size
 
-    // Key bucket. One bucket is the size of keySize long values. Size should always be a multiple of a power of two.
+    // Key buckets. One bucket is the size of keySize long values. Size should always be a multiple of a power of two.
     private var keys: LongArray = LongArray(keySize * INITIAL_SIZE)
 
-    // Value bucket. Size should always be a power of two.
+    // Value buckets. Size should always be a power of two.
     // Short is big enough to hold all practical values we'll see while computing solutions.
     // Byte is sadly too small as it could run into problems with e.g. boards of size 80x80 and upwards and 6 colors,
     // for which solutions can be found pretty quickly with InadmissibleFastestStrategy.

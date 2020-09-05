@@ -12,7 +12,7 @@ import terminalFlood.game.*
  * down on the amount of move permutations checked by A*.
  */
 interface Strategy {
-    fun heuristic(gameState: Game): Int
+    fun heuristic(gameState: GameState): Int
 }
 
 /**
@@ -35,7 +35,7 @@ open class AdmissibleStrategy(gameBoard: GameBoard) : Strategy {
 
     protected val colorEliminationMoves = ColorSet()
 
-    override fun heuristic(gameState: Game): Int {
+    override fun heuristic(gameState: GameState): Int {
         var minimumMovesLeft = 0
         currentState.setToState(gameState)
         notEliminatedColors.setToNotEliminatedColors(gameState)
@@ -84,7 +84,7 @@ open class InadmissibleSlowStrategy(gameBoard: GameBoard) : AdmissibleStrategy(g
 
     private var secondBestColorNodes = NodeSet(gameBoard.amountOfNodes)
 
-    override fun heuristic(gameState: Game): Int {
+    override fun heuristic(gameState: GameState): Int {
         if (gameState.amountOfTakenFields > gameState.gameBoard.amountOfFields / 2)
             return super.heuristic(gameState)
 
@@ -154,7 +154,7 @@ open class InadmissibleSlowStrategy(gameBoard: GameBoard) : AdmissibleStrategy(g
  * giving slightly less optimal results.
  */
 class InadmissibleStrategy(gameBoard: GameBoard) : InadmissibleSlowStrategy(gameBoard) {
-    override fun heuristic(gameState: Game): Int {
+    override fun heuristic(gameState: GameState): Int {
         val estimatedCost = super.heuristic(gameState)
         return estimatedCost + estimatedCost / 13
     }
@@ -165,7 +165,7 @@ class InadmissibleStrategy(gameBoard: GameBoard) : InadmissibleSlowStrategy(game
  * and [InadmissibleFastestStrategy] with the latter having double the weight.
  */
 class InadmissibleFastStrategy(gameBoard: GameBoard) : AdmissibleStrategy(gameBoard) {
-    override fun heuristic(gameState: Game): Int {
+    override fun heuristic(gameState: GameState): Int {
         val cost = super.heuristic(gameState) + InadmissibleFastestStrategy.heuristic(gameState) * 2
 
         return cost / 3
@@ -180,7 +180,7 @@ class InadmissibleFastStrategy(gameBoard: GameBoard) : AdmissibleStrategy(gameBo
  * inadmissible as it will never underestimate and quite often overestimate the moves needed to complete the game.
  */
 object InadmissibleFastestStrategy : Strategy {
-    override fun heuristic(gameState: Game): Int {
+    override fun heuristic(gameState: GameState): Int {
         if (gameState.isWon)
             return 0
 
