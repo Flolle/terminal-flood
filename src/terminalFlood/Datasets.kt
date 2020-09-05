@@ -121,15 +121,11 @@ object Datasets {
                     promisedGames.add(executor.submit<Array<Color>> {
                         val solution = try {
                             when (memoryScheme) {
-                                MemorySavingScheme.NO_MEMORY_SAVING         -> AStar.calculateMoves(
+                                MemorySavingScheme.NO_SPECIAL_SCHEME -> AStar.calculateMoves(
                                     GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE),
                                     strategy
                                 )
-                                MemorySavingScheme.LESS_MEMORY              -> AStar.calculateMovesLessMemory(
-                                    GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE),
-                                    strategy
-                                )
-                                MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
+                                MemorySavingScheme.QUEUE_CUTOFF      -> AStar.calculateMoves(
                                     GameBoard.createBoardFromCompactString(line, startPos, Int.MAX_VALUE),
                                     strategy,
                                     1_000_000

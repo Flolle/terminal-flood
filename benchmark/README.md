@@ -21,7 +21,7 @@ While terminal-flood allows you to create your own datasets, for the purpose of 
 
 pc19 and floodtest_simplified are popular datasets used as benchmarks/programming challenges, see [pc19](https://web.archive.org/web/20150909200653/http://cplus.about.com/od/programmingchallenges/a/challenge19.htm) and [floodtest](https://codegolf.stackexchange.com/questions/26232/create-a-flood-paint-ai). The original floodtest dataset has a slightly different format, but for the purpose of only having to support a single dataset format, it was transformed to the compact string format used by terminal-flood.
 
-Additionally, this repository contains either optimal solutionsets or in the case of b24c6n1000 a solutionset based on `astar_a (-lessMemoryQueueCutoff)`, because running the admissible heuristic without limits needs more RAM than I have in my machine and would have taken *a lot* of time to compute.
+Additionally, this repository contains either optimal solutionsets or in the case of b24c6n1000 a solutionset based on `astar_a (-queueCutoff)`, because running the admissible heuristic without limits needs more RAM than I have in my machine and would have taken *a lot* of time to compute.
 
 
 # Benchmark results
@@ -43,11 +43,9 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 26717 | 27198 |
-| astar_ias | 27070 | 2838 |
-| astar_ia | 27161 | 2617 |
-| astar_iaf | 27363 | 1491 |
-| astar_iaff | 28053 | 832 |
+| astar_a | 26717 | 28244 |
+| astar_ias | 27070 | 2918 |
+| astar_iaf | 27363 | 1513 |
 
 
 ### dataset b10c35n1000
@@ -56,70 +54,62 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 41751 | 13867 |
-| astar_ias | 42445 | 1399 |
-| astar_ia | 42712 | 1104 |
-| astar_iaf | 42689 | 1494 |
-| astar_iaff | 43186 | 861 |
+| astar_a | 41751 | 14005 |
+| astar_ias | 42445 | 1425 |
+| astar_iaf | 42689 | 1428 |
 
 
 ### dataset b12c12n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 27635 | 158979 |
-| astar_ias | 27897 | 2946 |
-| astar_ia | 28236 | 2275 |
-| astar_iaf | 28435 | 830 |
-| astar_iaff | 29492 | 560 |
+| astar_a | 27635 | 132267 |
+| astar_ias | 27897 | 3067 |
+| astar_iaf | 28435 | 895 |
 
 
 ### dataset b14c8n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 24582 | 96670 |
-| astar_ias | 24740 | 3783 |
-| astar_ia | 25061 | 1248 |
-| astar_iaf | 25256 | 901 |
-| astar_iaff | 26356 | 626 |
+| astar_a | 24582 | 85312 |
+| astar_ias | 24740 | 3796 |
+| astar_iaf | 25256 | 927 |
 
 
 ### dataset b18c6n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 24837 | 122203 |
-| astar_ias | 24951 | 6334 |
-| astar_ia | 25266 | 1910 |
-| astar_iaf | 25530 | 1115 |
-| astar_iaff | 26707 | 621 |
+| astar_a | 24837 | 108085 |
+| astar_ias | 24951 | 6318 |
+| astar_iaf | 25530 | 1170 |
 
 
 ### dataset b24c4n10000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 219580 | 18149 |
-| astar_ias | 220630 | 7469 |
-| astar_ia | 223212 | 3731 |
-| astar_iaf | 224670 | 2840 |
-| astar_iaff | 232415 | 1839 |
+| astar_a | 219580 | 18395 |
+| astar_ias | 220630 | 7528 |
+| astar_ia | 223212 | 3794 |
+| astar_iaf | 224670 | 2894 |
+| astar_iaff | 232415 | 1901 |
 
 
 ### dataset b24c6n1000
 
 I did not attempt to find an optimal solutionset with terminal-flood, because it would have taken too long to do so and it most likely would have needed more RAM than I have available in my PC.
 
-`astar_a (-lessMemoryQueueCutoff)` is the closest thing to an optimal solutionset that I have. It is not guaranteed to be optimal, but it should be relatively close.
+`astar_a (-queueCutoff)` is the closest thing to an optimal solutionset that I have. It is not guaranteed to be optimal, but it should be relatively close.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemoryQueueCutoff, 6 threads) | 31804 | 17978921 |
-| astar_ias (-lessMemory) | 31968 | 158141 |
-| astar_ia (-lessMemory) | 32537 | 18430 |
-| astar_iaf | 33178 | 3119 |
-| astar_iaff | 35117 | 965 |
+| astar_a (-queueCutoff) | 31804 | 14724149 |
+| astar_ias | 31968 | 148207 |
+| astar_ia | 32537 | 18035 |
+| astar_iaf | 33178 | 3117 |
+| astar_iaff | 35117 | 934 |
 
 
 ### dataset floodtest_simplified
@@ -128,11 +118,11 @@ This dataset was used in a code challenge [here](https://codegolf.stackexchange.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-lessMemory) | 1985078 | 14209604 |
-| astar_ias | 1992612 | 640217 |
-| astar_ia | 2007765 | 193807 |
-| astar_iaf | 2026214 | 68360 |
-| astar_iaff | 2135051 | 12358 |
+| astar_a | 1985078 | 13031459 |
+| astar_ias | 1992612 | 641453 |
+| astar_ia | 2007765 | 190358 |
+| astar_iaf | 2026214 | 68577 |
+| astar_iaff | 2135051 | 12444 |
 
 
 ### dataset pc19
@@ -143,8 +133,6 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 15509 |
-| astar_ias | 20189 | 4341 |
-| astar_ia | 20428 | 2016 |
-| astar_iaf | 20529 | 1487 |
-| astar_iaff | 21250 | 793 |
+| astar_a | 20086 | 15750 |
+| astar_ias | 20189 | 4384 |
+| astar_iaf | 20529 | 1585 |

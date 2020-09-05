@@ -8,87 +8,6 @@ object AStar {
     /**
      * Computes a solution for the given [GameBoard] using an A* algorithm with the given strategy. Returns an array
      * containing said solution.
-     */
-    fun calculateMoves(
-        gameBoard: GameBoard,
-        strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST
-    ): Array<Color> {
-        val heuristicStrategy = when (strategy) {
-            AStarStrategies.ADMISSIBLE -> AdmissibleStrategy(gameBoard)
-            AStarStrategies.INADMISSIBLE_SLOW -> InadmissibleSlowStrategy(gameBoard)
-            AStarStrategies.INADMISSIBLE -> InadmissibleStrategy(gameBoard)
-            AStarStrategies.INADMISSIBLE_FAST -> InadmissibleFastStrategy(gameBoard)
-            AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
-        }
-        val colorEliminationMoves = ColorSet()
-        val movesCollection = MoveCollection()
-        val movesNeededForBoardState = BoardStateHashMap(gameBoard)
-        val frontier = PriorityQueue<AStarNode>()
-        frontier.offer(AStarNode(GameExternalMoveList(gameBoard), false, 0))
-
-        while (frontier.isNotEmpty()) {
-            val currentNode = frontier.poll()
-            var currentGameState = currentNode.gameState
-
-            if (currentGameState.isWon)
-                return movesCollection.getMoveList(currentGameState.moveEntryIndex, currentGameState.amountOfMovesMade)
-
-            // Pruning technique for inadmissible heuristics: If we can eliminate colors, we only do that. This can
-            // sometimes result in slightly worse solutions, but speeds up the algorithm.
-            if (strategy != AStarStrategies.ADMISSIBLE) {
-                colorEliminationMoves.setToColorEliminations(currentGameState)
-                colorEliminationMoves.forEachColor {
-                    currentGameState =
-                        currentGameState.makeMove(it, movesCollection.addMoveEntry(currentGameState.moveEntryIndex, it))
-                }
-                if (!colorEliminationMoves.isEmpty) {
-                    addToQueue(currentGameState, true, movesNeededForBoardState, heuristicStrategy, frontier)
-                    continue
-                }
-            }
-
-            // Continue with A* but prune the possible moves first.
-            val nextMoves =
-                if (strategy != AStarStrategies.ADMISSIBLE)
-                    pruneSymmetries(currentGameState, currentNode.isIslandEliminationSpecialCase)
-                else
-                    pruneSymmetriesAdmissible(currentGameState)
-            nextMoves.forEachColor {
-                addToQueue(
-                    currentGameState.makeMove(it, movesCollection.addMoveEntry(currentGameState.moveEntryIndex, it)),
-                    false,
-                    movesNeededForBoardState,
-                    heuristicStrategy,
-                    frontier
-                )
-            }
-        }
-
-        error("Algorithm error!")
-    }
-
-    /**
-     * Adds the given game state to the queue with the right cost value, but only if this was the fastest way to that
-     * board state.
-     */
-    private fun addToQueue(
-        gameState: GameExternalMoveList,
-        isIslandEliminationSpecialCase: Boolean,
-        movesNeededForBoardState: BoardStateHashMap,
-        heuristicStrategy: Strategy,
-        frontier: PriorityQueue<AStarNode>
-    ) {
-        val isFastestWayToBoardState = movesNeededForBoardState.putIfLess(gameState.filled, gameState.amountOfMovesMade)
-
-        if (isFastestWayToBoardState) {
-            val priority = gameState.amountOfMovesMade + heuristicStrategy.heuristic(gameState)
-            frontier.offer(AStarNode(gameState, isIslandEliminationSpecialCase, priority))
-        }
-    }
-
-    /**
-     * Computes a solution for the given [GameBoard] using an A* algorithm with the given strategy. Returns an array
-     * containing said solution.
      *
      * This method trades in some performance in exchange for less memory needed by only caching a certain amount of
      * [GameState]s for the priority queue. If a node is checked whose game state is not cached, the game state is
@@ -99,7 +18,7 @@ object AStar {
      * in worse solutions being found than normally possible with a given heuristic. If you prefer to not use this
      * memory saving scheme, use [Int.MAX_VALUE] as the [queueMaxSizeCutoff] parameter value.
      */
-    fun calculateMovesLessMemory(
+    fun calculateMoves(
         gameBoard: GameBoard,
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST,
         queueMaxSizeCutoff: Int = Int.MAX_VALUE
@@ -114,18 +33,10 @@ object AStar {
         val colorEliminationMoves = ColorSet()
         val movesCollection = MoveCollection()
         val movesNeededForBoardState = BoardStateHashMap(gameBoard)
-        var frontier = PriorityQueue<AStarNodeLessMemory>()
+        var frontier = PriorityQueue<AStarNode>()
         val gameStateCache = GameStateCache()
         val initialGame = GameExternalMoveList(gameBoard)
-        frontier.offer(
-            AStarNodeLessMemory(
-                gameStateCache.addGameState(initialGame),
-                0,
-                MoveCollection.NO_MOVE_INDEX,
-                false,
-                0
-            )
-        )
+        frontier.offer(AStarNode(gameStateCache.addGameState(initialGame), 0, MoveCollection.NO_MOVE_INDEX, false, 0))
 
         while (frontier.isNotEmpty()) {
             val currentNode = frontier.poll()
@@ -144,7 +55,7 @@ object AStar {
                         currentGameState.makeMove(it, movesCollection.addMoveEntry(currentGameState.moveEntryIndex, it))
                 }
                 if (!colorEliminationMoves.isEmpty) {
-                    addToQueueLessMemory(
+                    addToQueue(
                         currentGameState,
                         true,
                         movesNeededForBoardState,
@@ -163,7 +74,7 @@ object AStar {
                 else
                     pruneSymmetriesAdmissible(currentGameState)
             nextMoves.forEachColor {
-                addToQueueLessMemory(
+                addToQueue(
                     currentGameState.makeMove(it, movesCollection.addMoveEntry(currentGameState.moveEntryIndex, it)),
                     false,
                     movesNeededForBoardState,
@@ -195,7 +106,7 @@ object AStar {
     }
 
     private fun getGameFromCacheOrRecompute(
-        node: AStarNodeLessMemory,
+        node: AStarNode,
         gameStateCache: GameStateCache,
         moveCollection: MoveCollection,
         initialGame: GameExternalMoveList
@@ -224,12 +135,12 @@ object AStar {
      * Adds the given game state to the queue with the right cost value, but only if this was the fastest way to that
      * board state.
      */
-    private fun addToQueueLessMemory(
+    private fun addToQueue(
         gameState: GameExternalMoveList,
         isIslandEliminationSpecialCase: Boolean,
         movesNeededForBoardState: BoardStateHashMap,
         heuristicStrategy: Strategy,
-        frontier: PriorityQueue<AStarNodeLessMemory>,
+        frontier: PriorityQueue<AStarNode>,
         gameStateCache: GameStateCache
     ) {
         val isFastestWayToBoardState = movesNeededForBoardState.putIfLess(gameState.filled, gameState.amountOfMovesMade)
@@ -237,7 +148,7 @@ object AStar {
         if (isFastestWayToBoardState) {
             val priority = gameState.amountOfMovesMade + heuristicStrategy.heuristic(gameState)
             frontier.offer(
-                AStarNodeLessMemory(
+                AStarNode(
                     gameStateCache.addGameState(gameState),
                     gameState.amountOfMovesMade.toShort(),
                     gameState.moveEntryIndex,
@@ -368,7 +279,9 @@ object AStar {
 }
 
 private data class AStarNode(
-    val gameState: GameExternalMoveList,
+    val index: Int,
+    val movesPlayed: Short,
+    val moveEntryIndex: Int,
     val isIslandEliminationSpecialCase: Boolean,
     val priority: Int
 ) : Comparable<AStarNode> {
@@ -381,32 +294,6 @@ private data class AStarNode(
      * [https://movingai.com/astar.html]
      */
     override fun compareTo(other: AStarNode): Int {
-        val comp = priority - other.priority
-        if (comp != 0)
-            return comp
-
-        return other.gameState.amountOfMovesMade - gameState.amountOfMovesMade
-    }
-}
-
-// The actual node class needs more memory than AStarNode, but it doesn't hold references to GameState objects, which
-// are far more expensive than two Ints and a Short.
-private data class AStarNodeLessMemory(
-    val index: Int,
-    val movesPlayed: Short,
-    val moveEntryIndex: Int,
-    val isIslandEliminationSpecialCase: Boolean,
-    val priority: Int
-) : Comparable<AStarNodeLessMemory> {
-    /**
-     * Break ties by sorting the states by amount of played moves (descending). Basically will explore nodes that should
-     * be closer to finishing the board first and potentially prune a bunch of paths in A*. However, this can result in
-     * less optimal solutions when using inadmissible heuristics.
-     *
-     * Idea for this behavior taken from here:
-     * [https://movingai.com/astar.html]
-     */
-    override fun compareTo(other: AStarNodeLessMemory): Int {
         val comp = priority - other.priority
         if (comp != 0)
             return comp
@@ -452,7 +339,7 @@ private class GameStateCache(cacheSize: Int = 10000) {
 }
 
 private data class QueueNode(
-    val node: AStarNodeLessMemory,
+    val node: AStarNode,
     val greedyPrediction: Int
 ) : Comparable<QueueNode> {
     override fun compareTo(other: QueueNode): Int {

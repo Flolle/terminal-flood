@@ -50,7 +50,7 @@ class GameExternalMoveList(
                 notFilledNotNeighbors,
                 GameState.createSensibleMoveSet(gameBoard, neighbors),
                 0,
-                -1,
+                Color.DUMMY.value.toByte(),
                 MoveCollection.NO_MOVE_INDEX
             )
         }

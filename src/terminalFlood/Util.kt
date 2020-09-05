@@ -32,16 +32,15 @@ object Util {
     fun aStarSimulation(
         gameBoard: GameBoard,
         strategy: AStarStrategies,
-        memoryScheme: MemorySavingScheme = MemorySavingScheme.NO_MEMORY_SAVING
+        memoryScheme: MemorySavingScheme = MemorySavingScheme.NO_SPECIAL_SCHEME
     ) {
         println("Using strategy: $strategy")
         println("Memory scheme: $memoryScheme")
         var simResult: Array<Color>?
         val t = measureTimeMillis {
             simResult = when (memoryScheme) {
-                MemorySavingScheme.NO_MEMORY_SAVING -> AStar.calculateMoves(gameBoard, strategy)
-                MemorySavingScheme.LESS_MEMORY -> AStar.calculateMovesLessMemory(gameBoard, strategy)
-                MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF -> AStar.calculateMovesLessMemory(
+                MemorySavingScheme.NO_SPECIAL_SCHEME -> AStar.calculateMoves(gameBoard, strategy)
+                MemorySavingScheme.QUEUE_CUTOFF -> AStar.calculateMoves(
                     gameBoard,
                     strategy,
                     2_000_000

@@ -16,9 +16,9 @@ fun main(args: Array<String>) {
     }
 
     val memoryScheme = when {
-        args.contains("-lessMemoryQueueCutoff") -> MemorySavingScheme.LESS_MEMORY_QUEUE_CUTOFF
-        args.contains("-lessMemory")            -> MemorySavingScheme.LESS_MEMORY
-        else                                    -> MemorySavingScheme.NO_MEMORY_SAVING
+        args.contains("-queueCutoff")           -> MemorySavingScheme.QUEUE_CUTOFF
+        args.contains("-lessMemoryQueueCutoff") -> MemorySavingScheme.QUEUE_CUTOFF
+        else                                    -> MemorySavingScheme.NO_SPECIAL_SCHEME
     }
 
     if (args.contains("-solutionsForDataset")) {
@@ -129,7 +129,7 @@ private fun parseStartPosition(startPosString: String): StartPos = when (startPo
     "ur" -> StartPos.UPPER_RIGHT
     "ll" -> StartPos.LOWER_LEFT
     "lr" -> StartPos.LOWER_RIGHT
-    "m"  -> StartPos.MIDDLE
+    "m" -> StartPos.MIDDLE
     else -> throw IllegalArgumentException("Incorrect value for startPos!")
 }
 
@@ -311,5 +311,5 @@ private fun debug() {
 }
 
 enum class MemorySavingScheme {
-    NO_MEMORY_SAVING, LESS_MEMORY, LESS_MEMORY_QUEUE_CUTOFF
+    NO_SPECIAL_SCHEME, QUEUE_CUTOFF
 }
