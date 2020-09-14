@@ -26,7 +26,7 @@ class MoveCollection {
     init {
         // First entry gets a special value so we can tell that there are no further moves.
         moveIndexArray[0] = NO_MOVE_VALUE
-        moveColorArray[0] = Color.DUMMY.value.toByte()
+        moveColorArray[0] = Color.NO_COLOR.value.toByte()
     }
 
     private var lastUsedIndex: Int = 0

@@ -3,7 +3,7 @@ package terminalFlood.game
 /**
  * This class represents the color of a field. This class is immutable.
  *
- * Use [Color.colorCache] to get instances of this class. Use [Color.DUMMY] if you just need a default color value.
+ * Use [Color.colorCache] to get instances of this class. Use [Color.NO_COLOR] if you just need a default color value.
  */
 class Color private constructor(
     val value: Int
@@ -30,7 +30,7 @@ class Color private constructor(
          * A sort of default color. It is not a valid color value for playing the game. Use this if you don't need/want
          * to specify a specific color.
          */
-        val DUMMY: Color = Color(-1)
+        val NO_COLOR: Color = Color(-1)
 
         /**
          * Use this list to get [Color] instances of the corresponding value.

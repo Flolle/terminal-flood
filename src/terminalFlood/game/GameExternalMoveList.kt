@@ -9,7 +9,7 @@ package terminalFlood.game
  * characteristics. Use [toSimpleBoardState] to create [SimpleBoardState] instances from [GameExternalMoveList] objects.
  *
  * This class doesn't directly store the moves made to reach the represented board state and is intended to be used
- * together with [MoveCollection]. This is done due to performance and memory requirements considerations. If these
+ * together with [MoveCollection]. This is done due to performance and memory requirement considerations. If these
  * considerations are not of pressing concern for your use case, it is recommended to use [Game] instead.
  *
  * Warning:
@@ -50,7 +50,7 @@ class GameExternalMoveList(
                 notFilledNotNeighbors,
                 GameState.createSensibleMoveSet(gameBoard, neighbors),
                 0,
-                Color.DUMMY.value.toByte(),
+                Color.NO_COLOR.value.toByte(),
                 MoveCollection.NO_MOVE_INDEX
             )
         }
