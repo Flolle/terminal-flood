@@ -241,24 +241,26 @@ class NodeSet private constructor(
     }
 
     /**
-     * Performs the given action on every bit set to true in this bitset.
-     */
-    inline fun forEachSetBit(fromIndex: Int = 0, action: (index: Int) -> Unit) {
-        var i = nextSetBit(fromIndex)
-        while (i >= 0) {
-            action(i)
-            i = nextSetBit(i + 1)
-        }
-    }
-
-    /**
      * Performs the given action on every [BoardNode] contained in this set.
      */
-    inline fun forEachNode(gameBoard: GameBoard, fromIndex: Int = 0, action: (node: BoardNode) -> Unit) {
-        var i = nextSetBit(fromIndex)
-        while (i >= 0) {
-            action(gameBoard.getNodeWithIndex(i))
-            i = nextSetBit(i + 1)
+    inline fun forEachNode(gameBoard: GameBoard, action: (node: BoardNode) -> Unit) {
+        words.forEachIndexed { i, initialWord ->
+            if (initialWord != 0L) {
+                var bitshift = initialWord.countTrailingZeroBits()
+                var index = (i shl 6) + bitshift // array index times 64 + bitshift
+                var word = initialWord ushr bitshift // shift to first 1
+                while (word != 0L) {
+                    action(gameBoard.getNodeWithIndex(index))
+
+                    word = word ushr 1
+                    if (word == 0L)
+                        break
+
+                    bitshift = word.countTrailingZeroBits()
+                    index += bitshift + 1 // bitshift + 1 because we already shifted by 1 before
+                    word = word ushr bitshift
+                }
+            }
         }
     }
 
