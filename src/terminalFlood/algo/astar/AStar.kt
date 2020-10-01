@@ -22,7 +22,55 @@ object AStar {
         gameBoard: GameBoard,
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST,
         queueMaxSizeCutoff: Int = Int.MAX_VALUE
+    ): Array<Color> = calculateSolution(GameExternalMoveList(gameBoard), MoveCollection(), strategy, queueMaxSizeCutoff)
+
+    /**
+     * Computes a solution for the given partially solved [Game] using an A* algorithm with the given strategy. Returns
+     * an array containing the already played moves and the computed solution.
+     *
+     * This method trades in some performance in exchange for less memory needed by only caching a certain amount of
+     * [GameState]s for the priority queue. If a node is checked whose game state is not cached, the game state is
+     * recomputed.
+     *
+     * As an additional memory saving scheme, this method will discard some of the highest priority nodes (high is
+     * worse) when the queue size reaches the cutoff value denoted by [queueMaxSizeCutoff]. This operation can result
+     * in worse solutions being found than normally possible with a given heuristic. If you prefer to not use this
+     * memory saving scheme, use [Int.MAX_VALUE] as the [queueMaxSizeCutoff] parameter value.
+     */
+    fun calculateMoves(
+        game: Game,
+        strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST,
+        queueMaxSizeCutoff: Int = Int.MAX_VALUE
     ): Array<Color> {
+        if (game.amountOfMovesMade == 0)
+            return calculateMoves(game.gameBoard, strategy, queueMaxSizeCutoff)
+
+        val movesCollection = MoveCollection()
+        var lastIndex = MoveCollection.NO_MOVE_INDEX
+        game.playedMoves.forEach {
+            lastIndex = movesCollection.addMoveEntry(lastIndex, it)
+        }
+        val initialGame = GameExternalMoveList(
+            game.gameBoard,
+            game.filled,
+            game.neighbors,
+            game.notFilledNotNeighbors,
+            game.sensibleMoves,
+            game.amountOfMovesMade,
+            game.lastMove.value.toByte(),
+            lastIndex
+        )
+
+        return calculateSolution(initialGame, movesCollection, strategy, queueMaxSizeCutoff)
+    }
+
+    private fun calculateSolution(
+        initialGame: GameExternalMoveList,
+        movesCollection: MoveCollection,
+        strategy: AStarStrategies,
+        queueMaxSizeCutoff: Int
+    ): Array<Color> {
+        val gameBoard = initialGame.gameBoard
         val heuristicStrategy = when (strategy) {
             AStarStrategies.ADMISSIBLE -> AdmissibleStrategy(gameBoard)
             AStarStrategies.INADMISSIBLE_SLOW -> InadmissibleSlowStrategy(gameBoard)
@@ -31,12 +79,22 @@ object AStar {
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
         val colorEliminationMoves = ColorSet()
-        val movesCollection = MoveCollection()
         val movesNeededForBoardState = BoardStateHashMap(gameBoard)
         var frontier = PriorityQueue<AStarNode>()
         val gameStateCache = GameStateCache()
-        val initialGame = GameExternalMoveList(gameBoard)
-        frontier.offer(AStarNode(gameStateCache.addGameState(initialGame), 0, MoveCollection.NO_MOVE_INDEX, false, 0))
+        // Populate the queue with all possible moves of the initial game state.
+        initialGame.sensibleMoves.forEachColor {
+            val newState = initialGame.makeMove(it, movesCollection.addMoveEntry(initialGame.moveEntryIndex, it))
+            frontier.offer(
+                AStarNode(
+                    gameStateCache.addGameState(newState),
+                    newState.amountOfMovesMade.toShort(),
+                    newState.moveEntryIndex,
+                    true,
+                    newState.amountOfMovesMade + heuristicStrategy.heuristic(newState)
+                )
+            )
+        }
 
         while (frontier.isNotEmpty()) {
             val currentNode = frontier.poll()

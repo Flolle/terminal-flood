@@ -1,5 +1,6 @@
 package terminalFlood
 
+import terminalFlood.algo.astar.AStar
 import terminalFlood.game.Color
 import terminalFlood.game.Game
 import terminalFlood.game.GameBoard
@@ -21,7 +22,7 @@ object PlayGame {
         while (!gameStack.peek().isFinished) {
             printCurrentState(gameStack.peek())
 
-            print("\nNext move (enter character between 1-$colorMaxValue")
+            print("\nNext move (enter character between 1-$colorMaxValue or hint")
             if (gameStack.size > 1)
                 print(" or undo):")
             else
@@ -46,6 +47,12 @@ object PlayGame {
                     println("Undoing last move.")
                     gameStack.pop()
                 }
+            } else if (inputStr == "hint") {
+                println("Computing move. This may take a moment ...")
+                val amountOfMovesMade = gameStack.peek().amountOfMovesMade
+                val computedSolution = AStar.calculateMoves(gameStack.peek())
+                println("The game can be finished in ${computedSolution.size - amountOfMovesMade} or less moves.")
+                println("The recommended move is: ${computedSolution[amountOfMovesMade]}")
             } else {
                 try {
                     if (inputStr.length != 1)
