@@ -24,7 +24,7 @@ object PlayGame {
 
             print("\nNext move (enter character between 1-$colorMaxValue or hint")
             if (gameStack.size > 1)
-                print(" or undo):")
+                print("/undo):")
             else
                 print("):")
 
@@ -48,7 +48,7 @@ object PlayGame {
                     gameStack.pop()
                 }
             } else if (inputStr == "hint") {
-                println("Computing move. This may take a moment ...")
+                println("Computing move. This may take a moment...")
                 val amountOfMovesMade = gameStack.peek().amountOfMovesMade
                 val computedSolution = AStar.calculateMoves(gameStack.peek())
                 println("The game can be finished in ${computedSolution.size - amountOfMovesMade} or less moves.")
