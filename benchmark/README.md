@@ -43,9 +43,9 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 26717 | 28244 |
-| astar_ias | 27070 | 2918 |
-| astar_iaf | 27363 | 1513 |
+| astar_a | 26717 | 26490 |
+| astar_ias | 27070 | 2712 |
+| astar_iaf | 27363 | 1453 |
 
 
 ### dataset b10c35n1000
@@ -54,47 +54,47 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 41751 | 14005 |
-| astar_ias | 42445 | 1425 |
-| astar_iaf | 42689 | 1428 |
+| astar_a | 41751 | 12990 |
+| astar_ias | 42439 | 1421 |
+| astar_iaf | 42686 | 1364 |
 
 
 ### dataset b12c12n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 27635 | 132267 |
-| astar_ias | 27897 | 3067 |
-| astar_iaf | 28435 | 895 |
+| astar_a | 27635 | 131902 |
+| astar_ias | 27897 | 2964 |
+| astar_iaf | 28435 | 881 |
 
 
 ### dataset b14c8n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 24582 | 85312 |
-| astar_ias | 24740 | 3796 |
-| astar_iaf | 25256 | 927 |
+| astar_a | 24582 | 79661 |
+| astar_ias | 24740 | 3453 |
+| astar_iaf | 25256 | 858 |
 
 
 ### dataset b18c6n1000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 24837 | 108085 |
-| astar_ias | 24951 | 6318 |
-| astar_iaf | 25530 | 1170 |
+| astar_a | 24837 | 108195 |
+| astar_ias | 24951 | 5584 |
+| astar_iaf | 25530 | 1098 |
 
 
 ### dataset b24c4n10000
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 219580 | 18395 |
-| astar_ias | 220630 | 7528 |
-| astar_ia | 223212 | 3794 |
-| astar_iaf | 224670 | 2894 |
-| astar_iaff | 232415 | 1901 |
+| astar_a | 219580 | 17078 |
+| astar_ias | 220630 | 7100 |
+| astar_ia | 223212 | 3675 |
+| astar_iaf | 224670 | 2783 |
+| astar_iaff | 232415 | 1807 |
 
 
 ### dataset b24c6n1000
@@ -105,11 +105,11 @@ I did not attempt to find an optimal solutionset with terminal-flood, because it
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a (-queueCutoff) | 31804 | 14724149 |
-| astar_ias | 31968 | 148207 |
-| astar_ia | 32537 | 18035 |
-| astar_iaf | 33178 | 3117 |
-| astar_iaff | 35117 | 934 |
+| astar_a (-queueCutoff) | 31804 | 13811651 |
+| astar_ias | 31968 | 136235 |
+| astar_ia | 32537 | 16962 |
+| astar_iaf | 33178 | 3034 |
+| astar_iaff | 35117 | 1003 |
 
 
 ### dataset floodtest_simplified
@@ -118,11 +118,11 @@ This dataset was used in a code challenge [here](https://codegolf.stackexchange.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 1985078 | 13031459 |
-| astar_ias | 1992612 | 641453 |
-| astar_ia | 2007765 | 190358 |
-| astar_iaf | 2026214 | 68577 |
-| astar_iaff | 2135051 | 12444 |
+| astar_a | 1985078 | 12461897 |
+| astar_ias | 1992612 | 597938 |
+| astar_ia | 2007763 | 174448 |
+| astar_iaf | 2026214 | 64192 |
+| astar_iaff | 2135051 | 11935 |
 
 
 ### dataset pc19
@@ -133,6 +133,6 @@ All benchmarks with this dataset where done using only 1 thread.
 
 | strategy | score | time in milliseconds |
 | :--- | ---: | ---: |
-| astar_a | 20086 | 15750 |
-| astar_ias | 20189 | 4384 |
-| astar_iaf | 20529 | 1585 |
+| astar_a | 20086 | 14570 |
+| astar_ias | 20189 | 3983 |
+| astar_iaf | 20529 | 1478 |
