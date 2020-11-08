@@ -85,13 +85,14 @@ object AStar {
         // Populate the queue with all possible moves of the initial game state.
         initialGame.sensibleMoves.forEachColor {
             val newState = initialGame.makeMove(it, movesCollection.addMoveEntry(initialGame.moveEntryIndex, it))
+            val priority = newState.amountOfMovesMade + heuristicStrategy.heuristic(newState)
             frontier.offer(
                 AStarNode(
                     gameStateCache.addGameState(newState),
                     newState.amountOfMovesMade.toShort(),
                     newState.moveEntryIndex,
                     true,
-                    newState.amountOfMovesMade + heuristicStrategy.heuristic(newState)
+                    priority.toShort()
                 )
             )
         }
@@ -150,7 +151,10 @@ object AStar {
                 frontier.forEachIndexed { i, aStarNode ->
                     val game = getGameFromCacheOrRecompute(aStarNode, gameStateCache, movesCollection, initialGame)
                     nodes[i] =
-                        QueueNode(aStarNode, Greedy.calculateAmountOfMovesNeeded(game) + game.amountOfMovesMade)
+                        QueueNode(
+                            aStarNode,
+                            (Greedy.calculateAmountOfMovesNeeded(game) + game.amountOfMovesMade).toShort()
+                        )
                 }
                 frontier = PriorityQueue(queueMaxSizeCutoff + gameBoard.colorSet.size)
                 nodes.sort()
@@ -211,7 +215,7 @@ object AStar {
                     gameState.amountOfMovesMade.toShort(),
                     gameState.moveEntryIndex,
                     isIslandEliminationSpecialCase,
-                    priority
+                    priority.toShort()
                 )
             )
         }
@@ -341,7 +345,7 @@ private data class AStarNode(
     val movesPlayed: Short,
     val moveEntryIndex: Int,
     val isIslandEliminationSpecialCase: Boolean,
-    val priority: Int
+    val priority: Short
 ) : Comparable<AStarNode> {
     /**
      * Break ties by sorting the states by amount of played moves (descending). Basically will explore nodes that should
@@ -366,11 +370,7 @@ private data class AStarNode(
  * This class is not thread-safe.
  */
 private class GameStateCache(cacheSize: Int = 10000) {
-    companion object {
-        private val DUMMY_GAME = GameExternalMoveList(GameBoard.initBoard("", 2, 2, StartPos.UPPER_LEFT))
-    }
-
-    private val ringbus: Array<GameExternalMoveList> = Array(cacheSize) { DUMMY_GAME }
+    private val ringbus: Array<GameExternalMoveList?> = arrayOfNulls(cacheSize)
 
     private var lastUsedIndex = -1
 
@@ -398,7 +398,7 @@ private class GameStateCache(cacheSize: Int = 10000) {
 
 private data class QueueNode(
     val node: AStarNode,
-    val greedyPrediction: Int
+    val greedyPrediction: Short
 ) : Comparable<QueueNode> {
     override fun compareTo(other: QueueNode): Int {
         val comp = greedyPrediction - other.greedyPrediction
