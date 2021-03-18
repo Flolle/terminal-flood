@@ -67,7 +67,7 @@ object PlayGame {
                     else
                         println("Move doesn't do anything!")
                 } catch (ex: NumberFormatException) {
-                    println("Only characters between 1-$colorMaxValue and undo are valid inputs!")
+                    println("Only characters between 1-$colorMaxValue and hint/undo are valid inputs!")
                 } catch (ex: IllegalArgumentException) {
                     println("The specified move is outside the color range of this game! (range: 1-$colorMaxValue)")
                 }
