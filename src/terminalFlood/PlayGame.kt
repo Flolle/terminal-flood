@@ -16,11 +16,19 @@ object PlayGame {
         println("You win the game by taking over the whole board within the allotted number of moves.\n\n")
 
         val colorMaxValue = gameBoard.maximumColorValue.toString(Character.MAX_RADIX)
-        val gameStack = Stack<Game>()
-        gameStack.push(Game(gameBoard))
+        val gameStack = ArrayDeque<GameAndHint>()
+        gameStack.push(GameAndHint(Game(gameBoard)))
 
-        while (!gameStack.peek().isFinished) {
-            printCurrentState(gameStack.peek())
+        while (!gameStack.peek().game.isFinished) {
+            val currentGame = gameStack.peek().game
+            val currentHint = gameStack.peek().hint
+            printCurrentState(currentGame)
+
+            if (currentHint != null) {
+                val amountOfMovesMade = currentGame.amountOfMovesMade
+                println("\nThe game can be finished in ${currentHint.size - amountOfMovesMade} or less moves.")
+                println("The recommended move is: ${currentHint[amountOfMovesMade]}")
+            }
 
             print("\nNext move (enter character between 1-$colorMaxValue or hint")
             if (gameStack.size > 1)
@@ -49,10 +57,7 @@ object PlayGame {
                 }
             } else if (inputStr == "hint") {
                 println("Computing move. This may take a moment...")
-                val amountOfMovesMade = gameStack.peek().amountOfMovesMade
-                val computedSolution = AStar.calculateMoves(gameStack.peek())
-                println("The game can be finished in ${computedSolution.size - amountOfMovesMade} or less moves.")
-                println("The recommended move is: ${computedSolution[amountOfMovesMade]}")
+                gameStack.peek().hint = AStar.calculateMoves(currentGame).toList()
             } else {
                 try {
                     if (inputStr.length != 1)
@@ -60,10 +65,9 @@ object PlayGame {
                     if (java.lang.String.valueOf(inputStr[0]).toInt(Character.MAX_RADIX) > gameBoard.maximumColorValue)
                         throw IllegalArgumentException()
 
-                    val currentGame = gameStack.peek()
                     val move = Color.fromValue(inputStr[0])
                     if (move in currentGame.sensibleMoves)
-                        gameStack.push(currentGame.makeMove(move))
+                        gameStack.push(GameAndHint(currentGame.makeMove(move)))
                     else
                         println("Move doesn't do anything!")
                 } catch (ex: NumberFormatException) {
@@ -76,9 +80,9 @@ object PlayGame {
             println("\n#############################################################\n\n")
         }
 
-        printCurrentState(gameStack.peek())
+        printCurrentState(gameStack.peek().game)
 
-        if (gameStack.peek().isWon)
+        if (gameStack.peek().game.isWon)
             println("\nYou've won the game!")
         else
             println("\nYou've lost! Better luck next time.")
@@ -100,3 +104,8 @@ object PlayGame {
         println("Number of moves left: ${gameState.gameBoard.maximumSteps - gameState.playedMoves.size}")
     }
 }
+
+private data class GameAndHint(
+    val game: Game,
+    var hint: List<Color>? = null
+)
