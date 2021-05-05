@@ -165,6 +165,6 @@ object Datasets {
 
         println("\n\nSolutions saved to: $output")
         println("Time taken: ${(time / 1_000_000.0).roundToInt()}ms")
-        println("Total score: ${finishedGames.sumBy { it.size }}")
+        println("Total score: ${finishedGames.sumOf { it.size }}")
     }
 }
