@@ -20,18 +20,16 @@ object Greedy {
         var neighborNodes = NodeSet(currentState.gameBoard.amountOfNodes)
         var bestColorNodes = NodeSet(currentState.gameBoard.amountOfNodes)
         val newBorderNodes = NodeSet(currentState.gameBoard.amountOfNodes)
-        val notEliminatedColors = ColorSet()
-        notEliminatedColors.setToNotEliminatedColors(gameState)
-        val colorEliminationMoves = ColorSet()
+        var notEliminatedColors = ColorSet.getNotEliminatedColors(gameState)
         var amountOfMoves = 0
 
         while (!currentState.isWon) {
             // If we can eliminate colors, that is always the optimal move.
             // If we eliminated colors, start the loop over.
-            colorEliminationMoves.setToColorEliminations(currentState, notEliminatedColors)
+            val colorEliminationMoves = ColorSet.getColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
                 currentState.makeMultiColorMove(colorEliminationMoves)
-                notEliminatedColors.andNot(colorEliminationMoves)
+                notEliminatedColors = notEliminatedColors.andNot(colorEliminationMoves)
                 amountOfMoves += colorEliminationMoves.size
                 continue
             }

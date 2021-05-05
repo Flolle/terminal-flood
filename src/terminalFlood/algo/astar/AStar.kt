@@ -78,7 +78,6 @@ object AStar {
             AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy(gameBoard)
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
-        val colorEliminationMoves = ColorSet()
         val movesNeededForBoardState = BoardStateHashMap(gameBoard)
         var frontier = PriorityQueue<AStarNode>()
         val gameStateCache = GameStateCache()
@@ -108,7 +107,7 @@ object AStar {
             // Pruning technique for inadmissible heuristics: If we can eliminate colors, we only do that. This can
             // sometimes result in slightly worse solutions, but speeds up the algorithm.
             if (strategy != AStarStrategies.ADMISSIBLE) {
-                colorEliminationMoves.setToColorEliminations(currentGameState)
+                val colorEliminationMoves = ColorSet.getColorEliminations(currentGameState)
                 colorEliminationMoves.forEachColor {
                     currentGameState =
                         currentGameState.makeMove(it, movesCollection.addMoveEntry(currentGameState.moveEntryIndex, it))
@@ -232,7 +231,7 @@ object AStar {
             return gameState.sensibleMoves
 
         // Only allow a move if the previous move added new border nodes of the next move's color.
-        val allowedMoves = ColorSet()
+        var allowedMoves = ColorSet()
         val previousMove = gameState.lastMove
         val nextMoveNeighbors = NodeSet(gameState.gameBoard.amountOfNodes)
         gameState.sensibleMoves.forEachColor { color ->
@@ -249,7 +248,7 @@ object AStar {
                     j = borderingNodes.nextSetBit(j + 1)
                 }
 
-                allowedMoves.set(color)
+                allowedMoves += color
                 break
             }
         }
@@ -271,12 +270,12 @@ object AStar {
         if (gameState.amountOfMovesMade == 0)
             return gameState.sensibleMoves
 
-        val allowedMoves = ColorSet()
+        var allowedMoves = ColorSet()
         val borderNodesByColor = NodeSet(gameState.gameBoard.amountOfNodes)
         gameState.sensibleMoves.forEachColor { nextMove ->
             borderNodesByColor.setToNeighborsWithColor(gameState, nextMove)
             if (shouldPlay(gameState, nextMove, borderNodesByColor))
-                allowedMoves.set(nextMove)
+                allowedMoves += nextMove
         }
 
         return allowedMoves

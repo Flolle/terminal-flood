@@ -9,13 +9,13 @@ interface GameState : BoardState {
          * Creates a [ColorSet] containing all colors of the nodes in the given [NodeSet] for the given [GameBoard].
          */
         fun createSensibleMoveSet(gameBoard: GameBoard, neighbors: NodeSet): ColorSet {
-            val sensibleMoves = ColorSet()
+            var sensibleMoves = ColorSet()
             if (neighbors.cardinality < gameBoard.colorSet.size) {
-                neighbors.forEachNode(gameBoard) { sensibleMoves.set(it.color) }
+                neighbors.forEachNode(gameBoard) { sensibleMoves += it.color }
             } else {
-                gameBoard.colorSet.forEachSetBit { colorValue ->
-                    if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
-                        sensibleMoves.set(Color(colorValue.toByte()))
+                gameBoard.colorSet.forEachColor { color ->
+                    if (gameBoard.boardNodesByColor[color.value.toInt()].intersects(neighbors))
+                        sensibleMoves += color
                 }
             }
 

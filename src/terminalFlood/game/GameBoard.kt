@@ -160,7 +160,7 @@ class GameBoard(
         ): GameBoard {
             val boardSize = sqrt(boardString.length.toDouble()).toInt()
             val colorBoard = Array(boardSize) { ByteArray(boardSize) }
-            val colors = ColorSet()
+            var colors = ColorSet()
 
             for (i in boardString.indices) {
                 val column = i % boardSize
@@ -169,7 +169,7 @@ class GameBoard(
                 val fieldColor = boardString[i].digitToInt(Character.MAX_RADIX).toByte()
 
                 colorBoard[column][row] = fieldColor
-                colors.set(Color(fieldColor))
+                colors += Color(fieldColor)
             }
 
             return initBoard(colorBoard, boardSize, colors.size, startPos, maxSteps)
@@ -197,7 +197,7 @@ class GameBoard(
             startPos: StartPos,
             maximumSteps: Int = 30 * (boardSize * numberOfColors) / 100
         ): GameBoard {
-            val colors = ColorSet()
+            var colors = ColorSet()
             val checkedFields = Array(boardSize) { BooleanArray(boardSize) }
             val boardNodes = ArrayList<BoardNodeImpl>()
 
@@ -209,7 +209,7 @@ class GameBoard(
 
                         exploreColorNode(nodeFields, colorBoard, checkedFields, color, x, y)
 
-                        colors.set(color)
+                        colors += color
                         boardNodes.add(BoardNodeImpl(color, nodeFields))
                     }
                 }

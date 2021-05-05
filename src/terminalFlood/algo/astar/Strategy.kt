@@ -31,21 +31,17 @@ interface Strategy {
 open class AdmissibleStrategy(gameBoard: GameBoard) : Strategy {
     protected val currentState = SimpleBoardState(gameBoard)
 
-    protected val notEliminatedColors = ColorSet()
-
-    protected val colorEliminationMoves = ColorSet()
-
     override fun heuristic(gameState: GameState): Int {
         var minimumMovesLeft = 0
         currentState.setToState(gameState)
-        notEliminatedColors.setToNotEliminatedColors(gameState)
+        var notEliminatedColors = ColorSet.getNotEliminatedColors(gameState)
 
         while (!currentState.isWon) {
-            colorEliminationMoves.setToColorEliminations(currentState, notEliminatedColors)
+            val colorEliminationMoves = ColorSet.getColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
                 // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
-                notEliminatedColors.andNot(colorEliminationMoves)
+                notEliminatedColors = notEliminatedColors.andNot(colorEliminationMoves)
                 minimumMovesLeft += colorEliminationMoves.size
             } else {
                 // If we didn't eliminate colors, do a color blind move taking all border nodes.
@@ -90,18 +86,18 @@ open class InadmissibleSlowStrategy(gameBoard: GameBoard) : AdmissibleStrategy(g
 
         var minimumMovesLeft = 0
         currentState.setToState(gameState)
-        notEliminatedColors.setToNotEliminatedColors(gameState)
+        var notEliminatedColors = ColorSet.getNotEliminatedColors(gameState)
         // Clearing bestColorNodes to make sure leftover state from previous heuristic() calls doesn't interfere with
         // the algorithm. bestColorNodes is the only bitset that needs to be cleared manually since the other bitsets
         // will be guaranteed to be set to specific states while running the algorithm.
         bestColorNodes.clear()
 
         while (!currentState.isWon) {
-            colorEliminationMoves.setToColorEliminations(currentState, notEliminatedColors)
+            val colorEliminationMoves = ColorSet.getColorEliminations(currentState, notEliminatedColors)
             if (!colorEliminationMoves.isEmpty) {
                 // Do all the moves that eliminate a color.
                 currentState.makeMultiColorMove(colorEliminationMoves)
-                notEliminatedColors.andNot(colorEliminationMoves)
+                notEliminatedColors = notEliminatedColors.andNot(colorEliminationMoves)
                 minimumMovesLeft += colorEliminationMoves.size
             } else {
                 // If we didn't eliminate colors, take at most two of the adjacent colors. If there are more than two
