@@ -1,5 +1,7 @@
 package terminalFlood.game
 
+import java.util.*
+
 /**
  * This is a bitmap implementation specific to [BoardNode]s.
  *
@@ -10,13 +12,18 @@ package terminalFlood.game
  *
  * The bit indexes and [BoardNode]s are linked through [BoardNode.id].
  *
+ * Note that [contentEquals] and [contentHashCode] should be used because the normal `equals` and `hashCode` methods
+ * will use the internal LongArray and not its contents.
+ *
  * @see BoardNode
  */
-class NodeSet private constructor(
-    val words: LongArray,
-    private val amountOfBits: Int
+@JvmInline
+value class NodeSet(
+    val words: LongArray
 ) {
     companion object {
+        val EMPTY: NodeSet = NodeSet(LongArray(0))
+
         private fun bitsToWords(amountOfBits: Int): Int = ((amountOfBits - 1) shr 6) + 1
 
         /**
@@ -34,9 +41,7 @@ class NodeSet private constructor(
         }
     }
 
-    constructor(amountOfBits: Int) : this(LongArray(bitsToWords(amountOfBits)), amountOfBits)
-
-    private val amountOfWords: Int = words.size
+    constructor(amountOfBits: Int) : this(LongArray(bitsToWords(amountOfBits)))
 
     /**
      * Returns true if this bitset contains no bits set to true.
@@ -100,16 +105,14 @@ class NodeSet private constructor(
      * Will set all bits in this bitset to false.
      */
     fun clear() {
-        var i = amountOfWords
-        while (--i >= 0)
-            words[i] = 0
+        Arrays.fill(words, 0, words.size, 0)
     }
 
     /**
      * Will inverse this bitset.
      */
     fun flipAll() {
-        var i = amountOfWords
+        var i = words.size
         while (--i >= 0)
             words[i] = words[i].inv()
     }
@@ -122,16 +125,17 @@ class NodeSet private constructor(
     // Assumes both NodeSets have the same internal array size.
     @Suppress("NOTHING_TO_INLINE")
     inline fun setToBorderingNodesOf(gameBoard: GameBoard, nodes: NodeSet) {
-        var i = nodes.nextSetBit(0)
+        val amountOfBits = gameBoard.amountOfNodes
+        var i = nodes.nextSetBit(0, amountOfBits)
         if (i == -1) {
             clear()
             return
         }
         setTo(gameBoard.getNodeWithIndex(i).borderingNodes)
-        i = nodes.nextSetBit(i + 1)
+        i = nodes.nextSetBit(i + 1, amountOfBits)
         while (i > 0) {
             or(gameBoard.getNodeWithIndex(i).borderingNodes)
-            i = nodes.nextSetBit(i + 1)
+            i = nodes.nextSetBit(i + 1, amountOfBits)
         }
     }
 
@@ -150,7 +154,7 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun setToIntersection(bitset1: NodeSet, bitset2: NodeSet) {
-        var i = amountOfWords
+        var i = words.size
         while (--i >= 0)
             words[i] = bitset1.words[i] and bitset2.words[i]
     }
@@ -160,9 +164,7 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun setTo(nodes: NodeSet) {
-        var i = amountOfWords
-        while (--i >= 0)
-            words[i] = nodes.words[i]
+        System.arraycopy(nodes.words, 0, words, 0, words.size)
     }
 
     /**
@@ -170,7 +172,7 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun or(nodes: NodeSet) {
-        var i = amountOfWords
+        var i = words.size
         while (--i >= 0)
             words[i] = words[i] or nodes.words[i]
     }
@@ -180,7 +182,7 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun xor(nodes: NodeSet) {
-        var i = amountOfWords
+        var i = words.size
         while (--i >= 0)
             words[i] = words[i] xor nodes.words[i]
     }
@@ -190,7 +192,7 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun and(nodes: NodeSet) {
-        var i = amountOfWords
+        var i = words.size
         while (--i >= 0)
             words[i] = words[i] and nodes.words[i]
     }
@@ -200,7 +202,7 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun andNot(nodes: NodeSet) {
-        var i = amountOfWords
+        var i = words.size
         while (--i >= 0)
             words[i] = words[i] and nodes.words[i].inv()
     }
@@ -210,18 +212,20 @@ class NodeSet private constructor(
      */
     // Assumes both NodeSets have the same internal array size.
     fun intersects(nodes: NodeSet): Boolean {
-        var i = amountOfWords
-        while (--i >= 0)
+        var i = words.size
+        while (--i >= 0) {
             if (words[i] and nodes.words[i] != 0L)
                 return true
+        }
 
         return false
     }
 
     /**
-     * Returns the index of the first bit that is set to true that occurs on or after the specified starting index.
+     * Returns the index of the first bit that is set to true that occurs on or after the specified starting index
+     * within the given total amount of bits.
      */
-    fun nextSetBit(index: Int): Int {
+    fun nextSetBit(index: Int, amountOfBits: Int): Int {
         if (index >= amountOfBits)
             return -1
 
@@ -231,7 +235,7 @@ class NodeSet private constructor(
         if (word != 0L)
             return index + word.countTrailingZeroBits()
 
-        while (++i < amountOfWords) {
+        while (++i < words.size) {
             word = words[i]
             if (word != 0L)
                 return (i shl 6) + word.countTrailingZeroBits()
@@ -267,20 +271,12 @@ class NodeSet private constructor(
     /**
      * Creates a copy of this bitset.
      */
-    fun copy(): NodeSet = NodeSet(words.copyOf(), amountOfBits)
+    fun copy(): NodeSet = NodeSet(words.copyOf())
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is NodeSet) return false
+    fun contentEquals(other: NodeSet): Boolean = words.contentEquals(other.words)
 
-        if (amountOfBits != other.amountOfBits) return false
-        if (!words.contentEquals(other.words)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        val h = wordsToHash(words, 0, amountOfWords)
+    fun contentHashCode(): Int {
+        val h = wordsToHash(words, 0, words.size)
         // fold leftmost bits into right and add a constant to prevent
         // empty sets from returning 0, which is too common.
         return (h shr 32 xor h).toInt() + -0x6789edcc
@@ -290,7 +286,7 @@ class NodeSet private constructor(
         val str = StringBuilder()
 
         str.append("[")
-        repeat(amountOfBits) {
+        repeat(words.size * 64) {
             if (get(it))
                 str.append("1")
             else

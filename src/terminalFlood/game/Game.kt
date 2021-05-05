@@ -93,7 +93,7 @@ class Game(
 
         if (playedMoves != other.playedMoves) return false
         if (gameBoard != other.gameBoard) return false
-        if (filled != other.filled) return false
+        if (!filled.contentEquals(other.filled)) return false
 
         return true
     }
@@ -101,7 +101,7 @@ class Game(
     override fun hashCode(): Int {
         var result = gameBoard.hashCode()
         result = 31 * result + playedMoves.hashCode()
-        result = 31 * result + filled.hashCode()
+        result = 31 * result + filled.contentHashCode()
         return result
     }
 }

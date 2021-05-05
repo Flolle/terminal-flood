@@ -308,7 +308,7 @@ private data class BoardNodeImpl(
     override val color: Color,
     override val occupiedFields: List<Point>
 ) : BoardNode {
-    override lateinit var borderingNodes: NodeSet
+    override var borderingNodes: NodeSet = NodeSet.EMPTY
 
     override var id: Int = -1
 
