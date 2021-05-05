@@ -30,7 +30,7 @@ interface BoardNode : Comparable<BoardNode> {
 
     override fun compareTo(other: BoardNode): Int {
         if (color != other.color)
-            return color.compareTo(other.color)
+            return color.value - other.color.value
         if (occupiedFields.size != other.occupiedFields.size)
             return occupiedFields.size - other.occupiedFields.size
         for (i in occupiedFields.indices) {

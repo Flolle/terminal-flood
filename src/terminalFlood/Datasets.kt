@@ -2,7 +2,7 @@ package terminalFlood
 
 import terminalFlood.algo.astar.AStar
 import terminalFlood.algo.astar.AStarStrategies
-import terminalFlood.game.Color
+import terminalFlood.game.ColorArray
 import terminalFlood.game.GameBoard
 import terminalFlood.game.StartPos
 import java.nio.file.Files
@@ -112,7 +112,7 @@ object Datasets {
         println("Memory scheme: $memoryScheme")
 
         val executor = Executors.newFixedThreadPool(threads)
-        val promisedGames = ArrayList<Future<Array<Color>>>(100_000)
+        val promisedGames = ArrayList<Future<ColorArray>>(100_000)
         val index = AtomicInteger(0)
         val t = System.nanoTime()
 
@@ -121,7 +121,7 @@ object Datasets {
                 .map { line -> line.trim() }
                 .filter { line -> line.isNotEmpty() }
                 .forEach { line ->
-                    promisedGames.add(executor.submit<Array<Color>> {
+                    promisedGames.add(executor.submit<ColorArray> {
                         val solution = try {
                             when (memoryScheme) {
                                 MemorySavingScheme.NO_SPECIAL_SCHEME -> AStar.calculateMoves(

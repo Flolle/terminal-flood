@@ -159,17 +159,17 @@ class GameBoard(
             maxSteps: Int
         ): GameBoard {
             val boardSize = sqrt(boardString.length.toDouble()).toInt()
-            val colorBoard = Array(boardSize) { IntArray(boardSize) }
+            val colorBoard = Array(boardSize) { ByteArray(boardSize) }
             val colors = ColorSet()
 
             for (i in boardString.indices) {
                 val column = i % boardSize
                 val row = i / boardSize
 
-                val fieldColor = boardString[i].digitToInt(Character.MAX_RADIX)
+                val fieldColor = boardString[i].digitToInt(Character.MAX_RADIX).toByte()
 
                 colorBoard[column][row] = fieldColor
-                colors.set(fieldColor)
+                colors.set(Color(fieldColor))
             }
 
             return initBoard(colorBoard, boardSize, colors.size, startPos, maxSteps)
@@ -191,7 +191,7 @@ class GameBoard(
             )
 
         fun initBoard(
-            colorBoard: Array<IntArray>,
+            colorBoard: Array<ByteArray>,
             boardSize: Int,
             numberOfColors: Int,
             startPos: StartPos,
@@ -204,13 +204,13 @@ class GameBoard(
             for (y in 0 until boardSize) {
                 for (x in 0 until boardSize) {
                     if (!checkedFields[x][y]) {
-                        val colorValue = colorBoard[x][y]
+                        val color = Color(colorBoard[x][y])
                         val nodeFields = ArrayList<Point>()
 
-                        exploreColorNode(nodeFields, colorBoard, checkedFields, colorValue, x, y)
+                        exploreColorNode(nodeFields, colorBoard, checkedFields, color, x, y)
 
-                        colors.set(colorValue)
-                        boardNodes.add(BoardNodeImpl(colorValue.toByte(), nodeFields))
+                        colors.set(color)
+                        boardNodes.add(BoardNodeImpl(color, nodeFields))
                     }
                 }
             }
@@ -219,7 +219,7 @@ class GameBoard(
             val maximumColorValue = colors.maximumColorValue
             val boardNodesByColor = Array(maximumColorValue + 1) { NodeSet(boardNodes.size) }
             for (node in boardNodes) {
-                boardNodesByColor[node.color.value].set(node.id)
+                boardNodesByColor[node.color.value.toInt()].set(node.id)
             }
 
             val startPoint = when (startPos) {
@@ -262,13 +262,13 @@ class GameBoard(
             return gameBoard
         }
 
-        private fun initColorBoard(seed: Int, boardSize: Int, numberOfColors: Int): Array<IntArray> {
-            val board = Array(boardSize) { IntArray(boardSize) }
+        private fun initColorBoard(seed: Int, boardSize: Int, numberOfColors: Int): Array<ByteArray> {
+            val board = Array(boardSize) { ByteArray(boardSize) }
             val rng = Random(seed)
 
             for (y in 0 until boardSize) {
                 for (x in 0 until boardSize) {
-                    board[x][y] = rng.nextInt(numberOfColors) + 1
+                    board[x][y] = (rng.nextInt(numberOfColors) + 1).toByte()
                 }
             }
 
@@ -277,13 +277,13 @@ class GameBoard(
 
         private fun exploreColorNode(
             fields: MutableList<Point>,
-            colorBoard: Array<IntArray>,
+            colorBoard: Array<ByteArray>,
             checkedFields: Array<BooleanArray>,
-            color: Int,
+            color: Color,
             x: Int,
             y: Int
         ) {
-            if (checkedFields[x][y] || colorBoard[x][y] != color)
+            if (checkedFields[x][y] || colorBoard[x][y] != color.value)
                 return
 
             checkedFields[x][y] = true
@@ -305,13 +305,10 @@ class GameBoard(
  * a [GameBoard] gets created and are *not* to be modified again afterwards.
  */
 private data class BoardNodeImpl(
-    val colorValue: Byte,
+    override val color: Color,
     override val occupiedFields: List<Point>
 ) : BoardNode {
     override lateinit var borderingNodes: NodeSet
-
-    override val color: Color
-        get() = Color.colorCache[colorValue.toInt()]
 
     override var id: Int = -1
 

@@ -31,18 +31,13 @@ class ColorSet private constructor(
     val maximumColorValue: Int
         get() = 63 - bits.countLeadingZeroBits()
 
-    operator fun get(bitIndex: Int): Boolean = (bits and (1L shl bitIndex)) != 0L
+    operator fun get(color: Color): Boolean = (bits and (1L shl color.value.toInt())) != 0L
 
     @Suppress("NOTHING_TO_INLINE")
-    inline operator fun contains(color: Color): Boolean = get(color.value)
+    inline operator fun contains(color: Color): Boolean = get(color)
 
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun set(color: Color) {
-        set(color.value)
-    }
-
-    fun set(bitIndex: Int) {
-        bits = bits or (1L shl bitIndex)
+    fun set(color: Color) {
+        bits = bits or (1L shl color.value.toInt())
     }
 
     fun clear(bitIndex: Int) {
@@ -78,7 +73,7 @@ class ColorSet private constructor(
     inline fun forEachColor(action: (color: Color) -> Unit) {
         var i = nextSetBit(0)
         while (i >= 0) {
-            action(Color.colorCache[i])
+            action(Color(i.toByte()))
             i = nextSetBit(i + 1)
         }
     }
@@ -88,7 +83,7 @@ class ColorSet private constructor(
 
         gameState.gameBoard.colorSet.forEachSetBit { colorValue ->
             if (gameState.gameBoard.boardNodesByColor[colorValue].intersects(gameState.notFilledNotNeighbors))
-                set(colorValue)
+                set(Color(colorValue.toByte()))
         }
     }
 

@@ -142,7 +142,7 @@ class NodeSet private constructor(
     // Assumes both NodeSets have the same internal array size.
     @Suppress("NOTHING_TO_INLINE")
     inline fun setToNeighborsWithColor(boardState: BoardState, color: Color) {
-        setToIntersection(boardState.gameBoard.boardNodesByColor[color.value], boardState.neighbors)
+        setToIntersection(boardState.gameBoard.boardNodesByColor[color.value.toInt()], boardState.neighbors)
     }
 
     /**

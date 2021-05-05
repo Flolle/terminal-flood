@@ -10,59 +10,48 @@ package terminalFlood.game
 sealed class MoveList {
     abstract val size: Int
 
-    // Uses a Byte to store the color to save space. This is OK since only 36 colors are supported.
-    protected abstract val lastMoveColorValue: Byte
+    abstract val lastMove: Color
 
     abstract val previousMoves: MoveList
-
-    val lastMove: Color
-        get() = Color.colorCache[lastMoveColorValue.toInt()]
 
     val isEmpty: Boolean
         get() = size == 0
 
-    operator fun plus(move: Color): MoveList = MoveListImpl(size + 1, move.value.toByte(), this)
+    operator fun plus(move: Color): MoveList = MoveListImpl(size + 1, move, this)
 
     /**
      * Returns an array representation of this MoveList with its elements in the order they were added to this MoveList.
      */
-    fun toArray(): Array<Color> {
+    fun toArray(): ColorArray {
         if (isEmpty)
-            return emptyArray()
+            return ColorArray.EMPTY
 
-        val result = arrayOfNulls<Color>(size)
+        val result = ByteArray(size)
         var index = this
         while (!index.isEmpty) {
-            result[index.size - 1] = index.lastMove
+            result[index.size - 1] = index.lastMove.value
             index = index.previousMoves
         }
 
-        @Suppress("UNCHECKED_CAST")
-        return result as Array<Color>
+        return ColorArray(result)
     }
-
-    /**
-     * Returns a list representation of this MoveList with its elements in the order they were added to this MoveList.
-     */
-    fun toList(): List<Color> = if (isEmpty) emptyList() else toArray().asList()
 
     /**
      * Iterates over the elements of this MoveList in the order they were added to this MoveList.
      */
     inline fun forEach(action: (Color) -> Unit) {
-        for (color in toArray())
-            action(color)
+        toArray().forEach { action(it) }
     }
 
-    override fun toString(): String = toList().toString()
+    override fun toString(): String = toArray().toString()
 
     companion object {
         fun emptyMoveList(): MoveList = EmptyMoveList
 
-        fun moveListOf(vararg elements: Color): MoveList {
+        fun moveListOf(vararg colorValues: Byte): MoveList {
             var moveList = emptyMoveList()
-            for (element in elements)
-                moveList += element
+            for (colorValue in colorValues)
+                moveList += Color(colorValue)
 
             return moveList
         }
@@ -72,35 +61,15 @@ sealed class MoveList {
 private object EmptyMoveList : MoveList() {
     override val size: Int = 0
 
-    override val lastMoveColorValue: Nothing
+    override val lastMove: Nothing
         get() = throw NoSuchElementException("The move list is empty!")
 
     override val previousMoves: Nothing
         get() = throw NoSuchElementException("The move list is empty!")
 }
 
-private class MoveListImpl(
+private data class MoveListImpl(
     override val size: Int,
-    override val lastMoveColorValue: Byte,
+    override val lastMove: Color,
     override val previousMoves: MoveList
-) : MoveList() {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as MoveListImpl
-
-        if (size != other.size) return false
-        if (lastMoveColorValue != other.lastMoveColorValue) return false
-        if (previousMoves != other.previousMoves) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = size
-        result = 31 * result + lastMoveColorValue
-        result = 31 * result + previousMoves.hashCode()
-        return result
-    }
-}
+) : MoveList()

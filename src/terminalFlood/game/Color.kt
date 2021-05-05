@@ -1,28 +1,14 @@
 package terminalFlood.game
 
 /**
- * This class represents the color of a field. This class is immutable.
+ * This value class represents the color of a field.
  *
- * Use [Color.colorCache] to get instances of this class. Use [Color.NO_COLOR] if you just need a default color value.
+ * Use [Color.NO_COLOR] if you just need a default color value.
  */
-class Color private constructor(
-    val value: Int
-) : Comparable<Color> {
-    override fun compareTo(other: Color): Int = value - other.value
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Color
-
-        if (value != other.value) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int = value
-
+@JvmInline
+value class Color(
+    val value: Byte
+) {
     override fun toString(): String = value.toString(Character.MAX_RADIX)
 
     companion object {
@@ -33,23 +19,55 @@ class Color private constructor(
         val NO_COLOR: Color = Color(-1)
 
         /**
-         * Use this list to get [Color] instances of the corresponding value.
-         *
-         * Only values below [Character.MAX_RADIX] are allowed.
-         */
-        val colorCache: List<Color> = (0 until Character.MAX_RADIX).map { Color(it) }
-
-        /**
          * Returns a color with the given value.
          *
          * The Char is converted to an Int using [Character.MAX_RADIX] as the radix. If the Char cannot be converted to
          * an Int or if the converted value is below 0 an exception will be thrown.
          *
-         * @see [String.toInt]
+         * @see [Char.digitToInt]
          */
         fun fromValue(value: Char): Color {
             val colorValue = value.digitToInt(Character.MAX_RADIX)
-            return colorCache[colorValue]
+            return Color(colorValue.toByte())
         }
+    }
+}
+
+/**
+ * A helper class for [Color] that is an efficient implementation of an array of colors. Just using `Array<Color>`
+ * would result in all Color values being boxed.
+ */
+@JvmInline
+value class ColorArray(
+    val colorValues: ByteArray
+) {
+    val size: Int
+        get() = colorValues.size
+
+    val last: Color
+        get() = Color(colorValues[colorValues.size - 1])
+
+    operator fun get(index: Int): Color = Color(colorValues[index])
+
+    inline fun forEach(action: (color: Color) -> Unit) {
+        for (colorValue in colorValues)
+            action(Color(colorValue))
+    }
+
+    override fun toString(): String {
+        if (size == 0)
+            return "[]"
+
+        val str = StringBuilder()
+        str.append("[")
+        forEach { str.append(it).append(", ") }
+        str.delete(str.length - 2, str.length) // remove last comma and space
+        str.append("]")
+
+        return str.toString()
+    }
+
+    companion object {
+        val EMPTY: ColorArray = ColorArray(ByteArray(0))
     }
 }

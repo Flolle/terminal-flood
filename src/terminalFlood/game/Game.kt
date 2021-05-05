@@ -65,7 +65,7 @@ class Game(
      * Makes a move that takes all [neighbors] of the given color and returns the new state.
      */
     fun makeMove(move: Color): Game {
-        val newNodes = gameBoard.boardNodesByColor[move.value].copy()
+        val newNodes = gameBoard.boardNodesByColor[move.value.toInt()].copy()
         newNodes.and(neighbors)
         val newFilled = filled.copy()
         val newNeighbors = neighbors.copy()

@@ -26,7 +26,7 @@ class MoveCollection {
     init {
         // First entry gets a special value so we can tell that there are no further moves.
         moveIndexArray[0] = NO_MOVE_VALUE
-        moveColorArray[0] = Color.NO_COLOR.value.toByte()
+        moveColorArray[0] = Color.NO_COLOR.value
     }
 
     private var lastUsedIndex: Int = 0
@@ -48,7 +48,7 @@ class MoveCollection {
         }
 
         moveIndexArray[currentIndex] = previousMoveIndex
-        moveColorArray[currentIndex] = move.value.toByte()
+        moveColorArray[currentIndex] = move.value
 
         return currentIndex
     }
@@ -59,18 +59,17 @@ class MoveCollection {
      * Should have slightly better performance than getMoveList(Int), but requires you to know the amount of moves
      * beforehand.
      */
-    fun getMoveList(moveIndex: Int, amountOfMoves: Int): Array<Color> {
-        val moves = arrayOfNulls<Color>(amountOfMoves)
+    fun getMoveList(moveIndex: Int, amountOfMoves: Int): ColorArray {
+        val moves = ByteArray(amountOfMoves)
 
         var i = amountOfMoves
         var index = moveIndex
         while (--i >= 0) {
-            moves[i] = Color.colorCache[moveColorArray[index].toInt()]
+            moves[i] = moveColorArray[index]
             index = moveIndexArray[index]
         }
 
-        @Suppress("UNCHECKED_CAST")
-        return moves as Array<Color>
+        return ColorArray(moves)
     }
 
     /**
@@ -83,7 +82,7 @@ class MoveCollection {
 
         var index = moveIndex
         while (index != NO_MOVE_INDEX) {
-            moves += Color.colorCache[moveColorArray[index].toInt()]
+            moves += Color(moveColorArray[index])
             index = moveIndexArray[index]
         }
         moves.reverse()

@@ -2,6 +2,7 @@ package terminalFlood
 
 import terminalFlood.algo.astar.AStar
 import terminalFlood.game.Color
+import terminalFlood.game.ColorArray
 import terminalFlood.game.Game
 import terminalFlood.game.GameBoard
 import java.util.*
@@ -57,7 +58,7 @@ object PlayGame {
                 }
             } else if (inputStr == "hint") {
                 println("Computing move. This may take a moment...")
-                gameStack.peek().hint = AStar.calculateMoves(currentGame).toList()
+                gameStack.peek().hint = AStar.calculateMoves(currentGame)
             } else {
                 try {
                     if (inputStr.length != 1)
@@ -107,5 +108,5 @@ object PlayGame {
 
 private data class GameAndHint(
     val game: Game,
-    var hint: List<Color>? = null
+    var hint: ColorArray? = null
 )

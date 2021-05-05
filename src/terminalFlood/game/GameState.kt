@@ -15,7 +15,7 @@ interface GameState : BoardState {
             } else {
                 gameBoard.colorSet.forEachSetBit { colorValue ->
                     if (gameBoard.boardNodesByColor[colorValue].intersects(neighbors))
-                        sensibleMoves.set(colorValue)
+                        sensibleMoves.set(Color(colorValue.toByte()))
                 }
             }
 

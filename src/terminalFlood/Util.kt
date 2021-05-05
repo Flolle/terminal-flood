@@ -2,7 +2,7 @@ package terminalFlood
 
 import terminalFlood.algo.astar.AStar
 import terminalFlood.algo.astar.AStarStrategies
-import terminalFlood.game.Color
+import terminalFlood.game.ColorArray
 import terminalFlood.game.GameBoard
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.system.measureTimeMillis
@@ -36,11 +36,11 @@ object Util {
     ) {
         println("Using strategy: $strategy")
         println("Memory scheme: $memoryScheme")
-        var simResult: Array<Color>?
+        var simResult: ColorArray?
         val t = measureTimeMillis {
             simResult = when (memoryScheme) {
                 MemorySavingScheme.NO_SPECIAL_SCHEME -> AStar.calculateMoves(gameBoard, strategy)
-                MemorySavingScheme.QUEUE_CUTOFF -> AStar.calculateMoves(
+                MemorySavingScheme.QUEUE_CUTOFF      -> AStar.calculateMoves(
                     gameBoard,
                     strategy,
                     2_000_000

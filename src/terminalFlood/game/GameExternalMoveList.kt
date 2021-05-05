@@ -27,7 +27,7 @@ class GameExternalMoveList(
     override val notFilledNotNeighbors: NodeSet,
     override val sensibleMoves: ColorSet,
     override val amountOfMovesMade: Int,
-    private val lastMoveColorValue: Byte,
+    override val lastMove: Color,
     val moveEntryIndex: Int
 ) : GameState {
     companion object {
@@ -50,20 +50,17 @@ class GameExternalMoveList(
                 notFilledNotNeighbors,
                 GameState.createSensibleMoveSet(gameBoard, neighbors),
                 0,
-                Color.NO_COLOR.value.toByte(),
+                Color.NO_COLOR,
                 MoveCollection.NO_MOVE_INDEX
             )
         }
     }
 
-    override val lastMove: Color
-        get() = Color.colorCache[lastMoveColorValue.toInt()]
-
     /**
      * Makes a move that takes all [neighbors] of the given color and returns the new state.
      */
     fun makeMove(move: Color, newMoveEntryIndex: Int): GameExternalMoveList {
-        val newNodes = gameBoard.boardNodesByColor[move.value].copy()
+        val newNodes = gameBoard.boardNodesByColor[move.value.toInt()].copy()
         newNodes.and(neighbors)
         val newFilled = filled.copy()
         val newNeighbors = neighbors.copy()
@@ -80,7 +77,7 @@ class GameExternalMoveList(
             newNotFilledNotNeighbors,
             GameState.createSensibleMoveSet(gameBoard, newNeighbors),
             amountOfMovesMade + 1,
-            move.value.toByte(),
+            move,
             newMoveEntryIndex
         )
     }

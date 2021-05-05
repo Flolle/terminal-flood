@@ -22,7 +22,7 @@ object AStar {
         gameBoard: GameBoard,
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST,
         queueMaxSizeCutoff: Int = Int.MAX_VALUE
-    ): Array<Color> = calculateSolution(GameExternalMoveList(gameBoard), MoveCollection(), strategy, queueMaxSizeCutoff)
+    ): ColorArray = calculateSolution(GameExternalMoveList(gameBoard), MoveCollection(), strategy, queueMaxSizeCutoff)
 
     /**
      * Computes a solution for the given partially solved [Game] using an A* algorithm with the given strategy. Returns
@@ -41,7 +41,7 @@ object AStar {
         game: Game,
         strategy: AStarStrategies = AStarStrategies.INADMISSIBLE_FAST,
         queueMaxSizeCutoff: Int = Int.MAX_VALUE
-    ): Array<Color> {
+    ): ColorArray {
         if (game.amountOfMovesMade == 0)
             return calculateMoves(game.gameBoard, strategy, queueMaxSizeCutoff)
 
@@ -57,7 +57,7 @@ object AStar {
             game.notFilledNotNeighbors,
             game.sensibleMoves,
             game.amountOfMovesMade,
-            game.lastMove.value.toByte(),
+            game.lastMove,
             lastIndex
         )
 
@@ -69,13 +69,13 @@ object AStar {
         movesCollection: MoveCollection,
         strategy: AStarStrategies,
         queueMaxSizeCutoff: Int
-    ): Array<Color> {
+    ): ColorArray {
         val gameBoard = initialGame.gameBoard
         val heuristicStrategy = when (strategy) {
-            AStarStrategies.ADMISSIBLE -> AdmissibleStrategy(gameBoard)
-            AStarStrategies.INADMISSIBLE_SLOW -> InadmissibleSlowStrategy(gameBoard)
-            AStarStrategies.INADMISSIBLE -> InadmissibleStrategy(gameBoard)
-            AStarStrategies.INADMISSIBLE_FAST -> InadmissibleFastStrategy(gameBoard)
+            AStarStrategies.ADMISSIBLE           -> AdmissibleStrategy(gameBoard)
+            AStarStrategies.INADMISSIBLE_SLOW    -> InadmissibleSlowStrategy(gameBoard)
+            AStarStrategies.INADMISSIBLE         -> InadmissibleStrategy(gameBoard)
+            AStarStrategies.INADMISSIBLE_FAST    -> InadmissibleFastStrategy(gameBoard)
             AStarStrategies.INADMISSIBLE_FASTEST -> InadmissibleFastestStrategy
         }
         val colorEliminationMoves = ColorSet()
@@ -188,7 +188,7 @@ object AStar {
             recomputedState.notFilledNotNeighbors,
             GameState.createSensibleMoveSet(recomputedState.gameBoard, recomputedState.neighbors),
             moves.size,
-            moves.last().value.toByte(),
+            moves.last,
             node.moveEntryIndex
         )
     }
@@ -242,7 +242,7 @@ object AStar {
                 val borderingNodes = gameState.gameBoard.getNodeWithIndex(i).borderingNodes
                 var j = borderingNodes.nextSetBit(0)
                 while (j >= 0) {
-                    if (gameState.gameBoard.getNodeWithIndex(j).color !== previousMove && gameState.filled[j]) {
+                    if (gameState.gameBoard.getNodeWithIndex(j).color != previousMove && gameState.filled[j]) {
                         i = nextMoveNeighbors.nextSetBit(i + 1)
                         continue@outerLoop
                     }
@@ -305,7 +305,7 @@ object AStar {
             val borderingNodes = gameState.gameBoard.getNodeWithIndex(i).borderingNodes
             var j = borderingNodes.nextSetBit(0)
             while (j >= 0) {
-                if (gameState.gameBoard.getNodeWithIndex(j).color !== previousMove && gameState.filled[j]) {
+                if (gameState.gameBoard.getNodeWithIndex(j).color != previousMove && gameState.filled[j]) {
                     i = borderNodesByColor.nextSetBit(i + 1)
                     continue@outerLoop
                 }
@@ -317,7 +317,7 @@ object AStar {
         }
 
         if (!isNewBorderNodes) {
-            if (nextMove < previousMove)
+            if (nextMove.value < previousMove.value)
                 return false
 
             // Should nextMove have been played before previousMove?
@@ -326,7 +326,7 @@ object AStar {
                 val borderingNodes = gameState.gameBoard.getNodeWithIndex(i).borderingNodes
                 var j = borderingNodes.nextSetBit(0)
                 while (j >= 0) {
-                    if (gameState.gameBoard.getNodeWithIndex(j).color === previousMove && !gameState.filled[j]) {
+                    if (gameState.gameBoard.getNodeWithIndex(j).color == previousMove && !gameState.filled[j]) {
                         return false
                     }
                     j = borderingNodes.nextSetBit(j + 1)
