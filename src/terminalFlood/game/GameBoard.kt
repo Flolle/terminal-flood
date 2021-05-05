@@ -166,7 +166,7 @@ class GameBoard(
                 val column = i % boardSize
                 val row = i / boardSize
 
-                val fieldColor = java.lang.String.valueOf(boardString[i]).toInt(Character.MAX_RADIX)
+                val fieldColor = boardString[i].digitToInt(Character.MAX_RADIX)
 
                 colorBoard[column][row] = fieldColor
                 colors.set(fieldColor)

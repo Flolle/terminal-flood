@@ -48,7 +48,7 @@ class Color private constructor(
          * @see [String.toInt]
          */
         fun fromValue(value: Char): Color {
-            val colorValue = java.lang.String.valueOf(value).toInt(Character.MAX_RADIX)
+            val colorValue = value.digitToInt(Character.MAX_RADIX)
             return colorCache[colorValue]
         }
     }

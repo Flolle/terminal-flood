@@ -62,7 +62,7 @@ object PlayGame {
                 try {
                     if (inputStr.length != 1)
                         throw NumberFormatException()
-                    if (java.lang.String.valueOf(inputStr[0]).toInt(Character.MAX_RADIX) > gameBoard.maximumColorValue)
+                    if (inputStr[0].digitToInt(Character.MAX_RADIX) > gameBoard.maximumColorValue)
                         throw IllegalArgumentException()
 
                     val move = Color.fromValue(inputStr[0])
