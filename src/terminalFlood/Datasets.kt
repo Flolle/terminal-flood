@@ -10,6 +10,10 @@ import java.nio.file.Path
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.div
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 import kotlin.math.roundToInt
 import kotlin.streams.asSequence
 import kotlin.system.exitProcess
@@ -32,7 +36,7 @@ object Datasets {
     }
 
     private fun findGameBoardInDataset(file: Path, lineNumber: Int, startPos: StartPos): GameBoard {
-        if (!Files.exists(file) || Files.isDirectory(file))
+        if (!file.exists() || file.isDirectory())
             throw IllegalArgumentException("The file doesn't exist or is a directory!")
 
         println("Given dataset: $file")
@@ -57,11 +61,10 @@ object Datasets {
     }
 
     fun createDataset(file: Path, boardSize: Int, numberOfColors: Int, numberOfBoards: Int) {
-        if (Files.isDirectory(file))
+        if (file.isDirectory())
             throw IllegalArgumentException("The file is a directory!")
 
-        if (Files.exists(file))
-            Files.delete(file)
+        file.deleteIfExists()
 
         println("Creating dataset.")
         println("Board dimensions: ${boardSize}x$boardSize")
@@ -99,7 +102,7 @@ object Datasets {
         startPos: StartPos,
         memoryScheme: MemorySavingScheme
     ) {
-        if (!Files.exists(file) || Files.isDirectory(file))
+        if (!file.exists() || file.isDirectory())
             throw IllegalArgumentException("The file doesn't exist or is a directory!")
 
         println("Finding solutions for the given dataset: $file")
@@ -150,9 +153,8 @@ object Datasets {
         val time = System.nanoTime() - t
         executor.shutdown()
 
-        val output = file.parent.resolve("solutions.txt")
-        if (Files.exists(output))
-            Files.delete(output)
+        val output = file.parent / "solutions.txt"
+        output.deleteIfExists()
 
         Files.newBufferedWriter(output, Charsets.UTF_8).use { outputWriter ->
             for (moves in finishedGames) {

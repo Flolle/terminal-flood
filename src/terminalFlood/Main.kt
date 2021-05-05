@@ -3,7 +3,7 @@ package terminalFlood
 import terminalFlood.algo.astar.AStarStrategies
 import terminalFlood.game.GameBoard
 import terminalFlood.game.StartPos
-import java.nio.file.Paths
+import kotlin.io.path.Path
 
 fun main(args: Array<String>) {
     if (args.contains("-debug")) {
@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
         val threads = args[arrayIndex + 1].toInt()
         val strategy = Util.strategyFromString(args[arrayIndex + 2])
         val startPos = parseStartPosition(args[arrayIndex + 3])
-        val file = Paths.get(args[arrayIndex + 4])
+        val file = Path(args[arrayIndex + 4])
 
         Datasets.findSolutionsForDataset(file, threads, strategy, startPos, memoryScheme)
         return
@@ -38,9 +38,9 @@ fun main(args: Array<String>) {
         val numberOfBoards = args[arrayIndex + 3].toInt()
         val file =
             if (args.size > arrayIndex + 4) {
-                Paths.get(args[arrayIndex + 4])
+                Path(args[arrayIndex + 4])
             } else {
-                Paths.get(
+                Path(
                     System.getProperty("user.dir"),
                     "dataset b${boardSize}c${numberOfColors}n${numberOfBoards}.txt"
                 )
@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
         val arrayIndex = args.indexOf("-playFromDataset")
         val lineNumber = args[arrayIndex + 1].toInt()
         val startPos = parseStartPosition(args[arrayIndex + 2])
-        val file = Paths.get(args[arrayIndex + 3])
+        val file = Path(args[arrayIndex + 3])
 
         Datasets.playFromDataset(file, lineNumber, startPos)
         return
@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
         val lineNumber = args[arrayIndex + 1].toInt()
         val strategy = Util.strategyFromString(args[arrayIndex + 2])
         val startPos = parseStartPosition(args[arrayIndex + 3])
-        val file = Paths.get(args[arrayIndex + 4])
+        val file = Path(args[arrayIndex + 4])
 
         Datasets.solveFromDataset(file, lineNumber, startPos, strategy, memoryScheme)
         return
@@ -129,7 +129,7 @@ private fun parseStartPosition(startPosString: String): StartPos = when (startPo
     "ur" -> StartPos.UPPER_RIGHT
     "ll" -> StartPos.LOWER_LEFT
     "lr" -> StartPos.LOWER_RIGHT
-    "m" -> StartPos.MIDDLE
+    "m"  -> StartPos.MIDDLE
     else -> throw IllegalArgumentException("Incorrect value for startPos!")
 }
 
