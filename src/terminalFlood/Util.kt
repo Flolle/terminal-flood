@@ -9,11 +9,11 @@ import kotlin.system.measureTimeMillis
 
 object Util {
     fun strategyFromString(str: String): AStarStrategies = when (str) {
-        "astar_a" -> AStarStrategies.ADMISSIBLE
-        "astar_ia" -> AStarStrategies.INADMISSIBLE
-        "astar_iaf" -> AStarStrategies.INADMISSIBLE_FAST
+        "astar_a"    -> AStarStrategies.ADMISSIBLE
+        "astar_ia"   -> AStarStrategies.INADMISSIBLE
+        "astar_iaf"  -> AStarStrategies.INADMISSIBLE_FAST
         "astar_iaff" -> AStarStrategies.INADMISSIBLE_FASTEST
-        "astar_ias" -> AStarStrategies.INADMISSIBLE_SLOW
+        "astar_ias"  -> AStarStrategies.INADMISSIBLE_SLOW
         else         -> throw IllegalArgumentException("Incorrect value for strategy!")
     }
 

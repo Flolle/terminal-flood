@@ -37,7 +37,7 @@ object PlayGame {
             else
                 print("):")
 
-            val input = readLine()
+            val input = readlnOrNull()
             // Ctrl+C seems to result in a null value, so we print a short message and exit the program in that case.
             if (input == null) {
                 println("Invalid or null input, ending program.")

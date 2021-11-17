@@ -35,7 +35,7 @@ value class NodeSet(
             var h = 0L
             var i = endIndex
             while (--i >= startIndex)
-                h = java.lang.Long.rotateLeft(h xor words[i], 1)
+                h = (h xor words[i]).rotateLeft(1)
 
             return h
         }
@@ -144,8 +144,7 @@ value class NodeSet(
      * bitset of the given color.
      */
     // Assumes both NodeSets have the same internal array size.
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun setToNeighborsWithColor(boardState: BoardState, color: Color) {
+    fun setToNeighborsWithColor(boardState: BoardState, color: Color) {
         setToIntersection(boardState.gameBoard.boardNodesByColor[color.value.toInt()], boardState.neighbors)
     }
 

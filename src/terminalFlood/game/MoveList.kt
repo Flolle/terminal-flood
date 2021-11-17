@@ -39,11 +39,9 @@ sealed class MoveList {
     /**
      * Iterates over the elements of this MoveList in the order they were added to this MoveList.
      */
-    inline fun forEach(action: (Color) -> Unit) {
-        toArray().forEach { action(it) }
+    inline fun forEach(action: (color: Color) -> Unit) {
+        toArray().forEach(action)
     }
-
-    override fun toString(): String = toArray().toString()
 
     companion object {
         fun emptyMoveList(): MoveList = EmptyMoveList
@@ -66,10 +64,14 @@ private object EmptyMoveList : MoveList() {
 
     override val previousMoves: Nothing
         get() = throw NoSuchElementException("The move list is empty!")
+
+    override fun toString(): String = "[]"
 }
 
 private data class MoveListImpl(
     override val size: Int,
     override val lastMove: Color,
     override val previousMoves: MoveList
-) : MoveList()
+) : MoveList() {
+    override fun toString(): String = toArray().toString()
+}
